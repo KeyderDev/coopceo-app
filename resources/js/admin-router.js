@@ -1,15 +1,16 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import Admin from './components/AdminPanel.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import AdminPanel from './components/AdminPanel.vue'
 import Login from './components/Login.vue'
-
+import Register from './components/Register.vue'
 
 const routes = [
-  { path: '/', component: Admin, meta: { requiresAuth: true } },
+  { path: '/', component: AdminPanel, meta: { requiresAuth: true } },
   { path: '/login', component: Login, name: 'login' },
+  { path: '/register', component: Register, name: 'register' },
 ]
 
 const router = createRouter({
-  history: createWebHistory('/admin-panel/'), 
+  history: createWebHistory('/admin-panel'), // base = /admin-panel
   routes,
 })
 
@@ -18,13 +19,11 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.requiresAuth && !token) {
     next({ name: 'login' })
-  } else if (to.name === 'login' && token) {
-    next('/')
+  } else if ((to.name === 'login' || to.name === 'register') && token) {
+    next('/') // redirige al panel si ya está logueado
   } else {
     next()
   }
 })
 
-export default router;
-
-
+export default router

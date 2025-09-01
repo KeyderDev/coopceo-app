@@ -7,24 +7,12 @@
       <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
           <label for="email">Correo Electronico</label>
-          <input
-            id="email"
-            v-model="email"
-            type="text"
-            placeholder="Email"
-            required
-          />
+          <input id="email" v-model="email" type="text" placeholder="Email" required />
         </div>
 
         <div class="form-group">
           <label for="password">Contraseña</label>
-          <input
-            id="password"
-            v-model="password"
-            type="password"
-            placeholder="Tu contraseña"
-            required
-          />
+          <input id="password" v-model="password" type="password" placeholder="Tu contraseña" required />
         </div>
 
         <button type="submit" class="login-button" :disabled="loading">
@@ -60,7 +48,7 @@ export default {
       this.error = null;
 
       try {
-        const response = await axios.post("/api/login", {
+        const response = await axios.post("http://localhost:8000/api/login", {
           email: this.email,
           password: this.password,
         });
@@ -73,16 +61,27 @@ export default {
 
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-        this.$router.push({ name: "dashboard" });
+        console.log("Login exitoso:", response.data);
+
+        // Recargar la página
+        window.location.reload();
+
       } catch (err) {
-        if (err.response && err.response.data) {
+        console.log("Error completo:", err);
+
+        if (err.response) {
+          console.log("Status code:", err.response.status);
+          console.log("Headers:", err.response.headers);
+          console.log("Data del backend:", err.response.data);
+
           this.error =
-            err.response.data.message ||
-            (err.response.data.errors?.username
-              ? err.response.data.errors.username[0]
-              : "Credenciales inválidas");
+            err.response.data.message || JSON.stringify(err.response.data);
+        } else if (err.request) {
+          console.log("No se recibió respuesta del servidor:", err.request);
+          this.error = "No se pudo conectar con el servidor.";
         } else {
-          this.error = "Error de conexión. Intenta nuevamente";
+          console.log("Error inesperado:", err.message);
+          this.error = "Ocurrió un error inesperado.";
         }
       } finally {
         this.loading = false;
@@ -91,6 +90,8 @@ export default {
   },
 };
 </script>
+
+
 
 <style scoped>
 .login-page {

@@ -1,30 +1,33 @@
 <template>
-  <div class="login-page">
-    <div class="login-card">
-      <h1 class="login-title">Regístrate</h1>
-      <p class="login-subtitle">Crea tu cuenta para comenzar</p>
+  <div class="register-page">
+    <div class="register-card">
+      <h1 class="register-title">Regístrate</h1>
+      <p class="register-subtitle">Crea tu cuenta para comenzar</p>
 
-      <form @submit.prevent="handleRegister" class="login-form">
-        <div class="form-group">
-          <label for="nombre">Nombre</label>
-          <input
-            id="nombre"
-            v-model="nombre"
-            type="text"
-            placeholder="Tu nombre"
-            required
-          />
-        </div>
+      <form @submit.prevent="handleRegister" class="register-form">
+        <!-- Nombre y Apellido en la misma fila -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input
+              id="nombre"
+              v-model="nombre"
+              type="text"
+              placeholder="Tu nombre"
+              required
+            />
+          </div>
 
-        <div class="form-group">
-          <label for="apellido">Apellido</label>
-          <input
-            id="apellido"
-            v-model="apellido"
-            type="text"
-            placeholder="Tu apellido"
-            required
-          />
+          <div class="form-group">
+            <label for="apellido">Apellido</label>
+            <input
+              id="apellido"
+              v-model="apellido"
+              type="text"
+              placeholder="Tu apellido"
+              required
+            />
+          </div>
         </div>
 
         <div class="form-group">
@@ -48,29 +51,32 @@
           />
         </div>
 
-        <div class="form-group">
-          <label for="password">Contraseña</label>
-          <input
-            id="password"
-            v-model="password"
-            type="password"
-            placeholder="Tu contraseña"
-            required
-          />
+        <!-- Contraseña y Confirmación en la misma fila -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input
+              id="password"
+              v-model="password"
+              type="password"
+              placeholder="Tu contraseña"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password_confirmation">Confirmar Contraseña</label>
+            <input
+              id="password_confirmation"
+              v-model="password_confirmation"
+              type="password"
+              placeholder="Repite tu contraseña"
+              required
+            />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="password_confirmation">Confirmar Contraseña</label>
-          <input
-            id="password_confirmation"
-            v-model="password_confirmation"
-            type="password"
-            placeholder="Repite tu contraseña"
-            required
-          />
-        </div>
-
-        <button type="submit" class="login-button" :disabled="loading">
+        <button type="submit" class="register-button" :disabled="loading">
           {{ loading ? 'Registrando...' : 'Registrarse' }}
         </button>
 
@@ -84,110 +90,59 @@
   </div>
 </template>
 
-<script>
-import axios from "axios";
-
-export default {
-  name: "Register",
-  data() {
-    return {
-      nombre: "",
-      apellido: "",
-      telefono: "",
-      email: "",
-      password: "",
-      password_confirmation: "",
-      loading: false,
-      error: null,
-    };
-  },
-  methods: {
-    async handleRegister() {
-      this.loading = true;
-      this.error = null;
-
-      try {
-        const response = await axios.post("/api/register", {
-          nombre: this.nombre,
-          apellido: this.apellido,
-          telefono: this.telefono,
-          email: this.email,
-          password: this.password,
-          password_confirmation: this.password_confirmation,
-        });
-
-        const token = response.data.access_token;
-        const user = response.data.user;
-
-        localStorage.setItem("auth_token", token);
-        localStorage.setItem("user", JSON.stringify(user));
-
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-        this.$router.push({ name: "dashboard" });
-      } catch (err) {
-        if (err.response && err.response.data) {
-          this.error =
-            err.response.data.message ||
-            Object.values(err.response.data.errors || {}).flat()[0] ||
-            "Error al registrar";
-        } else {
-          this.error = "Error de conexión. Intenta nuevamente";
-        }
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
-};
-</script>
-
 <style scoped>
-/* Los mismos estilos que el login, se pueden personalizar si deseas */
-.login-page {
+.register-page {
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #044271, #022d50);
   font-family: 'Inter', sans-serif;
+  padding: 1rem;
 }
 
-.login-card {
+.register-card {
   background-color: #ffffff;
-  padding: 2.5rem 2rem;
+  padding: 2.5rem 2.5rem;
   border-radius: 16px;
-  width: 380px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  width: 450px;
+  max-width: 95%;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.login-card:hover {
+.register-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
 }
 
-.login-title {
+.register-title {
   color: #044271;
   font-size: 2rem;
   margin-bottom: 0.25rem;
   font-weight: 700;
 }
 
-.login-subtitle {
+.register-subtitle {
   color: #555;
-  font-size: 0.95rem;
-  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  margin-bottom: 2rem;
 }
 
-.login-form {
+.register-form {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
 }
 
+.form-row {
+  display: flex;
+  gap: 1rem;
+}
+
 .form-group {
+  flex: 1;
   text-align: left;
 }
 
@@ -213,7 +168,7 @@ input:focus {
   box-shadow: 0 0 8px rgba(153, 211, 108, 0.5);
 }
 
-.login-button {
+.register-button {
   background-color: #99d36c;
   color: #ffffff;
   font-weight: 700;
@@ -225,7 +180,7 @@ input:focus {
   transition: background-color 0.3s, transform 0.2s;
 }
 
-.login-button:hover {
+.register-button:hover {
   background-color: #7cbf5a;
   transform: translateY(-2px);
 }

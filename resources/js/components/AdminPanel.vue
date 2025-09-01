@@ -1,6 +1,7 @@
 <template>
+    <router-view></router-view>
     <div class="portal">
-        <h1>admin</h1> <!-- Add your portal content here -->
+
     </div>
 </template>
 

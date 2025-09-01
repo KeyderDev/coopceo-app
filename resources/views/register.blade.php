@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Register</title>
     @vite('resources/js/app.js')
 </head>
 <body>

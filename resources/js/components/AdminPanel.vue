@@ -1,14 +1,13 @@
 <template>
     <router-view></router-view>
     <div class="portal">
-
+        <h1>admin</h1>
     </div>
 </template>
 
 <script>
 export default {
     name: 'Portal',
-    // Add your component logic here
 }
 </script>
 

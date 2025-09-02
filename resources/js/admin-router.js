@@ -19,8 +19,8 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.requiresAuth && !token) {
     next({ name: 'login' })
-  } else if ((to.name === 'login' || to.name === 'register') && token) {
-    next('/') // redirige al panel si ya está logueado
+  } else if (to.name === 'login' && token) {
+    next('/')
   } else {
     next()
   }

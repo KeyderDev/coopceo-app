@@ -7,7 +7,7 @@
       <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
           <label for="email">Correo Electronico</label>
-          <input id="email" v-model="email" type="text" placeholder="Email" required />
+          <input id="email" v-model="email" type="text" placeholder="Email" autocomplete="off" required />
         </div>
 
         <div class="form-group">
@@ -48,7 +48,7 @@ export default {
       this.error = null;
 
       try {
-        const response = await axios.post("http://localhost:8000/api/login", {
+        const response = await axios.post("https://coopceo.ddns.net:8000/api/login", {
           email: this.email,
           password: this.password,
         });
@@ -58,13 +58,11 @@ export default {
 
         localStorage.setItem("auth_token", token);
         localStorage.setItem("user", JSON.stringify(user));
-
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
         console.log("Login exitoso:", response.data);
 
-        // Recargar la página
-        window.location.reload();
+        // Redirigir al panel
+        this.$router.push("/");
 
       } catch (err) {
         console.log("Error completo:", err);

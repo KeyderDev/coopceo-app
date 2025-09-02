@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'api' => [
+            'driver' => 'token', // <-- usa token para API
+            'provider' => 'users',
+            'hash' => false,     // true si guardas tokens hasheados
+        ],
     ],
 
     /*

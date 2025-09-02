@@ -5,7 +5,6 @@
       <p class="register-subtitle">Crea tu cuenta para comenzar</p>
 
       <form @submit.prevent="handleRegister" class="register-form">
-        <!-- Nombre y Apellido en la misma fila -->
         <div class="form-row">
           <div class="form-group">
             <label for="nombre">Nombre</label>
@@ -51,7 +50,6 @@
           />
         </div>
 
-        <!-- Contraseña y Confirmación en la misma fila -->
         <div class="form-row">
           <div class="form-group">
             <label for="password">Contraseña</label>
@@ -84,11 +82,69 @@
       </form>
 
       <p class="signup-text">
-        ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
+        ¿Ya tienes cuenta? <router-link to="/login">Inicia Sesión</router-link>
       </p>
     </div>
   </div>
 </template>
+
+<script>
+import axios from "axios";
+
+export default {
+  name: "Register",
+  data() {
+    return {
+      nombre: "",
+      apellido: "",
+      telefono: "",
+      email: "",
+      password: "",
+      password_confirmation: "",
+      loading: false,
+      error: null,
+    };
+  },
+  methods: {
+    async handleRegister() {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const response = await axios.post("https://coopceo.ddns.net:8000/api/register", {
+          nombre: this.nombre,
+          apellido: this.apellido,
+          telefono: this.telefono,
+          email: this.email,
+          password: this.password,
+          password_confirmation: this.password_confirmation,
+        });
+
+        const token = response.data.access_token;
+        const user = response.data.user;
+
+        localStorage.setItem("auth_token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+        this.$router.push("/login");
+      } catch (err) {
+        if (err.response && err.response.data) {
+          this.error =
+            err.response.data.message ||
+            Object.values(err.response.data.errors || {}).flat()[0] ||
+            "Error al registrar";
+        } else {
+          this.error = "Error de conexión. Intenta nuevamente";
+        }
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+};
+</script>
 
 <style scoped>
 .register-page {

@@ -6,6 +6,6 @@
     @vite('resources/js/app.js')
 </head>
 <body>
-    <div id="app"></div> <!-- Vue montará Login.vue -->
+    <div id="login"></div> <!-- Vue montará Login.vue -->
 </body>
 </html>

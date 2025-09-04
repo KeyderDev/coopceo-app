@@ -19,6 +19,7 @@ class UserController extends Controller
             'nombre' => $user->nombre,
             'apellido' => $user->apellido,
             'numero_socio' => $user->numero_socio,
+            'admin' => $user->admin,
             'dividendos' => $user->dividendos ?? 0,
             'email' => $user->email,
         ]);

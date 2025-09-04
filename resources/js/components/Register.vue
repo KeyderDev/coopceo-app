@@ -18,12 +18,12 @@
           </div>
 
           <div class="form-group">
-            <label for="apellido">Apellido</label>
+            <label for="apellido">Apellidos</label>
             <input
               id="apellido"
               v-model="apellido"
               type="text"
-              placeholder="Tu apellido"
+              placeholder="Tus apellidos"
               required
             />
           </div>

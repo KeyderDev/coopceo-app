@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('telefono')->nullable();
             $table->string('numero_socio')->unique()->nullable();
             $table->decimal('dividendos', 10, 2)->default(0);
-
+            $table->boolean('admin')->default(0);
             $table->string('password');
             $table->string('api_token', 80)->unique()->nullable()->default(null);
 

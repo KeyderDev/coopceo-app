@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'numero_socio',
         'dividendos',
+        'admin',
         'password',
         'api_token',
     ];

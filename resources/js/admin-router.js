@@ -2,9 +2,17 @@ import { createRouter, createWebHistory } from 'vue-router'
 import AdminPanel from './components/AdminPanel.vue'
 import Login from './components/Login.vue'
 import Register from './components/Register.vue'
+import Users from './components/admin/users.vue'
 
 const routes = [
-  { path: '/', component: AdminPanel, meta: { requiresAuth: true } },
+  {
+    path: '/', 
+    component: AdminPanel,
+    meta: { requiresAuth: true },
+    children: [
+      { path: 'users', component: Users, name: 'users' }, // hijos
+    ]
+  },
   { path: '/login', component: Login, name: 'login' },
   { path: '/register', component: Register, name: 'register' },
 ]

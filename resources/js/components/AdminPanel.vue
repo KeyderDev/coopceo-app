@@ -4,10 +4,10 @@
             <div class="logo">COOPCEO</div>
             <nav>
                 <ul>
-                    <li><router-link to="/">Inicio</router-link></li>
-                    <li><router-link to="users">Socios</router-link></li>
-                    <li><a href="#">Mensajes</a></li>
-                    <li><a href="#">Configuración</a></li>
+                    <li><router-link to="/"><i class="fa-solid fa-house"></i> Inicio</router-link></li>
+                    <li><router-link to="users"><i class="fa-solid fa-users"></i> Socios</router-link></li>
+                    <li><a href="#"><i class="fa-solid fa-scroll"></i> Logs</a></li>
+                    <li><a href="#"><i class="fa-solid fa-gear"></i> Configuración</a></li>
                 </ul>
             </nav>
         </aside>

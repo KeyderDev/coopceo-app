@@ -6,8 +6,12 @@
                 <ul>
                     <li><router-link to="/"><i class="fa-solid fa-house"></i> Inicio</router-link></li>
                     <li><router-link to="users"><i class="fa-solid fa-users"></i> Socios</router-link></li>
-                    <li><a href="#"><i class="fa-solid fa-scroll"></i> Logs</a></li>
+                    <li><router-link to="logs"><i class="fa-solid fa-scroll"></i> Logs</router-link></li>
                     <li><a href="#"><i class="fa-solid fa-gear"></i> Configuración</a></li>
+                </ul>
+                <h2>**POS**</h2>
+                <ul>
+                    <li><router-link to="/"><i class="fa-solid fa-cash-register"></i> Terminal</router-link></li>
                 </ul>
             </nav>
         </aside>

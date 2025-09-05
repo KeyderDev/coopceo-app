@@ -3,6 +3,7 @@ import AdminPanel from './components/AdminPanel.vue'
 import Login from './components/Login.vue'
 import Register from './components/Register.vue'
 import Users from './components/admin/users.vue'
+import Logs from './components/admin/logs.vue'
 
 const routes = [
   {
@@ -11,6 +12,7 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       { path: 'users', component: Users, name: 'users' }, // hijos
+      { path: 'logs', component: Logs, name: 'logs' }, // hijos
     ]
   },
   { path: '/login', component: Login, name: 'login' },

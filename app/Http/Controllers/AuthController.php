@@ -6,37 +6,47 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\Log; // ✅ Correcto, aquí va el modelo
 
 class AuthController extends Controller
 {
     // Registro de usuario
-    public function register(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|unique:users,email',
-            'nombre' => 'required|string|max:255',
-            'apellido' => 'required|string|max:255',
-            'telefono' => 'nullable|string|max:50',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
+public function register(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email|unique:users,email',
+        'nombre' => 'required|string|max:255',
+        'apellido' => 'required|string|max:255',
+        'telefono' => 'nullable|string|max:50',
+        'password' => 'required|string|min:6|confirmed',
+    ]);
 
-        $user = User::create([
-            'email' => $request->email,
-            'nombre' => $request->nombre,
-            'apellido' => $request->apellido,
-            'telefono' => $request->telefono,
-            'numero_socio' => $request->numero_socio,
-            'dividendos' => 0,
-            'password' => Hash::make($request->password),
-            'api_token' => Str::random(60),
-        ]);
+    $user = User::create([
+        'email' => $request->email,
+        'nombre' => $request->nombre,
+        'apellido' => $request->apellido,
+        'telefono' => $request->telefono,
+        'numero_socio' => $request->numero_socio,
+        'dividendos' => 0,
+        'password' => Hash::make($request->password),
+        'api_token' => Str::random(60),
+    ]);
 
-        return response()->json([
-            'message' => 'Usuario registrado correctamente',
-            'user' => $user,
-            'access_token' => $user->api_token,
-        ], 201);
-    }
+    // 👉 Guardar log de registro
+    Log::create([
+        'user_id' => $user->id,
+        'event' => 'register', // o 'registro'
+        'ip_address' => $request->ip(),
+        'user_agent' => $request->header('User-Agent')
+    ]);
+
+    return response()->json([
+        'message' => 'Usuario registrado correctamente',
+        'user' => $user,
+        'access_token' => $user->api_token,
+    ], 201);
+}
+
 
     // Login
     public function login(Request $request)
@@ -54,9 +64,15 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Generar nuevo token
         $user->api_token = Str::random(60);
         $user->save();
+
+        Log::create([
+            'user_id' => $user->id,
+            'event' => 'login',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->header('User-Agent')
+        ]);
 
         return response()->json([
             'access_token' => $user->api_token,
@@ -76,7 +92,6 @@ class AuthController extends Controller
         return response()->json(['message' => 'Sesión cerrada correctamente']);
     }
 
-    // Datos del usuario logueado
     public function me(Request $request)
     {
         return response()->json($request->user());

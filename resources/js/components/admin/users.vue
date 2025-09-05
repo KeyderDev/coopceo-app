@@ -11,8 +11,9 @@
             <div class="filter-wrapper">
                 <label for="filter">Ordenar por:</label>
                 <select id="filter" v-model="selectedFilter" class="filter-select">
-                    <option value="default">Default</option>
+                    <option value="default">Predeterminado</option>
                     <option value="balance">Balance</option>
+                    <option value="recent">Recientes</option>
                     <option value="alphabetical">Orden alfabético</option>
                 </select>
             </div>
@@ -71,6 +72,14 @@ export default {
                 result.sort((a, b) =>
                     (a.nombre + " " + a.apellido).localeCompare(b.nombre + " " + b.apellido)
                 );
+            } else if (this.selectedFilter === "recent") {
+                // Si tienes created_at, usa eso:
+                if (result.length && result[0].created_at) {
+                    result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                } else {
+                    // fallback con id (los más altos son más recientes)
+                    result.sort((a, b) => b.id - a.id);
+                }
             }
 
             return result;
@@ -91,6 +100,7 @@ export default {
     }
 };
 </script>
+
 
 <style>
 .search-wrapper {

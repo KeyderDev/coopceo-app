@@ -45,7 +45,7 @@
                         </router-link>
                         <router-link to="pos-transactions">
                             <i class="fa-solid fa-list"></i>
-                            <span>Transactions</span>
+                            <span>Transacciones</span>
                         </router-link>
                         <router-link to="reconcilliation">
                             <i class="fa-solid fa-money-bill"></i>

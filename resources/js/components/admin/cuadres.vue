@@ -1,44 +1,67 @@
 <template>
   <div class="cash-reconciliations">
     <h2>Todos los Cuadres</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Petty</th>
-          <th>20</th>
-          <th>10</th>
-          <th>5</th>
-          <th>1</th>
-          <th>Coin 10</th>
-          <th>Coin 5</th>
-          <th>Coin 1</th>
-          <th>Coin 25</th>
-          <th>Total Contado</th>
-          <th>Total Ventas Efectivo</th>
-          <th>Diferencia</th>
-          <th>Fecha</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="cuadre in cuadrés" :key="cuadre.id">
-          <td>{{ cuadre.id }}</td>
-          <td>{{ cuadre.petty }}</td>
-          <td>{{ cuadre.bill_20 }}</td>
-          <td>{{ cuadre.bill_10 }}</td>
-          <td>{{ cuadre.bill_5 }}</td>
-          <td>{{ cuadre.bill_1 }}</td>
-          <td>{{ cuadre.coin_10 }}</td>
-          <td>{{ cuadre.coin_5 }}</td>
-          <td>{{ cuadre.coin_1 }}</td>
-          <td>{{ cuadre.coin_25 }}</td>
-          <td>{{ cuadre.total_counted }}</td>
-          <td>{{ cuadre.total_sales_cash }}</td>
-          <td>{{ cuadre.difference }}</td>
-          <td>{{ cuadre.created_at_local }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-container">
+      <!-- Tabla para escritorio -->
+      <table class="desktop-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Petty</th>
+            <th>20</th>
+            <th>10</th>
+            <th>5</th>
+            <th>1</th>
+            <th>Coin 10</th>
+            <th>Coin 5</th>
+            <th>Coin 1</th>
+            <th>Coin 25</th>
+            <th>Total Contado</th>
+            <th>Total Ventas Efectivo</th>
+            <th>Diferencia</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="cuadre in cuadrés" :key="cuadre.id">
+            <td>{{ cuadre.id }}</td>
+            <td>{{ cuadre.petty }}</td>
+            <td>{{ cuadre.bill_20 }}</td>
+            <td>{{ cuadre.bill_10 }}</td>
+            <td>{{ cuadre.bill_5 }}</td>
+            <td>{{ cuadre.bill_1 }}</td>
+            <td>{{ cuadre.coin_10 }}</td>
+            <td>{{ cuadre.coin_5 }}</td>
+            <td>{{ cuadre.coin_1 }}</td>
+            <td>{{ cuadre.coin_25 }}</td>
+            <td>{{ cuadre.total_counted }}</td>
+            <td>{{ cuadre.total_sales_cash }}</td>
+            <td>{{ cuadre.difference }}</td>
+            <td>{{ cuadre.created_at_local }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Cards para móviles -->
+      <div class="mobile-cards">
+        <div class="card" v-for="cuadre in cuadrés" :key="cuadre.id">
+          <p><strong>ID:</strong> {{ cuadre.id }}</p>
+          <p><strong>Petty:</strong> {{ cuadre.petty }}</p>
+          <p><strong>20:</strong> {{ cuadre.bill_20 }}</p>
+          <p><strong>10:</strong> {{ cuadre.bill_10 }}</p>
+          <p><strong>5:</strong> {{ cuadre.bill_5 }}</p>
+          <p><strong>1:</strong> {{ cuadre.bill_1 }}</p>
+          <p><strong>Coin 10:</strong> {{ cuadre.coin_10 }}</p>
+          <p><strong>Coin 5:</strong> {{ cuadre.coin_5 }}</p>
+          <p><strong>Coin 1:</strong> {{ cuadre.coin_1 }}</p>
+          <p><strong>Coin 25:</strong> {{ cuadre.coin_25 }}</p>
+          <p><strong>Total Contado:</strong> {{ cuadre.total_counted }}</p>
+          <p><strong>Total Ventas Efectivo:</strong> {{ cuadre.total_sales_cash }}</p>
+          <p><strong>Diferencia:</strong> {{ cuadre.difference }}</p>
+          <p><strong>Fecha:</strong> {{ cuadre.created_at_local }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -87,8 +110,8 @@ export default {
 
 <style scoped>
 .cash-reconciliations {
-  padding: 1.5rem;
-  background-color: #03365e; /* fondo azul oscuro */
+  padding: 1rem;
+  background-color: #03365e;
   color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -96,58 +119,94 @@ export default {
 }
 
 h2 {
-  color: #97d569; /* verde claro */
+  color: #97d569;
   margin-bottom: 1rem;
   font-size: 1.8rem;
   letter-spacing: 0.5px;
 }
 
 .table-container {
+  width: 100%;
   overflow-x: auto;
 }
 
-table {
+/* Tabla escritorio */
+.desktop-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  background-color: #044b7f; /* azul para filas */
+  background-color: #044b7f;
   border-radius: 8px;
-  overflow: hidden;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
 th,
 td {
-  padding: 0.7rem 1rem;
+  padding: 0.6rem 0.8rem;
   text-align: center;
   color: #fff;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
 }
 
 thead {
-  background-color: #97d569; /* verde encabezado */
-  color: #03365e; /* texto azul oscuro */
+  background-color: #97d569;
+  color: #03365e;
   font-weight: 600;
   letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #0562a3;
 }
 
 tbody tr {
   transition: background 0.3s, transform 0.2s;
-}
-
-tbody tr:nth-child(even) {
-  background-color: #0562a3; /* azul más claro filas pares */
+  transform: translateY(0);
 }
 
 tbody tr:hover {
-  background-color: #0971c2; /* azul brillante al pasar */
-  transform: scale(1.01);
+  background-color: #0971c2;
+  transform: translateY(-3px); /* se “levanta” suavemente */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* sombra para efecto 3D */
 }
 
-th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
+
+/* Cards móviles */
+.mobile-cards {
+  display: none; /* ocultas por defecto en escritorio */
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card {
+  background-color: #044b7f;
+  padding: 0.8rem;
+  border-radius: 8px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.card p {
+  margin: 0.2rem 0;
+  font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .desktop-table {
+    display: none; /* ocultamos tabla en móviles */
+  }
+  .mobile-cards {
+    display: flex; /* mostramos cards en móviles */
+  }
+  h2 {
+    font-size: 1.4rem;
+  }
+  .card p {
+    font-size: 0.8rem;
+  }
 }
 </style>
 

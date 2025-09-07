@@ -74,9 +74,18 @@ export default {
 <style scoped>
 .sales-list {
   padding: 1rem;
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  color: #fff;
+  background-color: #03365e; /* fondo claro neutro */
+  border-radius: 10px;
+  color: #033760;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #97d569;
+  border-bottom: 2px solid #97d569;
+  padding-bottom: 0.3rem;
 }
 
 .table-container {
@@ -87,27 +96,47 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
+  background-color: #03365e; /* fondo blanco para tabla */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* sombra sutil */
 }
 
-th,
-td {
-  border: 1px solid #2c2c2c;
-  padding: 0.5rem;
+th, td {
+  padding: 0.75rem 1rem;
   text-align: left;
   white-space: nowrap;
 }
 
 th {
-  background-color: #03365e;
+  background-color: #97d569; /* azul oscuro */
   color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+tr:nth-child(odd) {
+  background-color: #044b7f; /* fila impar */
 }
 
 tr:nth-child(even) {
-  background-color: #2a2a2a;
+  background-color: #0562a3; /* fila par */
+}
+
+tr:hover {
+  background-color: #97d569; /* verde de tu paleta al pasar el mouse */
+  color: #033760;
+  transition: background-color 0.3s;
+}
+
+td {
+  border-bottom: none; /* o border-bottom: 0; */
+  color: #fff;
 }
 
 .total {
-  color: #97d569;
+  color: #97d569; /* verde destacado */
   font-weight: bold;
 }
 </style>

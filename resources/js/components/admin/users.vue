@@ -36,11 +36,15 @@
                 <div class="user-balance">
                     Balance: ${{ user.dividendos ?? 0 }}
                 </div>
+
+                <!-- Botón eliminar -->
+                <button class="delete-btn" @click="deleteUser(user.id)">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
             </div>
         </div>
     </div>
 </template>
-
 
 <script>
 import axios from 'axios';
@@ -80,11 +84,54 @@ export default {
                     result.sort((a, b) => b.id - a.id);
                 }
             } else if (this.selectedFilter === "numeroSocio") {
-                result.sort((a, b) => (b.numero_socio ?? 0) - (a.numero_socio ?? 0)); // NUEVO
+                result.sort((a, b) => (b.numero_socio ?? 0) - (a.numero_socio ?? 0));
             }
 
             return result;
         }
+    },
+    methods: {
+async deleteUser(userId) {
+    console.log("Intentando eliminar usuario con ID:", userId);
+
+    if (!confirm("¿Estás seguro de eliminar este usuario?")) {
+        console.log("Eliminación cancelada por el usuario.");
+        return;
+    }
+
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+        console.error("No se encontró auth_token en localStorage.");
+        return;
+    }
+
+    console.log("Token encontrado:", token);
+
+    try {
+        console.log("Enviando solicitud DELETE al servidor...");
+        const response = await axios.delete(`https://coopceo.ddns.net:8000/api/users/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        console.log("Respuesta del servidor:", response.data);
+
+        // Quitar al usuario eliminado de la lista
+        this.users = this.users.filter(user => user.id !== userId);
+        console.log(`Usuario con ID ${userId} eliminado de la lista local.`);
+
+    } catch (err) {
+        if (err.response) {
+            // El servidor respondió con un código de error
+            console.error("Error del servidor:", err.response.status, err.response.data);
+        } else if (err.request) {
+            // No hubo respuesta del servidor
+            console.error("No se recibió respuesta del servidor:", err.request);
+        } else {
+            // Otro error
+            console.error("Error desconocido al eliminar usuario:", err.message);
+        }
+    }
+}
     },
     async created() {
         const token = localStorage.getItem('auth_token');
@@ -103,7 +150,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .search-wrapper {
     position: relative;
     width: 100%;
@@ -174,5 +221,26 @@ export default {
     color: #044271;
     font-size: 1rem;
     cursor: pointer;
+}
+
+.user-card {
+    position: relative; /* necesario para que el botón se posicione respecto a la card */
+}
+/* Botón eliminar */
+.delete-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: red;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.delete-btn:hover {
+    transform: scale(1.2);
+    color: darkred;
 }
 </style>

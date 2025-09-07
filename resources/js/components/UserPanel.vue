@@ -4,10 +4,24 @@
             <div class="logo">COOPCEO</div>
             <nav>
                 <ul>
-                    <li><a href="#">Inicio</a></li>
-                    <li><a href="#">Perfil</a></li>
-                    <li><a href="#">Mensajes</a></li>
-                    <li><a href="#">Configuración</a></li>
+                    <li>
+                        <router-link to="/">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Inicio</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link to="transactions">
+                            <i class="fa-solid fa-scroll"></i>
+                            <span>Mis Transacciones</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa-solid fa-gear"></i>
+                            <span>Configuración</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -23,12 +37,19 @@
             </header>
 
             <div class="portal">
-                <div class="user-card" v-if="user">
-                    <h3> #{{ user.numero_socio }} - {{ user.nombre }} {{ user.apellido }}</h3>
-                    <p>Balance acumulado</p>
-                    <span class="balance">${{ user.dividendos }}</span>
-                </div>
+                <router-view v-slot="{ Component }">
+                    <!-- Si NO hay un componente cargado, mostrar user-card -->
+                    <div class="user-card" v-if="!Component && user">
+                        <h3>#{{ user.numero_socio }} - {{ user.nombre }} {{ user.apellido }}</h3>
+                        <p>Balance acumulado</p>
+                        <span class="balance">${{ user.dividendos }}</span>
+                    </div>
+
+                    <!-- Si hay un componente cargado, renderízalo -->
+                    <component :is="Component" v-else />
+                </router-view>
             </div>
+
         </div>
     </div>
 </template>
@@ -98,7 +119,7 @@ export default {
     flex-direction: column;
     padding: 1.5rem 1rem;
     flex-shrink: 0;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar .logo {
@@ -151,7 +172,7 @@ export default {
     letter-spacing: 1px;
     color: #97d569;
     text-transform: uppercase;
-    border-top: 1px solid rgba(255,255,255,0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
     padding-top: 1rem;
 }
 
@@ -293,4 +314,3 @@ export default {
     }
 }
 </style>
-

@@ -43,9 +43,17 @@
                             <i class="fa-solid fa-file"></i>
                             <span>Productos</span>
                         </router-link>
-                        <router-link to="cuadre">
+                        <router-link to="pos-transactions">
+                            <i class="fa-solid fa-list"></i>
+                            <span>Transactions</span>
+                        </router-link>
+                        <router-link to="reconcilliation">
+                            <i class="fa-solid fa-money-bill"></i>
+                            <span>Reconcilliation</span>
+                        </router-link>
+                        <router-link to="cuadres">
                             <i class="fa-solid fa-building-columns"></i>
-                            <span>Cuadre</span>
+                            <span>Cuadres</span>
                         </router-link>
                     </li>
                 </ul>

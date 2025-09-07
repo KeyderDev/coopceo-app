@@ -2,16 +2,27 @@ import { createRouter, createWebHistory } from 'vue-router'
 import UserPanel from './components/UserPanel.vue'
 import Login from './components/Login.vue'
 import Register from './components/Register.vue'
+import transactions from './components/user/transactions.vue'
+
+
 
 
 const routes = [
-  { path: '/', component: UserPanel, meta: { requiresAuth: true } },
+  {
+    path: '/', 
+    component: UserPanel,
+    meta: { requiresAuth: true },
+    children: [
+      { path: 'transactions', component: transactions, name: 'transactions' }, 
+    ]
+  },
   { path: '/login', component: Login, name: 'login' },
   { path: '/register', component: Register, name: 'register' },
 ]
 
+
 const router = createRouter({
-  history: createWebHistory('/user-panel'), // base = /user-panel
+  history: createWebHistory('/user-panel'), 
   routes,
 })
 
@@ -28,3 +39,5 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
+
+

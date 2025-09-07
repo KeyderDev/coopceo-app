@@ -4,10 +4,9 @@
             <label>Seleccionar cliente:</label>
             <select v-model="clienteId">
                 <option value="" disabled>Seleccione un cliente</option>
-<option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
-  {{ (cliente.nombre || cliente.name) }} {{ (cliente.apellido || cliente.lastname) }}
-</option>
-
+                <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
+                    {{ (cliente.nombre || cliente.name) }} {{ (cliente.apellido || cliente.lastname) }}
+                </option>
             </select>
         </div>
 
@@ -35,7 +34,11 @@
                         <span>Total: ${{ total.toFixed(2) }}</span>
                     </div>
 
-                    <!-- Método de pago -->
+                    <div v-if="cashRecibido > 0" class="cash-info">
+                        <p>Cash: ${{ cashRecibido.toFixed(2) }}</p>
+                        <p>Cambio: ${{ cambio.toFixed(2) }}</p>
+                    </div>
+
                     <div class="payment-section">
                         <label>Método de pago:</label>
                         <select v-model="metodoPago">
@@ -44,19 +47,10 @@
                         </select>
                     </div>
 
-                    <!-- Botones de Cash -->
                     <div class="cash-buttons">
-                        <button v-for="monto in [1,5,10,20]" 
-                                :key="monto" 
-                                @click="seleccionarCash(monto)">
+                        <button v-for="monto in [1, 5, 10, 20]" :key="monto" @click="seleccionarCash(monto)">
                             ${{ monto }}
                         </button>
-                    </div>
-
-                    <!-- Mostrar cash recibido y cambio -->
-                    <div v-if="cashRecibido > 0" class="cash-info">
-                        <p>Cash: ${{ cashRecibido.toFixed(2) }}</p>
-                        <p>Cambio: ${{ cambio.toFixed(2) }}</p>
                     </div>
 
                     <button @click="terminarOrden" :disabled="orden.length === 0 || !clienteId || loading">
@@ -67,8 +61,11 @@
 
             <div class="products-section">
                 <h3>Productos</h3>
+
+                <input type="text" v-model="busqueda" placeholder="Buscar producto..." class="search-bar" />
+
                 <div v-if="productos.length === 0">Cargando productos...</div>
-                <div class="product-card" v-for="producto in productos" :key="producto.id">
+                <div class="product-card" v-for="producto in productosFiltrados" :key="producto.id">
                     <span>{{ producto.nombre }}</span>
                     <span>${{ Number(producto.precio).toFixed(2) }}</span>
                     <button @click="agregarProducto(producto)">Agregar</button>
@@ -90,7 +87,8 @@ export default {
             orden: [],
             metodoPago: "efectivo",
             loading: false,
-            cashRecibido: 0, // dinero recibido
+            cashRecibido: 0,
+            busqueda: "" 
         };
     },
     computed: {
@@ -102,6 +100,12 @@ export default {
         },
         cambio() {
             return this.cashRecibido - this.total > 0 ? this.cashRecibido - this.total : 0;
+        },
+        productosFiltrados() {
+            if (!this.busqueda) return this.productos;
+            return this.productos.filter(p =>
+                p.nombre.toLowerCase().includes(this.busqueda.toLowerCase())
+            );
         }
     },
     created() {
@@ -140,8 +144,8 @@ export default {
             this.orden.splice(index, 1);
         },
         seleccionarCash(monto) {
-            this.metodoPago = "efectivo"; // se fuerza a efectivo
-            this.cashRecibido += monto;   // suma al cash recibido
+            this.metodoPago = "efectivo";
+            this.cashRecibido += monto;
         },
         async terminarOrden() {
             if (!this.clienteId || this.orden.length === 0) return;
@@ -188,8 +192,8 @@ export default {
 .pos-container {
     padding: 1rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    min-height: 100vh;
     background-color: #f5f5f5;
+    /* quitamos min-height: 100vh */
 }
 
 .cash-buttons {
@@ -236,25 +240,28 @@ export default {
 .main-section {
     display: flex;
     gap: 1rem;
+    align-items: flex-start; /* para que no estire */
 }
 
 .order-section {
     flex: 1;
     min-width: 300px;
-    max-height: 600px;
-    background-color: #fff;
+    max-height: 400px; /* altura limitada */
+    background-color: #fff; /* mantenemos el fondo */
     border-radius: 10px;
     padding: 1rem;
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    overflow: hidden; /* evita que el contenido sobresalga */
 }
 
 .order-items-container {
     flex: 1;
-    overflow-y: auto;
-    margin-bottom: 1rem;
+    overflow-y: auto; /* scroll solo aquí */
+    margin-bottom: 0.5rem;
 }
+
 
 .order-footer {
     display: flex;
@@ -338,6 +345,14 @@ export default {
 .order-footer>button:disabled {
     background-color: #a5d6a7;
     cursor: not-allowed;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 0.6rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
 }
 
 @media (max-width: 768px) {

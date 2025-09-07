@@ -33,6 +33,7 @@
     </div>
 </template>
 
+
 <script>
 import axios from "axios";
 
@@ -90,38 +91,68 @@ export default {
 }
 
 .sidebar {
-    width: 220px;
-    background-color: #044271;
+    width: 240px;
+    background: linear-gradient(180deg, #044271 0%, #03345a 100%);
     color: #fff;
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    padding: 1.5rem 1rem;
+    flex-shrink: 0;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.2);
 }
 
 .sidebar .logo {
-    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.4rem;
     font-weight: bold;
     margin-bottom: 2rem;
+    color: #97d569;
 }
 
 .sidebar nav ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 .sidebar nav ul li {
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
 }
 
 .sidebar nav ul li a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
     color: #fff;
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.3s;
+    transition: all 0.3s ease;
 }
 
 .sidebar nav ul li a:hover {
+    background-color: rgba(151, 213, 105, 0.15);
     color: #97d569;
+    transform: translateX(4px);
+}
+
+.sidebar nav ul li a i {
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-section {
+    margin: 1.5rem 0 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #97d569;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 1rem;
 }
 
 /* Contenido principal */
@@ -261,5 +292,5 @@ export default {
         font-size: 1.25rem;
     }
 }
-
 </style>
+

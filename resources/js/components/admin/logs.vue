@@ -1,28 +1,30 @@
 <template>
     <div class="logs-container">
         <h2>Logs de usuarios</h2>
-        <table class="logs-table">
-            <thead>
-                <tr>
-                    <th>Usuario</th>
-                    <th>Evento</th>
-                    <th>IP</th>
-                    <th>Fecha</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="log in logs" :key="log.id">
-                    <td>
-                        {{ log.user ? log.user.nombre + ' ' + log.user.apellido : 'Desconocido' }}
-                    </td>
-                    <td>
-                        <span class="event-badge">{{ log.event }}</span>
-                    </td>
-                    <td>{{ log.ip_address }}</td>
-                    <td>{{ new Date(log.created_at).toLocaleString() }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="logs-table-wrapper">
+            <table class="logs-table">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Evento</th>
+                        <th>IP</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="log in logs" :key="log.id">
+                        <td>
+                            {{ log.user ? log.user.nombre + ' ' + log.user.apellido : 'Desconocido' }}
+                        </td>
+                        <td>
+                            <span class="event-badge">{{ log.event }}</span>
+                        </td>
+                        <td>{{ log.ip_address }}</td>
+                        <td>{{ new Date(log.created_at).toLocaleString() }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
 
@@ -63,17 +65,28 @@ export default {
     color: #97d569; /* Verde para el título */
 }
 
+/* Contenedor con scroll */
+.logs-table-wrapper {
+    max-height: 600px; /* Ajusta la altura a lo que necesites */
+    overflow-y: auto;
+    border-radius: 8px;
+    border: 1px solid #06609d;
+}
+
+/* Tabla */
 .logs-table {
     width: 100%;
     border-collapse: collapse;
-    overflow: hidden;
-    border-radius: 8px;
+    min-width: 600px; /* Para que no se vea comprimida */
 }
 
 .logs-table thead {
     background: #97d569; /* Verde */
-    color: #044271;       /* Azul oscuro para contraste */
+    color: #044271;      /* Azul oscuro para contraste */
     font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .logs-table th, 

@@ -1,17 +1,53 @@
 <template>
     <div class="portal-container">
         <aside class="sidebar">
-            <div class="logo">COOPCEO</div>
+            <div class="logo">
+                <span>COOPCEO</span>
+            </div>
             <nav>
                 <ul>
-                    <li><router-link to="/"><i class="fa-solid fa-house"></i> Inicio</router-link></li>
-                    <li><router-link to="users"><i class="fa-solid fa-users"></i> Socios</router-link></li>
-                    <li><router-link to="logs"><i class="fa-solid fa-scroll"></i> Logs</router-link></li>
-                    <li><a href="#"><i class="fa-solid fa-gear"></i> Configuración</a></li>
+                    <li>
+                        <router-link to="/">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Inicio</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link to="users">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Socios</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link to="logs">
+                            <i class="fa-solid fa-scroll"></i>
+                            <span>Logs</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa-solid fa-gear"></i>
+                            <span>Configuración</span>
+                        </a>
+                    </li>
                 </ul>
-                <h2>**POS**</h2>
+
+                <h2 class="sidebar-section">POS</h2>
                 <ul>
-                    <li><router-link to="/"><i class="fa-solid fa-cash-register"></i> Terminal</router-link></li>
+                    <li>
+                        <router-link to="terminal">
+                            <i class="fa-solid fa-cash-register"></i>
+                            <span>Terminal</span>
+                        </router-link>
+                        <router-link to="productos">
+                            <i class="fa-solid fa-file"></i>
+                            <span>Productos</span>
+                        </router-link>
+                        <router-link to="cuadre">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Cuadre</span>
+                        </router-link>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -29,7 +65,6 @@
             <div class="portal">
                 <router-view></router-view>
             </div>
-
         </div>
     </div>
 </template>
@@ -126,19 +161,24 @@ export default {
 }
 
 .sidebar {
-    width: 220px;
-    background-color: #044271;
+    width: 240px;
+    background: linear-gradient(180deg, #044271 0%, #03345a 100%);
     color: #fff;
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    padding: 1.5rem 1rem;
     flex-shrink: 0;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar .logo {
-    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.4rem;
     font-weight: bold;
     margin-bottom: 2rem;
+    color: #97d569;
 }
 
 .sidebar nav ul {
@@ -148,19 +188,43 @@ export default {
 }
 
 .sidebar nav ul li {
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
 }
 
 .sidebar nav ul li a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
     color: #fff;
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.3s;
+    transition: all 0.3s ease;
 }
 
 .sidebar nav ul li a:hover {
+    background-color: rgba(151, 213, 105, 0.15);
     color: #97d569;
+    transform: translateX(4px);
 }
+
+.sidebar nav ul li a i {
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-section {
+    margin: 1.5rem 0 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #97d569;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 1rem;
+}
+
 
 /* Contenido principal */
 .main-content {

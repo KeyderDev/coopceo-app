@@ -4,6 +4,8 @@ import Login from './components/Login.vue'
 import Register from './components/Register.vue'
 import Users from './components/admin/users.vue'
 import Logs from './components/admin/logs.vue'
+import terminal from './components/admin/terminal.vue'
+import Productos from './components/admin/productos.vue'
 
 const routes = [
   {
@@ -11,16 +13,19 @@ const routes = [
     component: AdminPanel,
     meta: { requiresAuth: true },
     children: [
-      { path: 'users', component: Users, name: 'users' }, // hijos
-      { path: 'logs', component: Logs, name: 'logs' }, // hijos
+      { path: 'users', component: Users, name: 'users' }, 
+      { path: 'logs', component: Logs, name: 'logs' }, 
+      { path: 'terminal', component: terminal, name: 'terminal' },
+      { path: 'productos', component: Productos, name: 'productos' },
     ]
   },
   { path: '/login', component: Login, name: 'login' },
   { path: '/register', component: Register, name: 'register' },
+
 ]
 
 const router = createRouter({
-  history: createWebHistory('/admin-panel'), // base = /admin-panel
+  history: createWebHistory('/admin-panel'), 
   routes,
 })
 

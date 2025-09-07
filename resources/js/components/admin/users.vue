@@ -12,6 +12,7 @@
                 <label for="filter">Ordenar por:</label>
                 <select id="filter" v-model="selectedFilter" class="filter-select">
                     <option value="default">Predeterminado</option>
+                    <option value="numeroSocio">Número de socio</option>
                     <option value="balance">Balance</option>
                     <option value="recent">Recientes</option>
                     <option value="alphabetical">Orden alfabético</option>
@@ -73,13 +74,13 @@ export default {
                     (a.nombre + " " + a.apellido).localeCompare(b.nombre + " " + b.apellido)
                 );
             } else if (this.selectedFilter === "recent") {
-                // Si tienes created_at, usa eso:
                 if (result.length && result[0].created_at) {
                     result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                 } else {
-                    // fallback con id (los más altos son más recientes)
                     result.sort((a, b) => b.id - a.id);
                 }
+            } else if (this.selectedFilter === "numeroSocio") {
+                result.sort((a, b) => (b.numero_socio ?? 0) - (a.numero_socio ?? 0)); // NUEVO
             }
 
             return result;

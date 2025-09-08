@@ -48,10 +48,16 @@
                     </div>
 
                     <div class="cash-buttons">
+                        <button class="exacto-btn" @click="seleccionarExacto">
+                            Exacto
+                        </button>
+                        
                         <button v-for="monto in [1, 5, 10, 20]" :key="monto" @click="seleccionarCash(monto)">
                             ${{ monto }}
                         </button>
+
                     </div>
+
 
                     <button @click="terminarOrden" :disabled="orden.length === 0 || !clienteId || loading">
                         {{ loading ? "Procesando..." : "Terminar Orden" }}
@@ -88,7 +94,7 @@ export default {
             metodoPago: "efectivo",
             loading: false,
             cashRecibido: 0,
-            busqueda: "" 
+            busqueda: ""
         };
     },
     computed: {
@@ -147,6 +153,10 @@ export default {
             this.metodoPago = "efectivo";
             this.cashRecibido += monto;
         },
+        seleccionarExacto() {
+            this.metodoPago = "efectivo";
+            this.cashRecibido = this.total; 
+        },
         async terminarOrden() {
             if (!this.clienteId || this.orden.length === 0) return;
             this.loading = true;
@@ -190,174 +200,249 @@ export default {
 
 <style scoped>
 .pos-container {
-    padding: 1rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f5f5;
-    /* quitamos min-height: 100vh */
+  padding: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  width: 100%;
+  box-sizing: border-box;
 }
 
+/* --- Botones de efectivo --- */
 .cash-buttons {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .cash-buttons button {
-    flex: 1;
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    padding: 0.8rem;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
+  flex: 1;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 0.8rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
 }
 
 .cash-buttons button:hover {
-    background-color: #43a047;
+  background-color: #43a047;
 }
 
 .cash-info {
-    margin-top: 0.5rem;
-    font-weight: bold;
-    color: #2e7d32;
+  margin-top: 0.5rem;
+  font-weight: bold;
+  color: #2e7d32;
 }
 
+/* --- Sección de cliente --- */
 .client-section {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .client-section select {
-    padding: 0.4rem 0.6rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+  flex: 1;
+  min-width: 180px;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
+/* --- Layout principal --- */
 .main-section {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start; /* para que no estire */
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
+/* --- Orden --- */
 .order-section {
-    flex: 1;
-    min-width: 300px;
-    max-height: 400px; /* altura limitada */
-    background-color: #fff; /* mantenemos el fondo */
-    border-radius: 10px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    overflow: hidden; /* evita que el contenido sobresalga */
+  flex: 1;
+  min-width: 280px;
+  max-height: 400px;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
 .order-items-container {
-    flex: 1;
-    overflow-y: auto; /* scroll solo aquí */
-    margin-bottom: 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 0.5rem;
 }
-
 
 .order-footer {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
+.totales {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  flex-wrap: wrap;
+}
+
+/* --- Productos --- */
 .products-section {
-    flex: 2;
-    min-width: 300px;
-    max-height: 600px;
-    background-color: #fff;
-    border-radius: 10px;
-    padding: 1rem;
-    overflow-y: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  flex: 2;
+  min-width: 280px;
+  max-height: 600px;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .product-card,
 .order-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    background-color: #fafafa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background-color: #fafafa;
+  flex-wrap: wrap;
 }
 
 .product-card button {
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    padding: 0.3rem 0.6rem;
-    border-radius: 6px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 .order-item button {
-    background-color: #e53935;
-    color: #fff;
-    border: none;
-    padding: 0.3rem 0.6rem;
-    border-radius: 6px;
+  background-color: #e53935;
+  color: #fff;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
+/* --- Cantidad/Subtotal --- */
 .cantidad-subtotal {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .cantidad-subtotal input {
-    width: 60px;
-    padding: 0.2rem;
+  width: 70px;
+  padding: 0.2rem;
+  box-sizing: border-box;
 }
 
-.totales {
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-}
-
+/* --- Métodos de pago --- */
 .payment-section {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
-.order-footer>button {
-    width: 100%;
-    padding: 0.6rem;
-    font-weight: bold;
-    border-radius: 8px;
-    border: none;
-    background-color: #4caf50;
-    color: #fff;
-    cursor: pointer;
+.order-footer > button {
+  width: 100%;
+  padding: 0.6rem;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  background-color: #4caf50;
+  color: #fff;
+  cursor: pointer;
 }
 
-.order-footer>button:disabled {
-    background-color: #a5d6a7;
-    cursor: not-allowed;
+.order-footer > button:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
 }
 
 .search-bar {
-    width: 100%;
-    padding: 0.6rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
+/* --- Responsive --- */
 @media (max-width: 768px) {
-    .main-section {
-        flex-direction: column;
-    }
+  .main-section {
+    flex-direction: column;
+  }
+
+  .order-section,
+  .products-section {
+    min-width: 100%;
+    max-height: none; /* que crezcan según contenido */
+  }
+
+  .order-item,
+  .product-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .cantidad-subtotal {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .cantidad-subtotal input {
+    width: 100%;
+    max-width: 100px;
+  }
+
+  .cash-buttons button {
+    flex: 1 1 45%;
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+
+  .totales {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .payment-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .client-section {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .client-section select {
+    width: 100%;
+  }
+
+  .order-footer > button {
+    font-size: 1rem;
+    padding: 0.8rem;
+  }
 }
 </style>
+

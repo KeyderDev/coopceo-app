@@ -2,7 +2,6 @@
   <div class="cash-reconciliations">
     <h2>Todos los Cuadres</h2>
     <div class="table-container">
-      <!-- Tabla para escritorio -->
       <table class="desktop-table">
         <thead>
           <tr>
@@ -42,7 +41,6 @@
         </tbody>
       </table>
 
-      <!-- Cards para móviles -->
       <div class="mobile-cards">
         <div class="card" v-for="cuadre in cuadrés" :key="cuadre.id">
           <p><strong>ID:</strong> {{ cuadre.id }}</p>
@@ -77,13 +75,12 @@ export default {
 
   async created() {
     try {
-      const token = localStorage.getItem('auth_token'); // o como guardes el token
+      const token = localStorage.getItem('auth_token'); 
       const response = await axios.get('/api/cash-reconciliations', {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      // Convertir fechas a hora local antes de asignarlas
       this.cuadrés = response.data.map(c => ({
         ...c,
         created_at_local: this.formatLocalDate(c.created_at)
@@ -130,7 +127,6 @@ h2 {
   overflow-x: auto;
 }
 
-/* Tabla escritorio */
 .desktop-table {
   width: 100%;
   border-collapse: separate;
@@ -169,14 +165,12 @@ tbody tr {
 
 tbody tr:hover {
   background-color: #0971c2;
-  transform: translateY(-3px); /* se “levanta” suavemente */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* sombra para efecto 3D */
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
 }
 
-
-/* Cards móviles */
 .mobile-cards {
-  display: none; /* ocultas por defecto en escritorio */
+  display: none;
   flex-direction: column;
   gap: 1rem;
 }
@@ -196,10 +190,10 @@ tbody tr:hover {
 /* Responsive */
 @media (max-width: 768px) {
   .desktop-table {
-    display: none; /* ocultamos tabla en móviles */
+    display: none;
   }
   .mobile-cards {
-    display: flex; /* mostramos cards en móviles */
+    display: flex; 
   }
   h2 {
     font-size: 1.4rem;

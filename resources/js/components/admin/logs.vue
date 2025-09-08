@@ -51,7 +51,7 @@ export default {
 <style scoped>
 .logs-container {
     padding: 20px;
-    background: #044271; /* Azul oscuro de fondo */
+    background: #044271;
     color: #e0e0e0;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.4);
@@ -62,12 +62,12 @@ export default {
     margin-bottom: 15px;
     font-size: 22px;
     font-weight: 600;
-    color: #97d569; /* Verde para el título */
+    color: #97d569; 
 }
 
 /* Contenedor con scroll */
 .logs-table-wrapper {
-    max-height: 600px; /* Ajusta la altura a lo que necesites */
+    max-height: 600px; 
     overflow-y: auto;
     border-radius: 8px;
     border: 1px solid #06609d;
@@ -77,12 +77,12 @@ export default {
 .logs-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; /* Para que no se vea comprimida */
+    min-width: 600px; 
 }
 
 .logs-table thead {
-    background: #97d569; /* Verde */
-    color: #044271;      /* Azul oscuro para contraste */
+    background: #97d569; 
+    color: #044271;      
     font-weight: 600;
     position: sticky;
     top: 0;
@@ -96,7 +96,7 @@ export default {
 }
 
 .logs-table tbody tr {
-    background: #03365a; /* Azul más oscuro para las filas */
+    background: #03365a; 
     transition: background 0.3s;
 }
 
@@ -112,7 +112,6 @@ export default {
     border-bottom: 1px solid #06609d;
 }
 
-/* Badge para el evento */
 .event-badge {
     background: #97d569;
     color: #044271;

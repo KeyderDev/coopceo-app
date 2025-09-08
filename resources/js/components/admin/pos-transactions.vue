@@ -16,14 +16,13 @@
         </thead>
         <tbody>
           <tr v-for="sale in sales" :key="sale.id">
-            <td>{{ sale.id }}</td>
-            <td>{{ sale.cliente_id }}</td>
-            <td>{{ sale.cajero_id }}</td>
-            <td class="total">{{ sale.total }}</td>
-            <td>{{ sale.metodo_pago }}</td>
-            <td>{{ formatDate(sale.created_at) }}</td>
-            <td>{{ formatDate(sale.updated_at) }}</td>
-
+            <td data-label="ID">{{ sale.id }}</td>
+            <td data-label="Cliente">{{ sale.cliente_id }}</td>
+            <td data-label="Cajero">{{ sale.cajero_id }}</td>
+            <td data-label="Total" class="total">{{ sale.total }}</td>
+            <td data-label="Método de Pago">{{ sale.metodo_pago }}</td>
+            <td data-label="Creado">{{ formatDate(sale.created_at) }}</td>
+            <td data-label="Actualizado">{{ formatDate(sale.updated_at) }}</td>
           </tr>
         </tbody>
       </table>
@@ -55,18 +54,21 @@ export default {
     });
   }
 },
-  async created() {
-    try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get('https://coopceo.ddns.net:8000/api/sales', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      console.log('Respuesta API:', response.data); // <--- revisa aquí
-      this.sales = response.data; // o response.data.data si tu API lo devuelve así
-    } catch (error) {
-      console.error('Error al obtener las transacciones:', error);
-    }
+async created() {
+  try {
+    const token = localStorage.getItem('auth_token');
+    const response = await axios.get('https://coopceo.ddns.net:8000/api/sales', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    console.log('Respuesta API:', response.data);
+
+    this.sales = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+  } catch (error) {
+    console.error('Error al obtener las transacciones:', error);
   }
+}
+
 
 };
 </script>
@@ -74,7 +76,7 @@ export default {
 <style scoped>
 .sales-list {
   padding: 1rem;
-  background-color: #03365e; /* fondo claro neutro */
+  background-color: #03365e;
   border-radius: 10px;
   color: #033760;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -96,10 +98,10 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
-  background-color: #03365e; /* fondo blanco para tabla */
+  background-color: #03365e;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* sombra sutil */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 th, td {
@@ -109,7 +111,7 @@ th, td {
 }
 
 th {
-  background-color: #97d569; /* azul oscuro */
+  background-color: #97d569;
   color: #fff;
   font-weight: 600;
   text-transform: uppercase;
@@ -117,26 +119,62 @@ th {
 }
 
 tr:nth-child(odd) {
-  background-color: #044b7f; /* fila impar */
+  background-color: #044b7f;
 }
 
 tr:nth-child(even) {
-  background-color: #0562a3; /* fila par */
+  background-color: #0562a3;
 }
 
 tr:hover {
-  background-color: #97d569; /* verde de tu paleta al pasar el mouse */
+  background-color: #97d569;
   color: #033760;
   transition: background-color 0.3s;
 }
 
 td {
-  border-bottom: none; /* o border-bottom: 0; */
   color: #fff;
 }
 
 .total {
-  color: #97d569; /* verde destacado */
+  color: #97d569;
   font-weight: bold;
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 768px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead {
+    display: none; /* Ocultamos encabezados en móvil */
+  }
+
+  tr {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    background: #044b7f;
+    padding: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #97d569;
+    margin-right: 0.5rem;
+  }
+
+  td:last-child {
+    border-bottom: none;
+  }
 }
 </style>

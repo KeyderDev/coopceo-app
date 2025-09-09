@@ -39,24 +39,33 @@
                             <i class="fa-solid fa-cash-register"></i>
                             <span>Terminal</span>
                         </router-link>
+                    </li>
+                    <li>
                         <router-link to="productos">
                             <i class="fa-solid fa-file"></i>
                             <span>Productos</span>
                         </router-link>
+                    </li>
+                    <li>
                         <router-link to="pos-transactions">
                             <i class="fa-solid fa-list"></i>
                             <span>Transacciones</span>
                         </router-link>
+                    </li>
+                    <li>
                         <router-link to="reconcilliation">
                             <i class="fa-solid fa-money-bill"></i>
                             <span>Reconcilliation</span>
                         </router-link>
+                    </li>
+                    <li>
                         <router-link to="cuadres">
                             <i class="fa-solid fa-building-columns"></i>
                             <span>Cuadres</span>
                         </router-link>
                     </li>
                 </ul>
+
             </nav>
         </aside>
 
@@ -196,7 +205,7 @@ export default {
 }
 
 .sidebar nav ul li {
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem;
 }
 
 .sidebar nav ul li a {
@@ -234,7 +243,6 @@ export default {
 }
 
 
-/* Contenido principal */
 .main-content {
     flex: 1;
     display: flex;
@@ -242,7 +250,6 @@ export default {
     min-width: 0;
 }
 
-/* Navbar horizontal */
 .topbar {
     height: 60px;
     background-color: #97d569;
@@ -269,7 +276,6 @@ export default {
     background-color: #03345a;
 }
 
-/* Contenedor del portal */
 .portal {
     flex: 1;
     padding: 1.5rem;
@@ -280,7 +286,6 @@ export default {
     min-height: 0;
 }
 
-/* Scroll vertical para las cards */
 .user-cards-scroll {
     display: flex;
     flex-direction: column;
@@ -290,7 +295,6 @@ export default {
     padding-right: 0.5rem;
 }
 
-/* Card de usuario estilo lista */
 .user-card {
     background-color: #fff;
     border-left: 5px solid #97d569;

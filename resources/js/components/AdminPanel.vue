@@ -24,12 +24,12 @@
                             <span>Logs</span>
                         </router-link>
                     </li>
-                    <li>
+                    <!-- <li>
                         <a href="#">
                             <i class="fa-solid fa-gear"></i>
                             <span>Configuración</span>
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
 
                 <h2 class="sidebar-section">POS</h2>

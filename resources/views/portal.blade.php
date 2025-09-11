@@ -113,7 +113,7 @@
             <h1 class="title">Portal COOPCEO</h1>
             <p class="subtitle">Bienvenido al sistema de gestión de COOPCEO</p>
             <div class="buttons">
-                <a href="{{ url('/user-panel') }}" class="btn btn-account">Manejar mi cuenta</a>
+                <a href="{{ url('/user-panel') }}" class="btn btn-account">Manejar mi cuenta - Socio</a>
                 <a href="{{ url('/admin-panel') }}" class="btn btn-admin">Administración</a>
             </div>
         </div>

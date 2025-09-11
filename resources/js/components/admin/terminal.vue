@@ -1,5 +1,6 @@
 <template>
   <div class="pos-container">
+    <!-- Sección de cliente -->
     <div class="client-section">
       <label>Seleccionar cliente:</label>
       <select v-model="clienteId">
@@ -11,6 +12,7 @@
     </div>
 
     <div class="main-section">
+      <!-- Sección de orden -->
       <div class="order-section">
         <h3>Orden</h3>
 
@@ -23,7 +25,7 @@
                 <input type="number" min="1" v-model.number="item.cantidad" />
                 <span>Subtotal: ${{ (item.cantidad * item.precio).toFixed(2) }}</span>
               </div>
-              <button @click="eliminarProducto(index)">Eliminar</button>
+              <button @click="intentarEliminarProducto(index)">Eliminar</button>
             </div>
           </div>
         </div>
@@ -39,6 +41,7 @@
             <p>Cambio: ${{ cambio.toFixed(2) }}</p>
           </div>
 
+          <!-- Métodos de pago -->
           <div class="payment-section">
             <label>Método de pago:</label>
             <select v-model="metodoPago">
@@ -47,17 +50,11 @@
             </select>
           </div>
           <div v-if="metodoPago === 'efectivo'" class="cash-buttons">
-            <button class="exacto-btn" @click="seleccionarExacto">
-              Exacto
-            </button>
-
+            <button class="exacto-btn" @click="seleccionarExacto">Exacto</button>
             <button v-for="monto in [1, 5, 10, 20]" :key="monto" @click="seleccionarCash(monto)">
               ${{ monto }}
             </button>
-
-            <button class="manual-btn" @click="toggleManual">
-              Manual
-            </button>
+            <button class="manual-btn" @click="toggleManual">Manual</button>
           </div>
 
           <div v-if="metodoPago === 'efectivo' && mostrarManual" class="cash-input">
@@ -68,10 +65,10 @@
           <button @click="terminarOrden" :disabled="orden.length === 0 || loading">
             {{ loading ? "Procesando..." : "Terminar Orden" }}
           </button>
-
         </div>
       </div>
 
+      <!-- Sección de productos -->
       <div class="products-section">
         <h3>Productos</h3>
 
@@ -82,6 +79,18 @@
           <span>{{ producto.nombre }}</span>
           <span>${{ Number(producto.precio).toFixed(2) }}</span>
           <button @click="agregarProducto(producto)">Agregar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para código superadmin -->
+    <div v-if="mostrarModal" class="modal-overlay">
+      <div class="modal">
+        <h3>Ingrese código superadmin para void</h3>
+        <input type="password" v-model="codigoSuperAdmin" placeholder="Código..." />
+        <div class="modal-buttons">
+          <button @click="confirmarVoid">Confirmar</button>
+          <button @click="cancelarVoid">Cancelar</button>
         </div>
       </div>
     </div>
@@ -103,6 +112,9 @@ export default {
       cashRecibido: 0,
       busqueda: "",
       mostrarManual: false,
+      mostrarModal: false,
+      productoAEliminar: null,
+      codigoSuperAdmin: "",
     };
   },
   computed: {
@@ -140,9 +152,7 @@ export default {
     },
     toggleManual() {
       this.mostrarManual = !this.mostrarManual;
-      if (!this.mostrarManual) {
-        this.cashRecibido = 0;
-      }
+      if (!this.mostrarManual) this.cashRecibido = 0;
     },
     async obtenerProductos() {
       try {
@@ -153,15 +163,38 @@ export default {
       }
     },
     agregarProducto(producto) {
-      const index = this.orden.findIndex((p) => p.id === producto.id);
+      const index = this.orden.findIndex(p => p.id === producto.id);
       if (index !== -1) {
         this.orden[index].cantidad += 1;
       } else {
         this.orden.push({ ...producto, cantidad: 1 });
       }
     },
+    intentarEliminarProducto(index) {
+      if (this.metodoPago === 'efectivo' && this.cashRecibido > 0) {
+        this.productoAEliminar = index;
+        this.mostrarModal = true;
+      } else {
+        this.eliminarProducto(index);
+      }
+    },
     eliminarProducto(index) {
       this.orden.splice(index, 1);
+    },
+    confirmarVoid() {
+      if (this.codigoSuperAdmin === "0000superadmin") {
+        this.eliminarProducto(this.productoAEliminar);
+        this.mostrarModal = false;
+        this.codigoSuperAdmin = "";
+        this.productoAEliminar = null;
+      } else {
+        alert("Código incorrecto. No se puede eliminar el producto.");
+      }
+    },
+    cancelarVoid() {
+      this.mostrarModal = false;
+      this.codigoSuperAdmin = "";
+      this.productoAEliminar = null;
     },
     seleccionarCash(monto) {
       this.metodoPago = "efectivo";
@@ -172,11 +205,11 @@ export default {
       this.cashRecibido = this.total;
     },
     async terminarOrden() {
-      if (this.orden.length === 0) return; 
+      if (this.orden.length === 0) return;
       this.loading = true;
 
       const payload = {
-        cliente_id: this.clienteId, 
+        cliente_id: this.clienteId,
         cajero_id: 1,
         total: this.total,
         metodo_pago: this.metodoPago,
@@ -221,6 +254,54 @@ export default {
   box-sizing: border-box;
 }
 
+.modal-overlay {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-color: rgba(0,0,0,0.5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index: 1000;
+}
+.modal {
+  background-color:#fff;
+  padding:1.5rem;
+  border-radius:10px;
+  width:300px;
+  display:flex;
+  flex-direction:column;
+  gap:0.5rem;
+}
+.modal input {
+  padding:0.5rem;
+  border-radius:6px;
+  border:1px solid #ccc;
+  font-size:1rem;
+}
+.modal-buttons {
+  display:flex;
+  justify-content:space-between;
+  gap:0.5rem;
+}
+.modal-buttons button {
+  flex:1;
+  padding:0.5rem;
+  border:none;
+  border-radius:6px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.modal-buttons button:first-child {
+  background-color:#4caf50;
+  color:#fff;
+}
+.modal-buttons button:last-child {
+  background-color:#e53935;
+  color:#fff;
+}
 /* --- Botones de efectivo --- */
 .cash-buttons {
   display: flex;

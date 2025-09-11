@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Sale;
 use Illuminate\Http\Request;
+use App\Mail\OrderCompletedMail;
+use Illuminate\Support\Facades\Mail;
 
 class SaleController extends Controller
 {
@@ -30,14 +32,14 @@ class SaleController extends Controller
             'total' => $request->total,
             'metodo_pago' => $request->metodo_pago
         ]);
-
-        $productIds = collect($request->productos)->pluck('product_id');
-        $sale->products()->sync($productIds);
-
+        
         if ($sale->cliente) {
             $dividendosSumar = $request->total * 0.3322785;
             $sale->cliente->dividendos += $dividendosSumar;
             $sale->cliente->save();
+
+            Mail::to($sale->cliente->email)
+                ->send(new OrderCompletedMail($sale, $sale->cliente));
         }
 
         return response()->json([

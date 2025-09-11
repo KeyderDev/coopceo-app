@@ -16,7 +16,7 @@ class SaleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'cliente_id' => 'required|exists:users,id',
+            'cliente_id' => 'nullable|exists:users,id',
             'cajero_id' => 'required|exists:users,id',
             'productos' => 'required|array|min:1',
             'productos.*.product_id' => 'required|exists:products,id',
@@ -34,16 +34,18 @@ class SaleController extends Controller
         $productIds = collect($request->productos)->pluck('product_id');
         $sale->products()->sync($productIds);
 
-        $cliente = $sale->cliente; // relación cliente en el modelo Sale
-        $dividendosSumar = $request->total * 0.3322785;
-        $cliente->dividendos += $dividendosSumar;
-        $cliente->save();
+        if ($sale->cliente) {
+            $dividendosSumar = $request->total * 0.3322785;
+            $sale->cliente->dividendos += $dividendosSumar;
+            $sale->cliente->save();
+        }
 
         return response()->json([
             'venta' => $sale->load('products', 'cliente', 'cajero'),
-            'dividendos_actuales' => $cliente->dividendos
+            'dividendos_actuales' => $sale->cliente ? $sale->cliente->dividendos : null
         ], 201);
     }
+
 
     public function myTransactions(Request $request)
     {

@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cliente_id')->constrained('users');
+            $table->foreignId('cliente_id')->nullable()->constrained('users');
             $table->foreignId('cajero_id')->constrained('users');
             $table->decimal('total', 10, 2);
             $table->string('metodo_pago');

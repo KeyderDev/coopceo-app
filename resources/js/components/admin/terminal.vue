@@ -65,9 +65,10 @@
             <input type="number" min="0" step="0.01" v-model.number="cashRecibido" placeholder="Ej. 37.50" />
           </div>
 
-          <button @click="terminarOrden" :disabled="orden.length === 0 || !clienteId || loading">
+          <button @click="terminarOrden" :disabled="orden.length === 0 || loading">
             {{ loading ? "Procesando..." : "Terminar Orden" }}
           </button>
+
         </div>
       </div>
 
@@ -171,11 +172,11 @@ export default {
       this.cashRecibido = this.total;
     },
     async terminarOrden() {
-      if (!this.clienteId || this.orden.length === 0) return;
+      if (this.orden.length === 0) return; 
       this.loading = true;
 
       const payload = {
-        cliente_id: this.clienteId,
+        cliente_id: this.clienteId, 
         cajero_id: 1,
         total: this.total,
         metodo_pago: this.metodoPago,
@@ -304,7 +305,7 @@ export default {
   flex: 1;
   overflow-y: auto;
   margin-bottom: 0.5rem;
-  min-height: 50px; 
+  min-height: 50px;
 }
 
 .order-footer {

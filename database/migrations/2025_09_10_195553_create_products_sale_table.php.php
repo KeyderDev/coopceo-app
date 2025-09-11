@@ -12,10 +12,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sale_id')
                   ->constrained('sales')
-                  ->onDelete('cascade'); // si se elimina la venta, se eliminan las relaciones
+                  ->onDelete('cascade'); 
             $table->foreignId('product_id')
                   ->constrained('products')
-                  ->onDelete('cascade'); // si se elimina el producto, se eliminan las relaciones
+                  ->onDelete('cascade'); 
             $table->timestamps();
         });
     }

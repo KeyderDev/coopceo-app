@@ -17,8 +17,12 @@
         <tbody>
           <tr v-for="sale in sales" :key="sale.id">
             <td data-label="ID">{{ sale.id }}</td>
-            <td data-label="Cliente">{{ sale.cliente_id }}</td>
-            <td data-label="Cajero">{{ sale.cajero_id }}</td>
+            <td data-label="Cliente">
+              {{ sale.cliente?.username || sale.cliente?.nombre || 'Sin nombre' }}
+            </td>
+            <td data-label="Cajero">
+              {{ sale.cajero?.username || sale.cajero?.nombre || 'Sistema' }}
+            </td>
             <td data-label="Total" class="total">{{ sale.total }}</td>
             <td data-label="Método de Pago">{{ sale.metodo_pago }}</td>
             <td data-label="Creado">{{ formatDate(sale.created_at) }}</td>
@@ -38,36 +42,36 @@ export default {
     return {
       sales: []
     };
-    
+
   },
   methods: {
-  formatDate(utcDate) {
-    const date = new Date(utcDate); // interpreta UTC
-    return date.toLocaleString('es-PR', { 
-      year: 'numeric', 
-      month: '2-digit', 
-      day: '2-digit', 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      second: '2-digit',
-      hour12: false
-    });
-  }
-},
-async created() {
-  try {
-    const token = localStorage.getItem('auth_token');
-    const response = await axios.get('https://coopceo.ddns.net:8000/api/sales', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    console.log('Respuesta API:', response.data);
+    formatDate(utcDate) {
+      const date = new Date(utcDate); // interpreta UTC
+      return date.toLocaleString('es-PR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+    }
+  },
+  async created() {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await axios.get('https://coopceo.ddns.net:8000/api/sales', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log('Respuesta API:', response.data);
 
-    this.sales = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      this.sales = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-  } catch (error) {
-    console.error('Error al obtener las transacciones:', error);
+    } catch (error) {
+      console.error('Error al obtener las transacciones:', error);
+    }
   }
-}
 
 
 };
@@ -101,10 +105,11 @@ table {
   background-color: #03365e;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-th, td {
+th,
+td {
   padding: 0.75rem 1rem;
   text-align: left;
   white-space: nowrap;
@@ -143,12 +148,19 @@ td {
 
 /* ---- RESPONSIVE ---- */
 @media (max-width: 768px) {
-  table, thead, tbody, th, td, tr {
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
     display: block;
   }
 
   thead {
-    display: none; /* Ocultamos encabezados en móvil */
+    display: none;
+    /* Ocultamos encabezados en móvil */
   }
 
   tr {
@@ -156,14 +168,14 @@ td {
     border-radius: 8px;
     background: #044b7f;
     padding: 0.5rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   }
 
   td {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   td::before {

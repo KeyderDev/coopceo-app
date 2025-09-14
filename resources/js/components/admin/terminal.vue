@@ -6,9 +6,11 @@
       <select v-model="clienteId">
         <option value="" disabled>Seleccione un cliente</option>
         <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
+          {{ cliente.numero_socio ? `#${cliente.numero_socio} - ` : '' }}
           {{ (cliente.nombre || cliente.name) }} {{ (cliente.apellido || cliente.lastname) }}
         </option>
       </select>
+
     </div>
 
     <div class="main-section">
@@ -256,52 +258,59 @@ export default {
 
 .modal-overlay {
   position: fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background-color: rgba(0,0,0,0.5);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 1000;
 }
+
 .modal {
-  background-color:#fff;
-  padding:1.5rem;
-  border-radius:10px;
-  width:300px;
-  display:flex;
-  flex-direction:column;
-  gap:0.5rem;
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
+
 .modal input {
-  padding:0.5rem;
-  border-radius:6px;
-  border:1px solid #ccc;
-  font-size:1rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
 }
+
 .modal-buttons {
-  display:flex;
-  justify-content:space-between;
-  gap:0.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
+
 .modal-buttons button {
-  flex:1;
-  padding:0.5rem;
-  border:none;
-  border-radius:6px;
-  font-weight:bold;
-  cursor:pointer;
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
 }
+
 .modal-buttons button:first-child {
-  background-color:#4caf50;
-  color:#fff;
+  background-color: #4caf50;
+  color: #fff;
 }
+
 .modal-buttons button:last-child {
-  background-color:#e53935;
-  color:#fff;
+  background-color: #e53935;
+  color: #fff;
 }
+
 /* --- Botones de efectivo --- */
 .cash-buttons {
   display: flex;

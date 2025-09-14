@@ -40,6 +40,10 @@ class User extends Authenticatable
         'api_token',
     ];
 
+    public function sales()
+{
+    return $this->hasMany(Sale::class, 'cliente_id'); 
+}
 
     /**
      * Get the attributes that should be cast.

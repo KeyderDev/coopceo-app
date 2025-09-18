@@ -1,12 +1,14 @@
 <!-- resources/views/portal.blade.php -->
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal COOPCEO</title>
     <style>
-        html, body {
+        html,
+        body {
             margin: 0;
             padding: 0;
             height: 100%;
@@ -18,23 +20,30 @@
             box-sizing: border-box;
         }
 
-        /* Página */
         .page {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #044271 0%, #0a5a95 100%);
             color: #fff;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
-            padding: 0;
+            padding: 2rem;
+            gap: 2rem;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        @media (min-width: 1024px) {
+            .page {
+                padding-top: 12rem;
+            }
         }
 
         .card {
             background: #ffffff;
             color: #044271;
             border-radius: 1rem;
-            padding: 3rem 2.5rem;
+            padding: 2rem;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
             text-align: center;
             max-width: 420px;
@@ -48,7 +57,7 @@
         }
 
         .title {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
@@ -56,7 +65,7 @@
         .subtitle {
             font-size: 1rem;
             color: #6b7c93;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .buttons {
@@ -100,12 +109,96 @@
         .logo-img {
             width: 160px;
             height: auto;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+
+        /* Noticias */
+        .news {
+            background: #ffffff;
+            color: #044271;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .news h2 {
+            margin-top: 0;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .news ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .news ul li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #ccc;
+            font-size: 0.95rem;
+        }
+
+        .news ul li:last-child {
+            border-bottom: none;
+        }
+
+        /* Responsividad */
+        @media (max-width: 768px) {
+            .page {
+                flex-direction: column;
+                align-items: center;
+                padding: 1rem;
+                gap: 1.5rem;
+            }
+
+            .card,
+            .news {
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+
+            .title {
+                font-size: 1.6rem;
+            }
+
+            .subtitle {
+                font-size: 0.95rem;
+            }
+
+            .logo-img {
+                width: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.4rem;
+            }
+
+            .btn {
+                font-size: 0.9rem;
+                padding: 0.7rem;
+            }
+
+            .news h2 {
+                font-size: 1.2rem;
+            }
         }
     </style>
+
 </head>
+
 <body>
     <div class="page">
+        <div class="news">
+            <h2>📰 Novedades</h2>
+            <ul>
+                <li>📢 Asamblea el martes 23 de septiembre en la blblioteca escolar, a partir de la 1:30pm</li>
+            </ul>
+        </div>
         <div class="card">
             <div class="logo">
                 <img src="{{ asset('images/coopceopng.png') }}" alt="COOPCEO Logo" class="logo-img" />
@@ -119,4 +212,5 @@
         </div>
     </div>
 </body>
+
 </html>

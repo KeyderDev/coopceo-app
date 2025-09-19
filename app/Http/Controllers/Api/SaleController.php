@@ -51,10 +51,10 @@ class SaleController extends Controller
 
     public function myTransactions(Request $request)
     {
-        $user = $request->user(); // usuario autenticado
+        $user = $request->user(); 
 
-        return Sale::with(['cajero', 'products']) // opcional: si quieres mostrar más info
-            ->where('cliente_id', $user->id) // filtra por cliente
+        return Sale::with(['cajero', 'products']) 
+            ->where('cliente_id', $user->id) 
             ->orderBy('created_at', 'desc')
             ->get();
     }

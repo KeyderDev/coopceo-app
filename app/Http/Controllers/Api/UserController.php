@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    // Devuelve los datos del usuario autenticado
     public function me(Request $request)
     {
         $user = Auth::user();
@@ -27,7 +26,6 @@ class UserController extends Controller
         ]);
     }
 
-    // Devuelve todos los usuarios
     public function index()
     {
         $users = User::all();

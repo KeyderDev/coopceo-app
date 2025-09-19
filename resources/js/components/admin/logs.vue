@@ -65,7 +65,6 @@ export default {
     color: #97d569; 
 }
 
-/* Contenedor con scroll */
 .logs-table-wrapper {
     max-height: 600px; 
     overflow-y: auto;
@@ -73,7 +72,6 @@ export default {
     border: 1px solid #06609d;
 }
 
-/* Tabla */
 .logs-table {
     width: 100%;
     border-collapse: collapse;

@@ -11,7 +11,6 @@ use Carbon\Carbon;
 
 class CashReconciliationController extends Controller
 {
-    // Guardar cuadre de caja
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -31,7 +30,6 @@ class CashReconciliationController extends Controller
 
         $today = Carbon::today()->toDateString();
 
-        // Evitar duplicados
         $existing = CashReconciliation::whereDate('created_at', $today)->first();
         if ($existing) {
             return response()->json([
@@ -49,11 +47,9 @@ class CashReconciliationController extends Controller
     }
     public function index()
     {
-        // Traer todos los cuadres
         $cuadres = CashReconciliation::orderBy('created_at', 'desc')->get();
         return response()->json($cuadres);
     }
-    // Traer total de ventas en efectivo del día actual
     public function totalSales(Request $request)
     {
         try {

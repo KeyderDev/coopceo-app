@@ -20,7 +20,6 @@
     </div>
 
     <div class="totals">
-      <!-- <p>Total contado: <span>{{ totalCounted.toFixed(2) }}</span></p> -->
       <p>Total ventas en efectivo: <span>{{ totalSalesCash.toFixed(2) }}</span></p>
       <p>Diferencia: <span :class="{ negative: difference < 0 }">{{ difference.toFixed(2) }}</span></p>
     </div>
@@ -35,7 +34,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      petty: 50, // dinero inicial en caja
+      petty: 50, 
       bills: [
         { label: '20', value: 20, quantity: 0 },
         { label: '10', value: 10, quantity: 0 },
@@ -48,17 +47,16 @@ export default {
         { label: '0.01', value: 0.01, quantity: 0 },
         { label: '0.25', value: 0.25, quantity: 0 },
       ],
-      totalSalesCash: 0, // total de ventas en efectivo
+      totalSalesCash: 0, 
     };
   },
   computed: {
-    // Total de efectivo físico contado en caja
     totalCounted() {
       const totalBills = this.bills.reduce((sum, b) => sum + (b.quantity || 0) * b.value, 0);
       const totalCoins = this.coins.reduce((sum, c) => sum + (c.quantity || 0) * c.value, 0);
       return parseFloat((totalBills + totalCoins).toFixed(2));
     },
-    // Diferencia real: efectivo contado - ventas en efectivo (petty ya se cuenta dentro del total físico)
+    
     difference() {
       const expectedCash = this.petty + this.totalSalesCash;
       return parseFloat((this.totalCounted - expectedCash).toFixed(2));

@@ -1,12 +1,10 @@
 <template>
     <div>
-        <!-- Barra de búsqueda -->
         <div class="search-wrapper">
             <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
             <input type="text" v-model="searchQuery" placeholder="Buscar usuario..." class="user-search-input" />
         </div>
 
-        <!-- Contenedor del filtro + total -->
         <div class="filter-total-container">
             <div class="filter-wrapper">
                 <label for="filter">Ordenar por:</label>
@@ -24,7 +22,6 @@
             </div>
         </div>
 
-        <!-- Cards -->
         <div class="user-cards-scroll">
             <div v-for="user in filteredUsers" :key="user.id" class="user-card">
                 <div class="user-info">
@@ -37,7 +34,6 @@
                     Balance: ${{ user.dividendos ?? 0 }}
                 </div>
 
-                <!-- Botón eliminar -->
                 <button class="delete-btn" @click="deleteUser(user.id)">
                     <i class="fa-solid fa-trash"></i>
                 </button>
@@ -91,47 +87,43 @@ export default {
         }
     },
     methods: {
-async deleteUser(userId) {
-    console.log("Intentando eliminar usuario con ID:", userId);
+        async deleteUser(userId) {
+            console.log("Intentando eliminar usuario con ID:", userId);
 
-    if (!confirm("¿Estás seguro de eliminar este usuario?")) {
-        console.log("Eliminación cancelada por el usuario.");
-        return;
-    }
+            if (!confirm("¿Estás seguro de eliminar este usuario?")) {
+                console.log("Eliminación cancelada por el usuario.");
+                return;
+            }
 
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-        console.error("No se encontró auth_token en localStorage.");
-        return;
-    }
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                console.error("No se encontró auth_token en localStorage.");
+                return;
+            }
 
-    console.log("Token encontrado:", token);
+            console.log("Token encontrado:", token);
 
-    try {
-        console.log("Enviando solicitud DELETE al servidor...");
-        const response = await axios.delete(`https://coopceo.ddns.net:8000/api/users/${userId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+            try {
+                console.log("Enviando solicitud DELETE al servidor...");
+                const response = await axios.delete(`https://coopceo.ddns.net:8000/api/users/${userId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
-        console.log("Respuesta del servidor:", response.data);
+                console.log("Respuesta del servidor:", response.data);
 
-        // Quitar al usuario eliminado de la lista
-        this.users = this.users.filter(user => user.id !== userId);
-        console.log(`Usuario con ID ${userId} eliminado de la lista local.`);
+                this.users = this.users.filter(user => user.id !== userId);
+                console.log(`Usuario con ID ${userId} eliminado de la lista local.`);
 
-    } catch (err) {
-        if (err.response) {
-            // El servidor respondió con un código de error
-            console.error("Error del servidor:", err.response.status, err.response.data);
-        } else if (err.request) {
-            // No hubo respuesta del servidor
-            console.error("No se recibió respuesta del servidor:", err.request);
-        } else {
-            // Otro error
-            console.error("Error desconocido al eliminar usuario:", err.message);
+            } catch (err) {
+                if (err.response) {
+                    console.error("Error del servidor:", err.response.status, err.response.data);
+                } else if (err.request) {
+                    console.error("No se recibió respuesta del servidor:", err.request);
+                } else {
+                    console.error("Error desconocido al eliminar usuario:", err.message);
+                }
+            }
         }
-    }
-}
     },
     async created() {
         const token = localStorage.getItem('auth_token');
@@ -167,7 +159,6 @@ async deleteUser(userId) {
     pointer-events: none;
 }
 
-/* Input de búsqueda */
 .user-search-input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 2.5rem;
@@ -192,7 +183,6 @@ async deleteUser(userId) {
 .filter-total-container {
     display: flex;
     justify-content: space-between;
-    /* uno a la izq (filtro) y otro a la der (total) */
     align-items: center;
     margin-bottom: 1rem;
 }
@@ -203,7 +193,6 @@ async deleteUser(userId) {
     font-size: 1.1rem;
 }
 
-/* Estilos del filtro */
 .filter-wrapper {
     margin-bottom: 1rem;
     color: #044271;
@@ -224,9 +213,9 @@ async deleteUser(userId) {
 }
 
 .user-card {
-    position: relative; /* necesario para que el botón se posicione respecto a la card */
+    position: relative;
 }
-/* Botón eliminar */
+
 .delete-btn {
     position: absolute;
     bottom: 10px;

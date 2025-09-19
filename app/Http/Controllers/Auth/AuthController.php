@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\User;
-use App\Models\Log; // ✅ Correcto, aquí va el modelo
+use App\Models\Log; 
 
 class AuthController extends Controller
 {
-    // Registro de usuario
 public function register(Request $request)
 {
     $request->validate([
@@ -32,10 +31,9 @@ public function register(Request $request)
         'api_token' => Str::random(60),
     ]);
 
-    // 👉 Guardar log de registro
     Log::create([
         'user_id' => $user->id,
-        'event' => 'register', // o 'registro'
+        'event' => 'register', 
         'ip_address' => $request->ip(),
         'user_agent' => $request->header('User-Agent')
     ]);
@@ -46,9 +44,6 @@ public function register(Request $request)
         'access_token' => $user->api_token,
     ], 201);
 }
-
-
-    // Login
     public function login(Request $request)
     {
         $request->validate([
@@ -80,7 +75,6 @@ public function register(Request $request)
         ]);
     }
 
-    // Logout
     public function logout(Request $request)
     {
         $user = $request->user();

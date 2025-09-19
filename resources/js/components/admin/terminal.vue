@@ -1,6 +1,5 @@
 <template>
   <div class="pos-container">
-    <!-- Sección de cliente -->
     <div class="client-section">
       <label>Seleccionar cliente:</label>
       <select v-model="clienteId">
@@ -14,7 +13,6 @@
     </div>
 
     <div class="main-section">
-      <!-- Sección de orden -->
       <div class="order-section">
         <h3>Orden</h3>
 
@@ -43,7 +41,6 @@
             <p>Cambio: ${{ cambio.toFixed(2) }}</p>
           </div>
 
-          <!-- Métodos de pago -->
           <div class="payment-section">
             <label>Método de pago:</label>
             <select v-model="metodoPago">
@@ -70,7 +67,6 @@
         </div>
       </div>
 
-      <!-- Sección de productos -->
       <div class="products-section">
         <h3>Productos</h3>
 
@@ -85,7 +81,6 @@
       </div>
     </div>
 
-    <!-- Modal para código superadmin -->
     <div v-if="mostrarModal" class="modal-overlay">
       <div class="modal">
         <h3>Ingrese código superadmin para void</h3>

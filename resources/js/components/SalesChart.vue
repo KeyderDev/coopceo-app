@@ -101,12 +101,12 @@ export default defineComponent({
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  margin: 2rem 0 0 2rem; /* sube el div y lo mueve a la izquierda */
-  width: 80%; /* un poco más ancho si quieres */
+  margin: 2rem 0 0 2rem; 
+  width: 80%;
   max-width: 1000px;
 }
 .sales-chart-container h2 {
-  text-align: left; /* alinea el título a la izquierda */
+  text-align: left; 
   margin-bottom: 1rem;
   color: #044271;
 }

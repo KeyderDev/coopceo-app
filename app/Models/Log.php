@@ -13,7 +13,6 @@ class Log extends Model
         'user_agent'
     ];
 
-    // 👇 Relación con usuario
     public function user()
     {
         return $this->belongsTo(User::class);

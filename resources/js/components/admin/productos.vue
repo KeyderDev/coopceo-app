@@ -165,7 +165,6 @@ button:hover {
     box-shadow: 0 4px 12px rgba(3, 56, 97, 0.3);
 }
 
-/* Contenedor de tabla scrollable para móviles */
 .table-wrapper {
     overflow-x: auto;
     border-radius: 10px;
@@ -175,7 +174,7 @@ button:hover {
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; /* asegura scroll en móviles si no cabe */
+    min-width: 600px; 
 }
 
 table th {

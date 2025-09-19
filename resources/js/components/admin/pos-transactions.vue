@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     formatDate(utcDate) {
-      const date = new Date(utcDate); // interpreta UTC
+      const date = new Date(utcDate); 
       return date.toLocaleString('es-PR', {
         year: 'numeric',
         month: '2-digit',
@@ -160,7 +160,6 @@ td {
 
   thead {
     display: none;
-    /* Ocultamos encabezados en móvil */
   }
 
   tr {

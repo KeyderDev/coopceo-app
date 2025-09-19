@@ -9,6 +9,7 @@ import Productos from './components/admin/productos.vue'
 import reconcilliation from './components/admin/reconcilliation.vue'
 import cuadres from './components/admin/cuadres.vue'
 import posTransactions from './components/admin/pos-transactions.vue'
+import email from './components/admin/email.vue'
 
 const routes = [
   {
@@ -23,6 +24,7 @@ const routes = [
       { path: 'reconcilliation', component: reconcilliation, name: 'reconcilliation' },
       { path: 'cuadres', component: cuadres, name: 'cuadres' },
       { path: 'pos-transactions', component: posTransactions, name: 'pos-transactions' },
+      { path: 'email', component: email, name: 'email' },
     ]
   },
   { path: '/login', component: Login, name: 'login' },

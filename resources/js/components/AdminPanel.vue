@@ -19,10 +19,10 @@
                         </router-link>
                     </li>
                     <li>
-                        <a href="#">
+                        <router-link to="email">
                             <i class="fa-solid fa-envelope"></i>
                             <span>Email</span>
-                        </a>
+                        </router-link>
                     </li>
                     <li>
                         <router-link to="logs">
@@ -72,7 +72,7 @@
         <div class="main-content">
             <header class="topbar">
                 <div class="topbar-left">
-                    <h2>Panel de Administración</h2>
+                    <h2>Administración</h2>
                 </div>
                 <div class="topbar-right">
                     <button @click="logout">Salir</button>

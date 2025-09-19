@@ -8,7 +8,9 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SaleController;
 use App\Http\Controllers\Api\CashReconciliationController;
+use App\Http\Controllers\Api\CustomEmailController;
 
+Route::middleware('auth:api')->post('/send-email', [CustomEmailController::class, 'sendCustomEmail']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -42,4 +44,5 @@ Route::middleware('auth:api')->group(function () {
 Route::get('/sales-reconcilliation', [CashReconciliationController::class, 'totalSales']);
 Route::post('/cash-reconciliations', [CashReconciliationController::class, 'store']);
 Route::middleware('auth:api')->get('/cash-reconciliations', [CashReconciliationController::class, 'index']);
+
 

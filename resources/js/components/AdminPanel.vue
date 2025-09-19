@@ -80,7 +80,26 @@
             </header>
 
             <div class="portal">
-                <router-view></router-view>
+                <router-view v-slot="{ Component }">
+                    <div class="welcome-banner" v-if="!Component && user">
+                        <h3>Buen dia, {{ user.nombre }}</h3>
+                        <p>{{ currentDateTime }}</p>
+                        <p v-if="weather">
+                            Clima: {{ weather.icon }} {{ weather.temp }}°F, {{ weather.desc }}
+                        </p>
+                        <p v-else>
+                            Cargando clima...
+                        </p>
+                    </div>
+
+                    <div v-if="!Component && totalSalesToday !== null" class="sales-summary">
+                        Total vendido hoy: ${{ totalSalesToday.toFixed(2) }}
+                    </div>
+
+                    <component v-if="Component" :is="Component" />
+
+                    <SalesChart v-else-if="showSalesChart && !Component" />
+                </router-view>
             </div>
         </div>
     </div>
@@ -88,14 +107,21 @@
 
 <script>
 import axios from "axios";
+import SalesChart from "./SalesChart.vue";
+import dayjs from "dayjs";
 
 export default {
     name: "AdminPanel",
+    components: { SalesChart },
     data() {
         return {
             user: null,
             users: [],
             loading: false,
+            totalSalesToday: null,
+            currentDateTime: "",
+            showSalesChart: true,
+
         };
     },
     async created() {
@@ -107,8 +133,16 @@ export default {
         }
 
         await this.loadUser(token);
+        this.updateDateTime();
+        setInterval(this.updateDateTime, 4000);
+        await this.loadWeather();
+        await this.loadSalesToday(token);
+
     },
     methods: {
+        updateDateTime() {
+            this.currentDateTime = dayjs().format('dddd, D MMMM YYYY HH:mm:ss');
+        },
         async loadUser(token) {
             try {
                 this.loading = true;
@@ -130,7 +164,6 @@ export default {
                 this.loading = false;
             }
         },
-
         async loadUsers(token) {
             try {
                 const responseUsers = await axios.get("https://coopceo.ddns.net:8000/api/users", {
@@ -141,7 +174,6 @@ export default {
                 console.error("Error al cargar usuarios:", error);
             }
         },
-
         async logout() {
             const token = localStorage.getItem('auth_token');
             try {
@@ -155,12 +187,51 @@ export default {
             }
         },
 
+        async loadSalesToday(token) {
+            try {
+                const response = await axios.get(
+                    "https://coopceo.ddns.net:8000/api/sales",
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+
+                const today = dayjs(); 
+
+                const salesToday = response.data.filter(sale => {
+                    const saleDate = dayjs(sale.created_at);
+                    return saleDate.isSame(today, 'day');
+                });
+
+                this.totalSalesToday = salesToday.reduce((sum, sale) => sum + parseFloat(sale.total), 0);
+
+            } catch (error) {
+                console.error("Error al cargar ventas del día:", error);
+                this.totalSalesToday = 0;
+            }
+        },
+        async loadWeather() {
+            try {
+                const lat = 18.4655;
+                const lon = -66.1057;
+
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit`;
+
+                const response = await axios.get(url);
+                const data = response.data.current_weather;
+
+                this.weather = {
+                    temp: Math.round(data.temperature),
+                    wind: data.windspeed,
+                    icon: data.temperature > 80 ? "🌞" : data.temperature > 68 ? "⛅" : "🌥️",
+                };
+            } catch (error) {
+                console.error("Error al cargar clima:", error);
+            }
+        },
         redirectToLogin() {
             if (window.location.pathname !== "/admin-panel/login") {
                 window.location.href = "/admin-panel/login";
             }
         },
-
         handleInvalidToken() {
             localStorage.removeItem('auth_token');
             this.redirectToLogin();
@@ -187,6 +258,83 @@ export default {
     flex-shrink: 0;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
 }
+
+.welcome-banner {
+    background: linear-gradient(135deg, #97d569 0%, #5aa832 100%);
+    color: #fff;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 1s ease-out;
+}
+
+.welcome-banner h3 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.welcome-banner p {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sales-summary {
+    background-color: #f1f9f2;
+    color: #044271;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Iconos decorativos */
+.welcome-banner::before {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 3rem;
+    opacity: 0.3;
+    transform: rotate(25deg);
+}
+
+.welcome-banner::after {
+    position: absolute;
+    bottom: -10px;
+    left: -10px;
+    font-size: 2.5rem;
+    opacity: 0.25;
+    transform: rotate(-15deg);
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 
 .sidebar .logo {
     display: flex;

@@ -7,14 +7,14 @@
           <tr>
             <th>ID</th>
             <th>Petty</th>
-            <th>20</th>
-            <th>10</th>
-            <th>5</th>
-            <th>1</th>
-            <th>Coin 10</th>
-            <th>Coin 5</th>
-            <th>Coin 1</th>
-            <th>Coin 25</th>
+            <th>$20</th>
+            <th>$10</th>
+            <th>$5</th>
+            <th>$1</th>
+            <th>Coin 0.10</th>
+            <th>Coin 0.05</th>
+            <th>Coin 0.01</th>
+            <th>Coin 0.25</th>
             <th>Total Contado</th>
             <th>Total Ventas Efectivo</th>
             <th>Diferencia</th>
@@ -45,10 +45,10 @@
         <div class="card" v-for="cuadre in cuadrés" :key="cuadre.id">
           <p><strong>ID:</strong> {{ cuadre.id }}</p>
           <p><strong>Petty:</strong> {{ cuadre.petty }}</p>
-          <p><strong>20:</strong> {{ cuadre.bill_20 }}</p>
-          <p><strong>10:</strong> {{ cuadre.bill_10 }}</p>
-          <p><strong>5:</strong> {{ cuadre.bill_5 }}</p>
-          <p><strong>1:</strong> {{ cuadre.bill_1 }}</p>
+          <p><strong>$20:</strong> {{ cuadre.bill_20 }}</p>
+          <p><strong>$10:</strong> {{ cuadre.bill_10 }}</p>
+          <p><strong>$5:</strong> {{ cuadre.bill_5 }}</p>
+          <p><strong>$1:</strong> {{ cuadre.bill_1 }}</p>
           <p><strong>Coin 10:</strong> {{ cuadre.coin_10 }}</p>
           <p><strong>Coin 5:</strong> {{ cuadre.coin_5 }}</p>
           <p><strong>Coin 1:</strong> {{ cuadre.coin_1 }}</p>

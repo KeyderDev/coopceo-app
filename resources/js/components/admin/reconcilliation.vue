@@ -36,16 +36,16 @@ export default {
     return {
       petty: 50, 
       bills: [
-        { label: '20', value: 20, quantity: 0 },
-        { label: '10', value: 10, quantity: 0 },
-        { label: '5', value: 5, quantity: 0 },
-        { label: '1', value: 1, quantity: 0 },
+        { label: '$20', value: 20, quantity: 0 },
+        { label: '$10', value: 10, quantity: 0 },
+        { label: '$5', value: 5, quantity: 0 },
+        { label: '$1', value: 1, quantity: 0 },
       ],
       coins: [
-        { label: '0.10', value: 0.10, quantity: 0 },
-        { label: '0.05', value: 0.05, quantity: 0 },
-        { label: '0.01', value: 0.01, quantity: 0 },
-        { label: '0.25', value: 0.25, quantity: 0 },
+        { label: '$0.10', value: 0.10, quantity: 0 },
+        { label: '$0.05', value: 0.05, quantity: 0 },
+        { label: '$0.01', value: 0.01, quantity: 0 },
+        { label: '$0.25', value: 0.25, quantity: 0 },
       ],
       totalSalesCash: 0, 
     };

@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal COOPCEO</title>
+    <link rel="icon" type="image/png" href="/images/coopceofixed.png">
     <style>
         html,
         body {
@@ -107,7 +108,7 @@
         }
 
         .logo-img {
-            width: 160px;
+            width: 140px;
             height: auto;
             margin-bottom: 1.2rem;
         }
@@ -201,7 +202,7 @@
         </div>
         <div class="card">
             <div class="logo">
-                <img src="{{ asset('images/coopceopng.png') }}" alt="COOPCEO Logo" class="logo-img" />
+                <img src="{{ asset('images/coopceofixed.png') }}" alt="COOPCEO Logo" class="logo-img" />
             </div>
             <h1 class="title">Portal COOPCEO</h1>
             <p class="subtitle">Bienvenido al sistema de gestión de COOPCEO</p>

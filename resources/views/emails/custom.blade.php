@@ -45,7 +45,7 @@
             <td bgcolor="#ffffff" style="background-color:#ffffff; padding:20px; color:#033a64; font-size:15px; line-height:1.6;" class="force-light">
               <!-- envolver el contenido también en <font> por compatibilidad máxima -->
               <div style="color:#033a64;">
-                <font color="#033a64">{!! $bodyText !!}</font>
+                <font color="#033a64">{!! nl2br(e($bodyText)) !!}</font>
               </div>
 
               <!-- botón como tabla + fallback VML para Outlook -->

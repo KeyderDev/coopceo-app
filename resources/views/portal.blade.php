@@ -196,7 +196,7 @@
         <div class="news">
             <h2>📰 Novedades</h2>
             <ul>
-                <li>📢 Asamblea el martes 23 de septiembre en la blblioteca escolar, a partir de la 1:30pm</li>
+                <li>📢 Fecha de apertura oficial: 15 de octubre de 2025</li>
             </ul>
         </div>
         <div class="card">

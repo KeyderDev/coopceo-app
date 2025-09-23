@@ -23,6 +23,7 @@ class UserController extends Controller
             'admin' => $user->admin,
             'dividendos' => $user->dividendos ?? 0,
             'email' => $user->email,
+            'posicion' => $user->posicion,
         ]);
     }
 

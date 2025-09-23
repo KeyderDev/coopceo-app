@@ -72,7 +72,7 @@
         <div class="main-content">
             <header class="topbar">
                 <div class="topbar-left">
-                    <h2>Administración</h2>
+                    <h2>{{ user.posicion }}</h2>
                 </div>
                 <div class="topbar-right">
                     <button @click="logout">Salir</button>
@@ -247,6 +247,15 @@ export default {
     min-height: 100vh;
     font-family: Arial, sans-serif;
 }
+
+.user-position {
+  font-size: 0.9rem;
+  color: #aaa; /* gris elegante */
+  margin-top: -0.4rem;
+  margin-bottom: 0.8rem;
+  font-style: italic;
+}
+
 
 .sidebar {
     width: 240px;

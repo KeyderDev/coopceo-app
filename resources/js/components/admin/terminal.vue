@@ -50,10 +50,16 @@
           </div>
           <div v-if="metodoPago === 'efectivo'" class="cash-buttons">
             <button class="exacto-btn" @click="seleccionarExacto">Exacto</button>
-            <button v-for="monto in [1, 5, 10, 20]" :key="monto" @click="seleccionarCash(monto)">
+            <button v-for="monto in [1, 5, 10, 20]" :key="monto" class="efectivo-btn" @click="seleccionarCash(monto)">
               ${{ monto }}
             </button>
             <button class="manual-btn" @click="toggleManual">Manual</button>
+          </div>
+
+          <div v-if="metodoPago === 'efectivo'" class="cash-buttons2">
+            <button class="athmovil-btn">
+              <img :src="athLogo" alt="ATH" class="icon" width="90" height="90" />
+            </button>
           </div>
 
           <div v-if="metodoPago === 'efectivo' && mostrarManual" class="cash-input">
@@ -112,6 +118,8 @@ export default {
       mostrarModal: false,
       productoAEliminar: null,
       codigoSuperAdmin: "",
+      athLogo: '/images/athpng.png'
+
     };
   },
   computed: {
@@ -316,7 +324,7 @@ export default {
 
 .cash-buttons button {
   flex: 1;
-  background-color: #4caf50;
+  /* background-color: #4caf50; */
   color: #fff;
   border: none;
   padding: 0.8rem;
@@ -324,6 +332,40 @@ export default {
   border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
+}
+
+
+.cash-buttons2 {
+  display: flex;
+  gap: 0.5rem;
+  /* border: 1px solid black; */
+  margin-top: 0.5rem;
+}
+
+.athmovil-btn {
+  background-color: #000; 
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px; 
+  padding: 0.2rem; /* mínimo padding */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: auto; 
+}
+
+.efectivo-btn {
+  background-color: #4caf50;
+}
+
+.exacto-btn {
+  background-color: #4caf50;
+}
+
+.manual-btn {
+  background-color: #4caf50;
 }
 
 .cash-buttons button:hover {
@@ -343,17 +385,6 @@ export default {
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
-}
-
-.manual-btn {
-  background-color: #ff9800;
-  /* naranja */
-  color: #fff;
-  font-weight: bold;
-}
-
-.manual-btn:hover {
-  background-color: #fb8c00;
 }
 
 .client-section select {

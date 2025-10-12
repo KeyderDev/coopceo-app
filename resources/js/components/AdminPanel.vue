@@ -93,7 +93,7 @@
                     </div>
 
                     <div v-if="!Component && totalSalesToday !== null" class="sales-summary">
-                        Total vendido hoy: ${{ totalSalesToday.toFixed(2) }}
+                        Total de ventas hoy: ${{ totalSalesToday.toFixed(2) }}
                     </div>
 
                     <component v-if="Component" :is="Component" />

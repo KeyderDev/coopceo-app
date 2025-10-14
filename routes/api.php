@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SaleController;
 use App\Http\Controllers\Api\CashReconciliationController;
 use App\Http\Controllers\Api\CustomEmailController;
+use App\Http\Controllers\CalendarNoteController;
 
 Route::middleware('auth:api')->post('/send-email', [CustomEmailController::class, 'sendCustomEmail']);
 
@@ -30,6 +31,13 @@ Route::middleware('auth.api')->group(function () {
 Route::get('/ping', function () {
     return response()->json(['pong' => true]);
 });
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/calendar-notes', [CalendarNoteController::class, 'index']);
+    Route::post('/calendar-notes', [CalendarNoteController::class, 'store']);
+    Route::delete('/calendar-notes/{date}', [CalendarNoteController::class, 'destroy']);
+});
+
 
 Route::middleware('auth:api')->get('/my-transactions', [SaleController::class, 'myTransactions']);
 

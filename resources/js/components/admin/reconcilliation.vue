@@ -1,83 +1,123 @@
 <template>
   <div class="cash-reconciliation">
-    <h2>Cash Reconciliation</h2>
-
-    <div class="field">
-      <label>Petty:</label>
-      <input type="number" v-model.number="petty" />
+    <div v-if="showPasswordModal" class="modal-overlay">
+      <div class="modal">
+        <h3>🔒 Acceso restringido</h3>
+        <p>Por favor, ingresa la contraseña para continuar:</p>
+        <input
+          type="password"
+          v-model="enteredPassword"
+          placeholder="Contraseña"
+          @keyup.enter="checkPassword"
+        />
+        <div class="modal-buttons">
+          <button @click="checkPassword">Entrar</button>
+        </div>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      </div>
     </div>
 
-    <h3>Billetes</h3>
-    <div class="field" v-for="bill in bills" :key="bill.value">
-      <label>{{ bill.label }}:</label>
-      <input type="number" v-model.number="bill.quantity" min="0" @focus="clearZero($event, bill)" />
-    </div>
+    <div v-if="!showPasswordModal">
+      <h2>Cash Reconciliation</h2>
 
-    <h3>Monedas</h3>
-    <div class="field" v-for="coin in coins" :key="coin.value">
-      <label>{{ coin.label }}:</label>
-      <input type="number" v-model.number="coin.quantity" min="0" @focus="clearZero($event, coin)" />
-    </div>
+      <div class="field">
+        <label>Petty:</label>
+        <input type="number" v-model.number="petty" />
+      </div>
 
-    <div class="totals">
-      <p>Total ventas en efectivo: <span>{{ totalSalesCash.toFixed(2) }}</span></p>
-      <p>Diferencia: <span :class="{ negative: difference < 0 }">{{ difference.toFixed(2) }}</span></p>
-    </div>
+      <h3>Billetes</h3>
+      <div class="field" v-for="bill in bills" :key="bill.value">
+        <label>{{ bill.label }}:</label>
+        <input
+          type="number"
+          v-model.number="bill.quantity"
+          min="0"
+          @focus="clearZero($event, bill)"
+        />
+      </div>
 
-    <button @click="saveReconciliation">Guardar cuadre</button>
+      <h3>Monedas</h3>
+      <div class="field" v-for="coin in coins" :key="coin.value">
+        <label>{{ coin.label }}:</label>
+        <input
+          type="number"
+          v-model.number="coin.quantity"
+          min="0"
+          @focus="clearZero($event, coin)"
+        />
+      </div>
+
+      <div class="totals">
+        <p>Total ventas en efectivo: <span>{{ totalSalesCash.toFixed(2) }}</span></p>
+        <p>
+          Diferencia:
+          <span :class="{ negative: difference < 0 }">
+            {{ difference.toFixed(2) }}
+          </span>
+        </p>
+      </div>
+
+      <button @click="saveReconciliation">Guardar cuadre</button>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
-      petty: 50, 
+      petty: 50,
       bills: [
-        { label: '$20', value: 20, quantity: 0 },
-        { label: '$10', value: 10, quantity: 0 },
-        { label: '$5', value: 5, quantity: 0 },
-        { label: '$1', value: 1, quantity: 0 },
+        { label: "$20", value: 20, quantity: 0 },
+        { label: "$10", value: 10, quantity: 0 },
+        { label: "$5", value: 5, quantity: 0 },
+        { label: "$1", value: 1, quantity: 0 },
       ],
       coins: [
-        { label: '$0.10', value: 0.10, quantity: 0 },
-        { label: '$0.05', value: 0.05, quantity: 0 },
-        { label: '$0.01', value: 0.01, quantity: 0 },
-        { label: '$0.25', value: 0.25, quantity: 0 },
+        { label: "$0.10", value: 0.1, quantity: 0 },
+        { label: "$0.05", value: 0.05, quantity: 0 },
+        { label: "$0.01", value: 0.01, quantity: 0 },
+        { label: "$0.25", value: 0.25, quantity: 0 },
       ],
-      totalSalesCash: 0, 
+      totalSalesCash: 0,
+      showPasswordModal: true,
+      enteredPassword: "",
+      correctPassword: "0000superadmin", 
+      errorMessage: "",
     };
   },
   computed: {
     totalCounted() {
-      const totalBills = this.bills.reduce((sum, b) => sum + (b.quantity || 0) * b.value, 0);
-      const totalCoins = this.coins.reduce((sum, c) => sum + (c.quantity || 0) * c.value, 0);
+      const totalBills = this.bills.reduce(
+        (sum, b) => sum + (b.quantity || 0) * b.value,
+        0
+      );
+      const totalCoins = this.coins.reduce(
+        (sum, c) => sum + (c.quantity || 0) * c.value,
+        0
+      );
       return parseFloat((totalBills + totalCoins).toFixed(2));
     },
-    
     difference() {
       const expectedCash = this.petty + this.totalSalesCash;
       return parseFloat((this.totalCounted - expectedCash).toFixed(2));
-    }
-
-
+    },
   },
   async created() {
     const today = new Date();
     const offset = today.getTimezoneOffset();
     today.setMinutes(today.getMinutes() - offset);
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const localDate = `${year}-${month}-${day}`;
+    const localDate = today.toISOString().split("T")[0];
 
     try {
-      const response = await axios.get(`/api/sales-reconcilliation?date=${localDate}&payment=efectivo`);
+      const response = await axios.get(
+        `/api/sales-reconcilliation?date=${localDate}&payment=efectivo`
+      );
       this.totalSalesCash = parseFloat(response.data.total_cash);
     } catch (error) {
-      console.error('Error al obtener total de ventas en efectivo:', error);
+      console.error("Error al obtener total de ventas en efectivo:", error);
       this.totalSalesCash = 0;
     }
   },
@@ -85,7 +125,7 @@ export default {
     clearZero(event, item) {
       if (item.quantity === 0) {
         item.quantity = null;
-        event.target.value = '';
+        event.target.value = "";
       }
     },
     async saveReconciliation() {
@@ -101,23 +141,28 @@ export default {
         coin_25: this.coins[3].quantity,
         total_counted: this.totalCounted,
         total_sales_cash: this.totalSalesCash,
-        difference: this.difference
+        difference: this.difference,
       };
 
       try {
-        await axios.post('/api/cash-reconciliations', data);
-        alert('Cuadre guardado correctamente!');
+        await axios.post("/api/cash-reconciliations", data);
+        alert("Cuadre guardado correctamente!");
       } catch (error) {
-        console.error('Error al guardar cuadre:', error);
-        alert('Ocurrió un error al guardar el cuadre.');
+        console.error("Error al guardar cuadre:", error);
+        alert("Ocurrió un error al guardar el cuadre.");
       }
-    }
-  }
+    },
+    checkPassword() {
+      if (this.enteredPassword === this.correctPassword) {
+        this.showPasswordModal = false;
+        this.errorMessage = "";
+      } else {
+        this.errorMessage = "Contraseña incorrecta. Intenta de nuevo.";
+      }
+    },
+  },
 };
 </script>
-
-
-
 
 <style scoped>
 .cash-reconciliation {
@@ -129,7 +174,7 @@ export default {
   color: #ffffff;
   border-radius: 14px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 h2 {
@@ -207,11 +252,57 @@ button:hover {
   background-color: #81c25d;
 }
 
-@media (min-width: 700px) {
-  .field-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px 25px;
-  }
+/* === MODAL === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal {
+  background: #043861;
+  border-radius: 12px;
+  padding: 30px;
+  width: 300px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.modal input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.modal-buttons {
+  margin-top: 15px;
+}
+
+.modal button {
+  background: #97d569;
+  color: #043861;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal button:hover {
+  background: #81c25d;
+}
+
+.error {
+  margin-top: 10px;
+  color: #ff5c5c;
+  font-weight: bold;
 }
 </style>

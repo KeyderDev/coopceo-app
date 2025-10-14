@@ -543,6 +543,8 @@ export default {
 }
 
 /* --- Responsive --- */
+/* --- Responsive --- */
+/* --- Responsive --- */
 @media (max-width: 768px) {
   .main-section {
     flex-direction: column;
@@ -552,7 +554,27 @@ export default {
   .products-section {
     min-width: 100%;
     max-height: none;
-    /* que crezcan según contenido */
+  }
+
+  /* ✅ Scroll SOLO en productos */
+  .products-section {
+    max-height: 50vh; /* ocupa 60% de la pantalla */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Scrollbar elegante */
+  .products-section::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .products-section::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+  }
+
+  .products-section::-webkit-scrollbar-track {
+    background-color: transparent;
   }
 
   .order-item,
@@ -598,9 +620,11 @@ export default {
     width: 100%;
   }
 
-  .order-footer>button {
+  .order-footer > button {
     font-size: 1rem;
     padding: 0.8rem;
   }
 }
+
+
 </style>

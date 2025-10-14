@@ -1,53 +1,79 @@
 <template>
   <div class="email-container">
-    <h2 class="title">Enviar Email</h2>
-
-    <input v-model="subject" placeholder="Asunto" class="input" />
-    <textarea v-model="body" placeholder="Mensaje" class="textarea"></textarea>
-
-    <h3 class="subtitle">Selecciona usuarios</h3>
-    <div class="users-list">
-      <label class="user-label select-all">
+    <!-- Modal de contraseña -->
+    <div v-if="showPasswordModal" class="modal-overlay">
+      <div class="modal">
+        <h3>🔒 Acceso restringido</h3>
+        <p>Por favor, ingresa la contraseña para continuar:</p>
         <input
-          type="checkbox"
-          v-model="selectAll"
-          @change="toggleSelectAll"
+          type="password"
+          v-model="enteredPassword"
+          placeholder="Contraseña"
+          @keyup.enter="checkPassword"
         />
-        Seleccionar todos
-      </label>
-      <label v-for="user in users" :key="user.id" class="user-label">
-        <input type="checkbox" :value="user.id" v-model="selectedUsers" />
-        {{ user.email }}
-      </label>
+        <div class="modal-buttons">
+          <button @click="checkPassword">Entrar</button>
+        </div>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      </div>
     </div>
 
-    <button class="send-btn" @click="sendEmail">Enviar</button>
+    <!-- Contenido principal -->
+    <div v-if="!showPasswordModal">
+      <h2 class="title">Enviar Email</h2>
+
+      <input v-model="subject" placeholder="Asunto" class="input" />
+      <textarea v-model="body" placeholder="Mensaje" class="textarea"></textarea>
+
+      <h3 class="subtitle">Selecciona usuarios</h3>
+      <div class="users-list">
+        <label class="user-label select-all">
+          <input
+            type="checkbox"
+            v-model="selectAll"
+            @change="toggleSelectAll"
+          />
+          Seleccionar todos
+        </label>
+
+        <label v-for="user in users" :key="user.id" class="user-label">
+          <input type="checkbox" :value="user.id" v-model="selectedUsers" />
+          {{ user.email }}
+        </label>
+      </div>
+
+      <button class="send-btn" @click="sendEmail">Enviar</button>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
       users: [],
       selectedUsers: [],
-      subject: '',
-      body: '',
+      subject: "",
+      body: "",
       selectAll: false,
+      showPasswordModal: true,
+      enteredPassword: "",
+      correctPassword: "0000superadmin",
+      errorMessage: "",
     };
   },
   async created() {
     try {
-      const token = localStorage.getItem('auth_token');
-      const res = await axios.get('https://coopceo.ddns.net:8000/api/users', {
+      const token = localStorage.getItem("auth_token");
+      const res = await axios.get("https://coopceo.ddns.net:8000/api/users", {
         headers: { Authorization: `Bearer ${token}` },
       });
       this.users = res.data;
     } catch (error) {
       console.error(error);
-      alert('No autorizado. Por favor, inicia sesión.');
+      alert("No autorizado. Por favor, inicia sesión.");
     }
   },
   watch: {
@@ -57,21 +83,21 @@ export default {
   },
   methods: {
     toggleSelectAll() {
-      if (this.selectAll) {
-        this.selectedUsers = this.users.map(user => user.id);
-      } else {
-        this.selectedUsers = [];
-      }
+      this.selectedUsers = this.selectAll
+        ? this.users.map((user) => user.id)
+        : [];
     },
     async sendEmail() {
       if (!this.subject || !this.body || this.selectedUsers.length === 0) {
-        return alert('Completa todos los campos y selecciona al menos un usuario.');
+        return alert(
+          "Completa todos los campos y selecciona al menos un usuario."
+        );
       }
 
       try {
-        const token = localStorage.getItem('auth_token');
+        const token = localStorage.getItem("auth_token");
         await axios.post(
-          'https://coopceo.ddns.net:8000/api/send-email',
+          "https://coopceo.ddns.net:8000/api/send-email",
           {
             user_ids: this.selectedUsers,
             subject: this.subject,
@@ -79,14 +105,22 @@ export default {
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        alert('Emails enviados correctamente');
-        this.subject = '';
-        this.body = '';
+        alert("Emails enviados correctamente");
+        this.subject = "";
+        this.body = "";
         this.selectedUsers = [];
         this.selectAll = false;
       } catch (error) {
         console.error(error);
-        alert('Error al enviar los emails');
+        alert("Error al enviar los emails");
+      }
+    },
+    checkPassword() {
+      if (this.enteredPassword === this.correctPassword) {
+        this.showPasswordModal = false;
+        this.errorMessage = "";
+      } else {
+        this.errorMessage = "Contraseña incorrecta. Intenta de nuevo.";
       }
     },
   },
@@ -94,17 +128,21 @@ export default {
 </script>
 
 <style scoped>
+/* ==== CONTENEDOR PRINCIPAL ==== */
 .email-container {
+  width: 100%;
   max-width: 800px;
-  margin: 2rem auto;
-  padding: 2.5rem;
+  margin: 1.5rem auto;
+  padding: 2rem;
   background: #043b65;
   border-radius: 12px;
   color: #fff;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
+  box-sizing: border-box;
 }
 
+/* ==== TITULOS ==== */
 .title {
   margin-bottom: 1rem;
   color: #97d569;
@@ -119,6 +157,7 @@ export default {
   font-size: 1.2rem;
 }
 
+/* ==== CAMPOS ==== */
 .input,
 .textarea {
   width: 100%;
@@ -130,12 +169,7 @@ export default {
   color: #043b65;
   background: #97d569;
   font-weight: 500;
-}
-
-.input::placeholder,
-.textarea::placeholder {
-  color: #043b65;
-  opacity: 0.8;
+  box-sizing: border-box;
 }
 
 .textarea {
@@ -143,6 +177,7 @@ export default {
   resize: vertical;
 }
 
+/* ==== LISTA DE USUARIOS ==== */
 .users-list {
   display: flex;
   flex-direction: column;
@@ -163,13 +198,14 @@ export default {
   padding: 0.4rem 0.6rem;
   border-radius: 6px;
   transition: all 0.2s ease;
+  word-break: break-all;
 }
 
 .user-label:hover {
   background: rgba(151, 213, 105, 0.15);
 }
 
-.user-label input[type='checkbox'] {
+.user-label input[type="checkbox"] {
   width: 18px;
   height: 18px;
   accent-color: #97d569;
@@ -182,6 +218,7 @@ export default {
   padding-bottom: 0.5rem;
 }
 
+/* ==== BOTON ==== */
 .send-btn {
   margin-top: 1.5rem;
   width: 100%;
@@ -202,15 +239,78 @@ export default {
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
 }
 
+/* ==== MODAL ==== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.modal {
+  background: #043861;
+  border-radius: 12px;
+  padding: 25px 20px;
+  width: 90%;
+  max-width: 350px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+}
+
+.modal input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.modal-buttons {
+  margin-top: 15px;
+}
+
+.modal button {
+  background: #97d569;
+  color: #043861;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}
+
+.modal button:hover {
+  background: #81c25d;
+}
+
+.error {
+  margin-top: 10px;
+  color: #ff5c5c;
+  font-weight: bold;
+}
+
+/* ==== RESPONSIVE ==== */
 @media (max-width: 600px) {
   .email-container {
-    max-width: 95%;
-    padding: 1.5rem;
+    width: 100%;
+    padding: 1rem;
     margin: 1rem auto;
+    border-radius: 10px;
+    background: #043b65;
   }
 
   .title {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
   }
 
   .subtitle {
@@ -227,15 +327,36 @@ export default {
     min-height: 100px;
   }
 
+  .users-list {
+    max-height: 180px;
+    padding: 0.8rem;
+  }
+
   .user-label {
     font-size: 0.9rem;
-    padding: 0.3rem 0.5rem;
+    padding: 0.3rem 0.4rem;
   }
 
   .send-btn {
     font-size: 1rem;
     padding: 0.8rem;
   }
+
+  .modal {
+    width: 95%;
+    padding: 1.2rem;
+  }
+
+  .modal h3 {
+    font-size: 1.2rem;
+  }
+
+  .modal p {
+    font-size: 0.9rem;
+  }
+
+  .modal input {
+    font-size: 0.9rem;
+  }
 }
 </style>
-

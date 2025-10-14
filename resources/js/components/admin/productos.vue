@@ -1,237 +1,319 @@
 <template>
-    <div class="products-container">
-        <h2>Productos</h2>
+  <div class="products-container">
+    <h2>Productos</h2>
 
-        <!-- Formulario para crear producto -->
-        <form @submit.prevent="crearProducto" class="product-form">
-            <div>
-                <label>Nombre:</label>
-                <input type="text" v-model="nuevoProducto.nombre" required />
-            </div>
+    <!-- Formulario -->
+    <form @submit.prevent="crearProducto" class="product-form">
+      <div class="form-row">
+        <div>
+          <label>Nombre:</label>
+          <input type="text" v-model="nuevoProducto.nombre" required />
+        </div>
 
-            <div>
-                <label>Precio:</label>
-                <input type="number" v-model.number="nuevoProducto.precio" step="0.01" required />
-            </div>
+        <div>
+          <label>Precio:</label>
+          <input
+            type="number"
+            v-model.number="nuevoProducto.precio"
+            step="0.01"
+            required
+          />
+        </div>
 
-            <div>
-                <label>Categoría:</label>
-                <input type="text" v-model="nuevoProducto.categoria" required />
-            </div>
+        <div>
+          <label>Categoría:</label>
+          <input type="text" v-model="nuevoProducto.categoria" required />
+        </div>
 
-            <button type="submit">Agregar Producto</button>
-        </form>
+        <button type="submit">Agregar Producto</button>
+      </div>
+    </form>
 
-        <!-- Lista de productos -->
-        <h3>Productos existentes</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Categoría</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="producto in productos" :key="producto.id">
-                    <td>{{ producto.nombre }}</td>
-                    <td>{{ Number(producto.precio).toFixed(2) }}</td>
-                    <td>{{ producto.categoria }}</td>
-                    <td>
-                        <button class="delete-btn" @click="eliminarProducto(producto.id)">Eliminar</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- Lista de productos -->
+    <h3>Productos existentes</h3>
+
+    <!-- Vista tipo tabla en pantallas grandes -->
+    <div class="table-wrapper desktop-only">
+      <table class="products-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Categoría</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="producto in productos" :key="producto.id">
+            <td>{{ producto.nombre }}</td>
+            <td>${{ Number(producto.precio).toFixed(2) }}</td>
+            <td>{{ producto.categoria }}</td>
+            <td>
+              <button class="delete-btn" @click="eliminarProducto(producto.id)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+
+    <!-- Vista tipo tarjetas en móviles -->
+    <div class="mobile-cards mobile-only">
+      <div class="cards-scroll">
+        <div
+          v-for="producto in productos"
+          :key="producto.id"
+          class="product-card"
+        >
+          <div class="info"><strong>Nombre:</strong> {{ producto.nombre }}</div>
+          <div class="info">
+            <strong>Precio:</strong> ${{ Number(producto.precio).toFixed(2) }}
+          </div>
+          <div class="info">
+            <strong>Categoría:</strong> {{ producto.categoria }}
+          </div>
+          <button class="delete-btn" @click="eliminarProducto(producto.id)">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import axios from "axios";
 
 export default {
-    data() {
-        return {
-            productos: [],
-            nuevoProducto: {
-                nombre: "",
-                precio: 0,
-                categoria: ""
-            }
-        };
+  data() {
+    return {
+      productos: [],
+      nuevoProducto: { nombre: "", precio: 0, categoria: "" },
+    };
+  },
+  created() {
+    this.obtenerProductos();
+  },
+  methods: {
+    async obtenerProductos() {
+      try {
+        const res = await axios.get("/api/products");
+        this.productos = res.data;
+      } catch (error) {
+        console.error("Error al obtener productos:", error);
+      }
     },
-    created() {
-        this.obtenerProductos();
+    async crearProducto() {
+      try {
+        const res = await axios.post("/api/products", this.nuevoProducto);
+        this.productos.push(res.data);
+        this.nuevoProducto = { nombre: "", precio: 0, categoria: "" };
+      } catch (error) {
+        console.error("Error al crear producto:", error);
+      }
     },
-    methods: {
-        async obtenerProductos() {
-            try {
-                const res = await axios.get("/api/products");
-                this.productos = res.data;
-            } catch (error) {
-                console.error("Error al obtener productos:", error);
-            }
-        },
-        async crearProducto() {
-            try {
-                const res = await axios.post("/api/products", this.nuevoProducto);
-                this.productos.push(res.data);
-                this.nuevoProducto = { nombre: "", precio: 0, categoria: "" };
-            } catch (error) {
-                console.error("Error al crear producto:", error);
-            }
-        },
-        async eliminarProducto(id) {
-            if (!confirm("¿Seguro que deseas eliminar este producto?")) return;
-
-            try {
-                await axios.delete(`/api/products/${id}`);
-                // Quitar el producto de la lista local
-                this.productos = this.productos.filter(p => p.id !== id);
-            } catch (error) {
-                console.error("Error al eliminar producto:", error);
-            }
-        }
-    }
+    async eliminarProducto(id) {
+      if (!confirm("¿Seguro que deseas eliminar este producto?")) return;
+      try {
+        await axios.delete(`/api/products/${id}`);
+        this.productos = this.productos.filter((p) => p.id !== id);
+      } catch (error) {
+        console.error("Error al eliminar producto:", error);
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
 .products-container {
-    max-width: 750px;
-    margin: 2rem auto;
-    padding: 2rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-    color: #033861;
+  max-width: 1200px; /* 🔥 Más ancho en desktop */
+  margin: 3rem auto;
+  padding: 2.5rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(3, 56, 97, 0.08);
+  color: #033861;
+  transition: all 0.3s ease;
 }
 
-h2, h3 {
-    color: #033861;
-    margin-bottom: 1rem;
-    font-weight: 600;
+h2,
+h3 {
+  color: #033861;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
 }
 
+/* === FORMULARIO (desktop mejorado) === */
 .product-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
-.product-form div {
-    display: flex;
-    flex-direction: column;
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-end;
+}
+
+.form-row > div {
+  flex: 1;
+  min-width: 220px;
 }
 
 .product-form label {
-    margin-bottom: 0.4rem;
-    font-weight: 600;
-    color: #033861;
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #033861;
 }
 
 .product-form input {
-    padding: 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    font-size: 0.95rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: 0.3s;
 }
 
 .product-form input:focus {
-    border-color: #97d569;
-    box-shadow: 0 0 6px rgba(151, 213, 105, 0.4);
-    outline: none;
+  border-color: #97d569;
+  box-shadow: 0 0 8px rgba(151, 213, 105, 0.3);
+  outline: none;
 }
 
 button {
-    padding: 0.65rem 1.3rem;
-    background-color: #97d569;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    align-self: flex-start;
+  padding: 0.75rem 1.5rem;
+  background-color: #97d569;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
 }
 
 button:hover {
-    background-color: #033861;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(3, 56, 97, 0.3);
+  background-color: #033861;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(3, 56, 97, 0.25);
 }
 
+/* === TABLA (desktop) === */
 .table-wrapper {
-    overflow-x: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  background: #fdfdfd;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 600px; 
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-table th {
-    background-color: #033861;
-    color: #97d569;
-    padding: 0.8rem;
-    font-weight: 600;
-    text-align: left;
+.products-table th {
+  background-color: #033861;
+  color: #97d569;
+  padding: 1rem;
+  font-weight: 600;
+  text-align: left;
+  font-size: 1rem;
 }
 
-table td {
-    padding: 0.7rem;
-    border-bottom: 1px solid #e6e6e6;
+.products-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e6e6e6;
+  font-size: 0.95rem;
 }
 
-table tr:last-child td {
-    border-bottom: none;
-}
-
-table tr:hover {
-    background-color: #f0f9f5;
-    transition: background-color 0.3s;
+.products-table tr:hover {
+  background-color: #f5fbf2;
+  transition: background-color 0.3s;
 }
 
 .delete-btn {
-    padding: 0.45rem 0.9rem;
-    background-color: #ff4d4f;
-    color: #ffffff;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  background-color: #ff4d4f;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .delete-btn:hover {
-    background-color: #c41d1d;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(196, 29, 29, 0.3);
+  background-color: #c41d1d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(196, 29, 29, 0.3);
 }
 
-/* --- MEDIA QUERIES PARA MÓVILES --- */
-@media (max-width: 600px) {
-    .products-container {
-        padding: 1rem;
-        margin: 1rem;
-    }
+/* === TARJETAS (móvil) === */
+.mobile-cards {
+  display: none;
+}
 
-    .product-form input {
-        font-size: 0.9rem;
-        padding: 0.5rem;
-    }
+.cards-scroll {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: #97d569 #f5f5f5;
+}
 
-    button {
-        width: 100%;
-        text-align: center;
-    }
+.cards-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cards-scroll::-webkit-scrollbar-thumb {
+  background-color: #97d569;
+  border-radius: 8px;
+}
+
+.cards-scroll::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}
+
+.product-card {
+  background: #f8f9fa;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.product-card .info {
+  margin-bottom: 0.5rem;
+  color: #033861;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-cards {
+    display: block;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .products-container {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  button {
+    width: 100%;
+    text-align: center;
+  }
 }
 </style>
-

@@ -13,6 +13,12 @@
                         </router-link>
                     </li>
                     <li>
+                        <router-link to="calendar">
+                            <i class="fa-solid fa-calendar"></i>
+                            <span>Calendario</span>
+                        </router-link>
+                    </li>
+                    <li>
                         <router-link to="users">
                             <i class="fa-solid fa-users"></i>
                             <span>Socios</span>
@@ -194,7 +200,7 @@ export default {
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
 
-                const today = dayjs(); 
+                const today = dayjs();
 
                 const salesToday = response.data.filter(sale => {
                     const saleDate = dayjs(sale.created_at);
@@ -249,11 +255,12 @@ export default {
 }
 
 .user-position {
-  font-size: 0.9rem;
-  color: #aaa; /* gris elegante */
-  margin-top: -0.4rem;
-  margin-bottom: 0.8rem;
-  font-style: italic;
+    font-size: 0.9rem;
+    color: #aaa;
+    /* gris elegante */
+    margin-top: -0.4rem;
+    margin-bottom: 0.8rem;
+    font-style: italic;
 }
 
 

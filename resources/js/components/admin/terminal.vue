@@ -215,7 +215,6 @@ export default {
 
       const payload = {
         cliente_id: this.clienteId,
-        cajero_id: 1,
         total: this.total,
         metodo_pago: this.metodoPago,
         productos: this.orden.map(item => ({ product_id: item.id }))
@@ -343,17 +342,18 @@ export default {
 }
 
 .athmovil-btn {
-  background-color: #000; 
+  background-color: #000;
   color: #fff;
   font-weight: bold;
   border: none;
-  border-radius: 8px; 
-  padding: 0.2rem; /* mínimo padding */
+  border-radius: 8px;
+  padding: 0.2rem;
+  /* mínimo padding */
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  width: auto; 
+  width: auto;
 }
 
 .efectivo-btn {
@@ -558,7 +558,8 @@ export default {
 
   /* ✅ Scroll SOLO en productos */
   .products-section {
-    max-height: 50vh; /* ocupa 60% de la pantalla */
+    max-height: 50vh;
+    /* ocupa 60% de la pantalla */
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
@@ -620,11 +621,9 @@ export default {
     width: 100%;
   }
 
-  .order-footer > button {
+  .order-footer>button {
     font-size: 1rem;
     padding: 0.8rem;
   }
 }
-
-
 </style>

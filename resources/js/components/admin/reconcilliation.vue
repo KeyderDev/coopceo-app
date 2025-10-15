@@ -19,8 +19,16 @@
       <input type="number" v-model.number="coin.quantity" min="0" @focus="clearZero($event, coin)" />
     </div>
 
+    <h3>Rolled Currency</h3>
+    <!-- Rollos: $10 (quarters), $5 (dimes), $2 (nickels), $0.50 (pennies) -->
+    <div class="field" v-for="roll in rolledCurrency" :key="roll.value">
+      <label>{{ roll.label }}:</label>
+      <input type="number" v-model.number="roll.quantity" min="0" @focus="clearZero($event, roll)" />
+    </div>
+
     <div class="totals">
       <p>Total ventas en efectivo: <span>{{ totalSalesCash.toFixed(2) }}</span></p>
+      <p>Total contado (billetes + monedas + rollos): <span>{{ totalCounted.toFixed(2) }}</span></p>
       <p>Diferencia: <span :class="{ negative: difference < 0 }">{{ difference.toFixed(2) }}</span></p>
     </div>
 
@@ -34,7 +42,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      petty: 50, 
+      petty: 50,
       bills: [
         { label: '$20', value: 20, quantity: 0 },
         { label: '$10', value: 10, quantity: 0 },
@@ -42,27 +50,55 @@ export default {
         { label: '$1', value: 1, quantity: 0 },
       ],
       coins: [
-        { label: '$0.10', value: 0.10, quantity: 0 },
-        { label: '$0.05', value: 0.05, quantity: 0 },
-        { label: '$0.01', value: 0.01, quantity: 0 },
-        { label: '$0.25', value: 0.25, quantity: 0 },
+        { label: '$0.10', value: 0.10, quantity: 0 }, // dimes
+        { label: '$0.05', value: 0.05, quantity: 0 }, // nickels
+        { label: '$0.01', value: 0.01, quantity: 0 }, // pennies
+        { label: '$0.25', value: 0.25, quantity: 0 }, // quarters
       ],
-      totalSalesCash: 0, 
+      rolledCurrency: [
+        { label: 'Rollos de $10', value: 10.00, coinValue: 0.25, coinsPerRoll: 40, quantity: 0, key: 'roll_10' },
+        { label: 'Rollos de $5', value: 5.00, coinValue: 0.10, coinsPerRoll: 50, quantity: 0, key: 'roll_5' },
+        { label: 'Rollos de $2', value: 2.00, coinValue: 0.05, coinsPerRoll: 40, quantity: 0, key: 'roll_2' },
+        { label: 'Rollos de $0.50', value: 0.50, coinValue: 0.01, coinsPerRoll: 50, quantity: 0, key: 'roll_0_50' },
+      ],
+      totalSalesCash: 0,
     };
   },
   computed: {
-    totalCounted() {
-      const totalBills = this.bills.reduce((sum, b) => sum + (b.quantity || 0) * b.value, 0);
-      const totalCoins = this.coins.reduce((sum, c) => sum + (c.quantity || 0) * c.value, 0);
-      return parseFloat((totalBills + totalCoins).toFixed(2));
+    totalBills() {
+      return this.bills.reduce((sum, b) => sum + ((b.quantity || 0) * b.value), 0);
     },
-    
+
+    rolledCoinsAddition() {
+      const additions = {};
+      this.rolledCurrency.forEach(roll => {
+        const qty = parseInt(roll.quantity || 0, 10);
+        if (!qty) return;
+        const coinVal = roll.coinValue;
+        const extraCoins = qty * roll.coinsPerRoll;
+        additions[coinVal] = (additions[coinVal] || 0) + extraCoins;
+      });
+      return additions;
+    },
+
+    totalCoins() {
+      return this.coins.reduce((sum, c) => {
+        const manualQty = parseInt(c.quantity || 0, 10);
+        const extraCoins = this.rolledCoinsAddition[c.value] || 0;
+        const totalQtyForCoin = manualQty + extraCoins;
+        return sum + (totalQtyForCoin * c.value);
+      }, 0);
+    },
+
+    totalCounted() {
+      const total = this.totalBills + this.totalCoins;
+      return parseFloat(total.toFixed(2));
+    },
+
     difference() {
-      const expectedCash = this.petty + this.totalSalesCash;
+      const expectedCash = parseFloat((this.petty || 0) + (this.totalSalesCash || 0));
       return parseFloat((this.totalCounted - expectedCash).toFixed(2));
     }
-
-
   },
   async created() {
     const today = new Date();
@@ -88,30 +124,38 @@ export default {
         event.target.value = '';
       }
     },
+
     async saveReconciliation() {
-      const data = {
+      const rolledAdd = this.rolledCoinsAddition;
+
+      const payload = {
         petty: this.petty,
         bill_20: this.bills[0].quantity,
         bill_10: this.bills[1].quantity,
         bill_5: this.bills[2].quantity,
         bill_1: this.bills[3].quantity,
-        coin_10: this.coins[0].quantity,
-        coin_5: this.coins[1].quantity,
-        coin_1: this.coins[2].quantity,
-        coin_25: this.coins[3].quantity,
+        coin_10: (this.coins.find(c => c.value === 0.10).quantity || 0) + (rolledAdd[0.10] || 0),
+        coin_5: (this.coins.find(c => c.value === 0.05).quantity || 0) + (rolledAdd[0.05] || 0),
+        coin_1: (this.coins.find(c => c.value === 0.01).quantity || 0) + (rolledAdd[0.01] || 0),
+        coin_25: (this.coins.find(c => c.value === 0.25).quantity || 0) + (rolledAdd[0.25] || 0),
+        roll_10: this.rolledCurrency.find(r => r.key === 'roll_10').quantity,
+        roll_5: this.rolledCurrency.find(r => r.key === 'roll_5').quantity,
+        roll_2: this.rolledCurrency.find(r => r.key === 'roll_2').quantity,
+        roll_0_50: this.rolledCurrency.find(r => r.key === 'roll_0_50').quantity,
         total_counted: this.totalCounted,
         total_sales_cash: this.totalSalesCash,
         difference: this.difference
       };
 
       try {
-        await axios.post('/api/cash-reconciliations', data);
+        await axios.post('/api/cash-reconciliations', payload);
         alert('Cuadre guardado correctamente!');
       } catch (error) {
         console.error('Error al guardar cuadre:', error);
         alert('Ocurrió un error al guardar el cuadre.');
       }
     }
+
   }
 };
 </script>

@@ -2,15 +2,20 @@
   <div class="pos-container">
     <div class="client-section">
       <label>Seleccionar cliente:</label>
-      <select v-model="clienteId">
-        <option value="" disabled>Seleccione un cliente</option>
-        <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
+      <input type="text" v-model="busquedaCliente" placeholder="Buscar por nombre o #socio..." class="search-bar"
+        @focus="mostrarClientes = true" @blur="ocultarListaClientes" />
+
+      <!-- Lista de clientes filtrados -->
+      <div v-if="mostrarClientes && clientesFiltrados.length" class="clientes-list">
+        <div class="cliente-item" v-for="cliente in clientesFiltrados" :key="cliente.id"
+          @mousedown.prevent="seleccionarCliente(cliente)">
           {{ cliente.numero_socio ? `#${cliente.numero_socio} - ` : '' }}
           {{ (cliente.nombre || cliente.name) }} {{ (cliente.apellido || cliente.lastname) }}
-        </option>
-      </select>
-
+        </div>
+      </div>
     </div>
+
+
 
     <div class="main-section">
       <div class="order-section">
@@ -118,6 +123,10 @@ export default {
       mostrarModal: false,
       productoAEliminar: null,
       codigoSuperAdmin: "",
+      busquedaCliente: "",
+      mostrarClientes: false,
+      clienteSeleccionado: null,
+      user: {},
       athLogo: '/images/athpng.png'
 
     };
@@ -125,6 +134,15 @@ export default {
   computed: {
     subtotal() {
       return this.orden.reduce((acc, item) => acc + Number(item.precio) * item.cantidad, 0);
+    },
+    clientesFiltrados() {
+      if (!this.busquedaCliente) return this.clientes;
+      return this.clientes.filter(cliente => {
+        const nombreCompleto = `${cliente.nombre || cliente.name} ${cliente.apellido || cliente.lastname}`.toLowerCase();
+        const numeroSocio = cliente.numero_socio ? cliente.numero_socio.toString() : "";
+        const busqueda = this.busquedaCliente.toLowerCase();
+        return nombreCompleto.includes(busqueda) || numeroSocio.includes(busqueda);
+      });
     },
     total() {
       return this.subtotal;
@@ -139,9 +157,17 @@ export default {
       );
     }
   },
-  created() {
-    this.obtenerClientes();
-    this.obtenerProductos();
+  async created() {
+    try {
+      const token = localStorage.getItem("auth_token");
+      if (!token) throw new Error("No hay token de autenticación");
+
+      await this.loadCurrentUser(token);
+      await this.obtenerClientes();
+      await this.obtenerProductos();
+    } catch (err) {
+      console.error("Error al cargar usuario:", err);
+    }
   },
   methods: {
     async obtenerClientes() {
@@ -154,6 +180,29 @@ export default {
       } catch (err) {
         console.error("Error al cargar clientes:", err);
       }
+    },
+    async loadCurrentUser(token) {
+      try {
+        const res = await axios.get("/api/user", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.user = res.data;
+        console.log("Usuario logueado:", this.user); 
+      } catch (err) {
+        console.error("Error al obtener usuario logueado:", err);
+        this.user = null;
+      }
+    },
+    seleccionarCliente(cliente) {
+      this.clienteId = cliente.id;
+      this.clienteSeleccionado = cliente;
+      this.busquedaCliente = `${cliente.numero_socio ? `#${cliente.numero_socio} - ` : ''}${cliente.nombre || cliente.name} ${cliente.apellido || cliente.lastname}`;
+      this.mostrarClientes = false;
+    },
+    ocultarListaClientes() {
+      setTimeout(() => {
+        this.mostrarClientes = false;
+      }, 200); 
     },
     toggleManual() {
       this.mostrarManual = !this.mostrarManual;
@@ -215,6 +264,7 @@ export default {
 
       const payload = {
         cliente_id: this.clienteId,
+        cajero_id: this.user.id,
         total: this.total,
         metodo_pago: this.metodoPago,
         productos: this.orden.map(item => ({ product_id: item.id }))
@@ -381,10 +431,12 @@ export default {
 /* --- Sección de cliente --- */
 .client-section {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 0.5rem;
   margin-bottom: 1rem;
+  position: relative;
+  /* <-- importante para que la lista se posicione respecto al input */
 }
 
 .client-section select {
@@ -510,6 +562,30 @@ export default {
   box-sizing: border-box;
 }
 
+.clientes-list {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  position: absolute;
+  top: 100%;
+  /* justo debajo del input */
+  left: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+.cliente-item {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.cliente-item:hover {
+  background-color: #f0f0f0;
+}
+
+
 /* --- Métodos de pago --- */
 .payment-section {
   display: flex;
@@ -542,9 +618,6 @@ export default {
   border-radius: 6px;
 }
 
-/* --- Responsive --- */
-/* --- Responsive --- */
-/* --- Responsive --- */
 @media (max-width: 768px) {
   .main-section {
     flex-direction: column;

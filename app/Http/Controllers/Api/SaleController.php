@@ -19,17 +19,16 @@ class SaleController extends Controller
     {
         $request->validate([
             'cliente_id' => 'nullable|exists:users,id',
+            'cajero_id' => 'required|exists:users,id',
             'productos' => 'required|array|min:1',
             'productos.*.product_id' => 'required|exists:products,id',
             'total' => 'required|numeric',
             'metodo_pago' => 'required|string'
         ]);
 
-        $user = $request->user(); 
-
         $sale = Sale::create([
             'cliente_id' => $request->cliente_id,
-            'cajero_id' => $user->id, 
+            'cajero_id' => $request->cajero_id,
             'total' => $request->total,
             'metodo_pago' => $request->metodo_pago
         ]);

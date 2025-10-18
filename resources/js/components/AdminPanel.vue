@@ -88,7 +88,7 @@
             <div class="portal">
                 <router-view v-slot="{ Component }">
                     <div class="welcome-banner" v-if="!Component && user">
-                        <h3>Buen dia, {{ user.nombre }}</h3>
+                        <h3>{{ saludo }}, {{ user.nombre }}</h3>
                         <p>{{ currentDateTime }}</p>
                         <p v-if="weather">
                             Clima: {{ weather.icon }} {{ weather.temp }}°F, {{ weather.desc }}
@@ -144,6 +144,19 @@ export default {
         await this.loadWeather();
         await this.loadSalesToday(token);
 
+    },
+
+    computed: {
+        saludo() {
+            const hora = dayjs().hour();
+            if (hora >= 5 && hora < 12) {
+                return "Buenos días";
+            } else if (hora >= 12 && hora < 19) {
+                return "Buenas tardes";
+            } else {
+                return "Buenas noches";
+            }
+        }
     },
     methods: {
         updateDateTime() {
@@ -319,7 +332,6 @@ export default {
 }
 
 
-/* Iconos decorativos */
 .welcome-banner::before {
     position: absolute;
     top: -10px;
@@ -338,7 +350,6 @@ export default {
     transform: rotate(-15deg);
 }
 
-/* Animación de entrada */
 @keyframes fadeIn {
     0% {
         opacity: 0;
@@ -350,7 +361,6 @@ export default {
         transform: translateY(0);
     }
 }
-
 
 .sidebar .logo {
     display: flex;
@@ -488,7 +498,6 @@ export default {
     color: #044271;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .portal-container {
         flex-direction: column;

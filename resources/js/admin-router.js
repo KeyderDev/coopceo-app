@@ -11,6 +11,7 @@ import cuadres from './components/admin/cuadres.vue'
 import posTransactions from './components/admin/pos-transactions.vue'
 import email from './components/admin/email.vue'
 import Calendar from './components/admin/calendar.vue'
+import horarios from './components/admin/horarios.vue'
 
 const routes = [
   {
@@ -27,6 +28,7 @@ const routes = [
       { path: 'pos-transactions', component: posTransactions, name: 'pos-transactions' },
       { path: 'email', component: email, name: 'email' },
       { path: 'calendar', component: Calendar, name: 'calendar' },
+      { path: 'horarios', component: horarios, name: 'horarios' },
     ]
   },
   { path: '/login', component: Login, name: 'login' },

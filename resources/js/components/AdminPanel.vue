@@ -12,66 +12,106 @@
                             <span>Inicio</span>
                         </router-link>
                     </li>
+
                     <li>
                         <router-link to="calendar">
                             <i class="fa-solid fa-calendar"></i>
                             <span>Calendario</span>
                         </router-link>
                     </li>
+
                     <li>
                         <router-link to="users">
                             <i class="fa-solid fa-users"></i>
                             <span>Socios</span>
                         </router-link>
                     </li>
+
                     <li>
                         <router-link to="email">
                             <i class="fa-solid fa-envelope"></i>
                             <span>Email</span>
                         </router-link>
                     </li>
-                    <li>
-                        <router-link to="logs">
-                            <i class="fa-solid fa-scroll"></i>
-                            <span>Logs</span>
-                        </router-link>
+
+                    <li class="has-submenu" @click="toggleDropdown('gestion')">
+                        <div class="dropdown-toggle">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <span>Gestion</span>
+                            <i class="fa-solid fa-chevron-down chevron"
+                                :class="{ open: openDropdown === 'gestion' }"></i>
+                        </div>
+                        <ul v-show="openDropdown === 'gestion'" class="submenu">
+                            <li>
+                                <router-link to="horarios">
+                                    <i class="fa-solid fa-clock"></i> <span>Horarios</span>
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link to="inventario">
+                                    <i class="fa-solid fa-box"></i>
+                                    <span>Inventario</span>
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link to="documentos">
+                                    <i class="fa-solid fa-folder-open"></i> <span>Documentos</span>
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link to="logs">
+                                    <i class="fa-solid fa-scroll"></i>
+                                    <span>Logs</span>
+                                </router-link>
+                            </li>
+                        </ul>
                     </li>
+
+
                 </ul>
 
                 <h2 class="sidebar-section">POS</h2>
                 <ul>
-                    <li>
-                        <router-link to="terminal">
+                    <li class="has-submenu" @click="toggleDropdown('pos')">
+                        <div class="dropdown-toggle">
                             <i class="fa-solid fa-cash-register"></i>
                             <span>Terminal</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="productos">
-                            <i class="fa-solid fa-file"></i>
-                            <span>Productos</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="pos-transactions">
-                            <i class="fa-solid fa-list"></i>
-                            <span>Transacciones</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="cuadre">
-                            <i class="fa-solid fa-money-bill"></i>
-                            <span>Cuadre</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="cuadres">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>Cuadres</span>
-                        </router-link>
+                            <i class="fa-solid fa-chevron-down chevron" :class="{ open: openDropdown === 'pos' }"></i>
+                        </div>
+                        <ul v-show="openDropdown === 'pos'" class="submenu">
+                            <li>
+                                <router-link to="terminal">
+                                    <i class="fa-solid fa-cash-register"></i>
+                                    <span>Terminal</span>
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link to="productos">
+                                    <i class="fa-solid fa-box"></i>
+                                    <span>Productos</span>
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link to="pos-transactions">
+                                    <i class="fa-solid fa-list"></i>
+                                    <span>Transacciones</span>
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link to="cuadre">
+                                    <i class="fa-solid fa-money-bill"></i>
+                                    <span>Cuadre</span>
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link to="cuadres">
+                                    <i class="fa-solid fa-building-columns"></i>
+                                    <span>Cuadres</span>
+                                </router-link>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
-
             </nav>
         </aside>
 
@@ -104,7 +144,11 @@
 
                     <component v-if="Component" :is="Component" />
 
-                    <SalesChart v-else-if="showSalesChart && !Component" />
+                    <div v-else-if="showSalesChart && !Component" class="charts-container">
+                        <SalesChart />
+                        <WeeklySalesChart />
+                    </div>
+
                 </router-view>
             </div>
         </div>
@@ -114,11 +158,12 @@
 <script>
 import axios from "axios";
 import SalesChart from "./SalesChart.vue";
+import WeeklySalesChart from "./WeeklySalesChart.vue";
 import dayjs from "dayjs";
 
 export default {
     name: "AdminPanel",
-    components: { SalesChart },
+    components: { SalesChart, WeeklySalesChart },
     data() {
         return {
             user: null,
@@ -127,7 +172,7 @@ export default {
             totalSalesToday: null,
             currentDateTime: "",
             showSalesChart: true,
-
+            openDropdown: null,
         };
     },
     async created() {
@@ -143,22 +188,21 @@ export default {
         setInterval(this.updateDateTime, 4000);
         await this.loadWeather();
         await this.loadSalesToday(token);
-
     },
 
     computed: {
         saludo() {
             const hora = dayjs().hour();
-            if (hora >= 5 && hora < 12) {
-                return "Buenos días";
-            } else if (hora >= 12 && hora < 19) {
-                return "Buenas tardes";
-            } else {
-                return "Buenas noches";
-            }
+            if (hora >= 5 && hora < 12) return "Buenos días";
+            if (hora >= 12 && hora < 19) return "Buenas tardes";
+            return "Buenas noches";
         }
     },
+
     methods: {
+        toggleDropdown(menu) {
+            this.openDropdown = this.openDropdown === menu ? null : menu;
+        },
         updateDateTime() {
             this.currentDateTime = dayjs().format('dddd, D MMMM YYYY HH:mm:ss');
         },
@@ -205,7 +249,6 @@ export default {
                 this.handleInvalidToken();
             }
         },
-
         async loadSalesToday(token) {
             try {
                 const response = await axios.get(
@@ -214,14 +257,11 @@ export default {
                 );
 
                 const today = dayjs();
-
-                const salesToday = response.data.filter(sale => {
-                    const saleDate = dayjs(sale.created_at);
-                    return saleDate.isSame(today, 'day');
-                });
+                const salesToday = response.data.filter(sale =>
+                    dayjs(sale.created_at).isSame(today, 'day')
+                );
 
                 this.totalSalesToday = salesToday.reduce((sum, sale) => sum + parseFloat(sale.total), 0);
-
             } catch (error) {
                 console.error("Error al cargar ventas del día:", error);
                 this.totalSalesToday = 0;
@@ -231,12 +271,9 @@ export default {
             try {
                 const lat = 18.4655;
                 const lon = -66.1057;
-
                 const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit`;
-
                 const response = await axios.get(url);
                 const data = response.data.current_weather;
-
                 this.weather = {
                     temp: Math.round(data.temperature),
                     wind: data.windspeed,
@@ -270,12 +307,17 @@ export default {
 .user-position {
     font-size: 0.9rem;
     color: #aaa;
-    /* gris elegante */
     margin-top: -0.4rem;
     margin-bottom: 0.8rem;
     font-style: italic;
 }
 
+.charts-container {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
 
 .sidebar {
     width: 240px;
@@ -330,7 +372,6 @@ export default {
     text-align: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-
 
 .welcome-banner::before {
     position: absolute;
@@ -415,7 +456,6 @@ export default {
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     padding-top: 1rem;
 }
-
 
 .main-content {
     flex: 1;
@@ -554,6 +594,11 @@ export default {
         gap: 0.75rem;
     }
 
+    .charts-container {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
     .user-card {
         flex-direction: column;
         align-items: flex-start;
@@ -561,6 +606,63 @@ export default {
 
     .user-balance {
         margin-top: 0.5rem;
+    }
+}
+
+.has-submenu .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.has-submenu .dropdown-toggle:hover {
+    background-color: rgba(151, 213, 105, 0.15);
+    color: #97d569;
+}
+
+.submenu {
+    margin-top: 0.3rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    animation: fadeInSubmenu 0.3s ease;
+}
+
+.submenu li a {
+    display: flex;
+    align-items: center;
+    color: #ddd;
+    font-size: 0.9rem;
+}
+
+.submenu li a:hover {
+    color: #97d569;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.chevron {
+    transition: transform 0.3s ease;
+}
+
+.chevron.open {
+    transform: rotate(180deg);
+}
+
+@keyframes fadeInSubmenu {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 </style>

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\SaleController;
 use App\Http\Controllers\Api\CashReconciliationController;
 use App\Http\Controllers\Api\CustomEmailController;
 use App\Http\Controllers\CalendarNoteController;
+use App\Http\Controllers\ScheduleController;
 
 Route::middleware('auth:api')->post('/send-email', [CustomEmailController::class, 'sendCustomEmail']);
 
@@ -27,6 +28,11 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 });
+
+Route::get('/users', [ScheduleController::class, 'users']);
+Route::post('/schedules', [ScheduleController::class, 'store']);
+Route::post('/schedules/send-email', [ScheduleController::class, 'sendEmail']);
+
 
 Route::get('/ping', function () {
     return response()->json(['pong' => true]);

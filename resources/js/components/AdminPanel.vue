@@ -59,9 +59,9 @@
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="reconcilliation">
+                        <router-link to="cuadre">
                             <i class="fa-solid fa-money-bill"></i>
-                            <span>Reconcilliation</span>
+                            <span>Cuadre</span>
                         </router-link>
                     </li>
                     <li>

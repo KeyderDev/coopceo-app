@@ -36,7 +36,7 @@
             <td data-label="Cajero">
               {{ sale.cajero?.username || sale.cajero?.nombre || 'Sistema' }}
             </td>
-            <td data-label="Total" class="total">{{ sale.total }}</td>
+            <td data-label="Total" class="total">${{ sale.total }}</td>
             <td data-label="Método de Pago">{{ sale.metodo_pago }}</td>
             <td data-label="Creado">{{ formatDate(sale.created_at) }}</td>
             <td data-label="Actualizado">{{ formatDate(sale.updated_at) }}</td>

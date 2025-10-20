@@ -6,7 +6,7 @@ import Users from './components/admin/users.vue'
 import Logs from './components/admin/logs.vue'
 import terminal from './components/admin/terminal.vue'
 import Productos from './components/admin/productos.vue'
-import reconcilliation from './components/admin/reconcilliation.vue'
+import cuadre from './components/admin/cuadre.vue'
 import cuadres from './components/admin/cuadres.vue'
 import posTransactions from './components/admin/pos-transactions.vue'
 import email from './components/admin/email.vue'
@@ -22,7 +22,7 @@ const routes = [
       { path: 'logs', component: Logs, name: 'logs' }, 
       { path: 'terminal', component: terminal, name: 'terminal' },
       { path: 'productos', component: Productos, name: 'productos' },
-      { path: 'reconcilliation', component: reconcilliation, name: 'reconcilliation' },
+      { path: 'cuadre', component: cuadre, name: 'reconciliation' },
       { path: 'cuadres', component: cuadres, name: 'cuadres' },
       { path: 'pos-transactions', component: posTransactions, name: 'pos-transactions' },
       { path: 'email', component: email, name: 'email' },

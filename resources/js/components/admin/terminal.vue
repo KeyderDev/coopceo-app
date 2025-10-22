@@ -65,6 +65,9 @@
             <button class="athmovil-btn">
               <img :src="athLogo" alt="ATH" class="icon" width="90" height="90" />
             </button>
+            <router-link to="/cuadre" custom v-slot="{ navigate }">
+              <button class="reconciliation-btn" @click="navigate">Cuadre</button>
+            </router-link>
           </div>
 
           <div v-if="metodoPago === 'efectivo' && mostrarManual" class="cash-input">
@@ -187,7 +190,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` },
         });
         this.user = res.data;
-        console.log("Usuario logueado:", this.user); 
+        console.log("Usuario logueado:", this.user);
       } catch (err) {
         console.error("Error al obtener usuario logueado:", err);
         this.user = null;
@@ -202,7 +205,7 @@ export default {
     ocultarListaClientes() {
       setTimeout(() => {
         this.mostrarClientes = false;
-      }, 200); 
+      }, 200);
     },
     toggleManual() {
       this.mostrarManual = !this.mostrarManual;
@@ -404,6 +407,25 @@ export default {
   justify-content: center;
   cursor: pointer;
   width: auto;
+}
+
+.reconciliation-btn {
+  background-color: #2399EB;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 0.2rem;
+  /* mínimo padding */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: auto;
+}
+
+.reconciliation-btn:hover {
+  background-color: #1a7acb;
 }
 
 .efectivo-btn {

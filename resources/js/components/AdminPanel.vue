@@ -98,12 +98,6 @@
                                 </router-link>
                             </li>
                             <li>
-                                <router-link to="cuadre">
-                                    <i class="fa-solid fa-money-bill"></i>
-                                    <span>Cuadre</span>
-                                </router-link>
-                            </li>
-                            <li>
                                 <router-link to="cuadres">
                                     <i class="fa-solid fa-building-columns"></i>
                                     <span>Cuadres</span>
@@ -314,9 +308,17 @@ export default {
 
 .charts-container {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
     gap: 2rem;
     margin-top: 1.5rem;
+}
+
+.charts-container > * {
+    flex: 1 1 45%;
+    min-width: 300px;
+    max-width: 600px;
 }
 
 .sidebar {
@@ -596,7 +598,13 @@ export default {
 
     .charts-container {
         flex-direction: column;
+        align-items: center;
         gap: 1.5rem;
+    }
+
+    .charts-container > * {
+        width: 100%;
+        max-width: none;
     }
 
     .user-card {

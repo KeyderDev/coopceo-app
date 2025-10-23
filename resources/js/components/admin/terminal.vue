@@ -1,6 +1,5 @@
 <template>
   <div class="pos-container">
-    <!-- Loader -->
     <div v-if="isLoading" class="loader-overlay">
       <div class="loader">
         <div></div>
@@ -10,35 +9,21 @@
       <p>Cargando POS...</p>
     </div>
 
-    <!-- Contenido POS -->
     <div v-else>
-      <!-- Sección de cliente -->
       <div class="client-section">
         <label>Seleccionar cliente:</label>
-        <input
-          type="text"
-          v-model="busquedaCliente"
-          placeholder="Buscar por nombre o #socio..."
-          class="search-bar"
-          @focus="mostrarClientes = true"
-          @blur="ocultarListaClientes"
-        />
+        <input type="text" v-model="busquedaCliente" placeholder="Buscar por nombre o #socio..." class="search-bar"
+          @focus="mostrarClientes = true" @blur="ocultarListaClientes" />
         <div v-if="mostrarClientes && clientesFiltrados.length" class="clientes-list">
-          <div
-            class="cliente-item"
-            v-for="cliente in clientesFiltrados"
-            :key="cliente.id"
-            @mousedown.prevent="seleccionarCliente(cliente)"
-          >
+          <div class="cliente-item" v-for="cliente in clientesFiltrados" :key="cliente.id"
+            @mousedown.prevent="seleccionarCliente(cliente)">
             {{ cliente.numero_socio ? '#' + cliente.numero_socio + ' - ' : '' }}
             {{ (cliente.nombre || cliente.name) }} {{ (cliente.apellido || cliente.lastname) }}
           </div>
         </div>
       </div>
 
-      <!-- Sección principal -->
       <div class="main-section">
-        <!-- Orden -->
         <div class="order-section">
           <h3>Orden</h3>
           <div class="order-items-container">
@@ -76,7 +61,7 @@
 
             <div v-if="metodoPago === 'efectivo'" class="cash-buttons">
               <button class="exacto-btn" @click="seleccionarExacto">Exacto</button>
-              <button v-for="monto in [1,5,10,20]" :key="monto" class="efectivo-btn" @click="seleccionarCash(monto)">
+              <button v-for="monto in [1, 5, 10, 20]" :key="monto" class="efectivo-btn" @click="seleccionarCash(monto)">
                 ${{ monto }}
               </button>
               <button class="manual-btn" @click="toggleManual">Manual</button>
@@ -86,10 +71,8 @@
               <button class="athmovil-btn">
                 <img :src="athLogo" alt="ATH" class="icon" width="90" height="90" />
               </button>
-              <router-link to="/cuadre" custom v-slot="{ navigate }">
-                <button class="reconciliation-btn" @click="navigate">Cuadre</button>
-              </router-link>
               <button class="more-options-btn" @click="toggleMasOpciones">Mas Opciones</button>
+              <button class="more-options-btn" @click="volverProductos">Atras</button>
             </div>
 
             <div v-if="metodoPago === 'efectivo' && mostrarManual" class="cash-input">
@@ -103,30 +86,30 @@
           </div>
         </div>
 
-        <!-- Productos / Opciones -->
         <div class="products-section">
           <h3>Productos</h3>
 
-          <!-- Buscador solo si mostramos productos -->
-          <input type="text" v-model="busqueda" placeholder="Buscar producto..." class="search-bar" v-if="!mostrarOpciones" />
+          <input type="text" v-model="busqueda" placeholder="Buscar producto..." class="search-bar"
+            v-if="!mostrarOpciones" />
 
-          <!-- BOTONES DE OPCIONES -->
           <div v-if="mostrarOpciones" class="productos-botones">
-            <button class="producto-boton" @click="opcion1">Opción 1</button>
-            <button class="producto-boton" @click="opcion2">Opción 2</button>
-            <button class="producto-boton" @click="opcion3">Opción 3</button>
-            <button class="producto-boton" @click="opcion4">Opción 4</button>
+            <button class="producto-boton">Codigo Promocional</button>
+            <button class="producto-boton" style="background-color: goldenrod;">Refund</button>
+            <router-link to="/cuadre" custom v-slot="{ navigate }">
+              <button class="reconciliation-btn" @click="navigate">Cuadre</button>
+            </router-link>
           </div>
 
-          <!-- LISTADO DE PRODUCTOS -->
           <div v-else>
             <div v-if="productos.length === 0">Cargando productos...</div>
             <div v-else>
               <div v-if="Object.keys(productosPorCategoria).length === 0">No se encontraron productos</div>
-              <div v-for="(listaProductos, categoria) in productosPorCategoria" :key="categoria" class="categoria-bloque">
+              <div v-for="(listaProductos, categoria) in productosPorCategoria" :key="categoria"
+                class="categoria-bloque">
                 <h4 class="categoria-titulo">{{ categoria }}</h4>
                 <div class="productos-grid">
-                  <button v-for="producto in listaProductos" :key="producto.id" class="producto-boton" :class="obtenerClaseCategoria(producto)" @click="agregarProducto(producto)">
+                  <button v-for="producto in listaProductos" :key="producto.id" class="producto-boton"
+                    :class="obtenerClaseCategoria(producto)" @click="agregarProducto(producto)">
                     {{ producto.nombre }}
                   </button>
                 </div>
@@ -136,7 +119,6 @@
         </div>
       </div>
 
-      <!-- Modal -->
       <div v-if="mostrarModal" class="modal-overlay">
         <div class="modal">
           <h3>Ingrese código superadmin para void</h3>
@@ -174,7 +156,7 @@ export default {
       clienteSeleccionado: null,
       user: {},
       athLogo: "/images/athpng.png",
-      mostrarOpciones: false, // <-- nuevo estado
+      mostrarOpciones: false,
     };
   },
   computed: {
@@ -218,7 +200,7 @@ export default {
     },
   },
   async created() {
-    const MIN_LOADING_TIME = 1500; // 1.5 segundos
+    const MIN_LOADING_TIME = 1500;
     const startTime = Date.now();
     try {
       const token = localStorage.getItem("auth_token");
@@ -241,6 +223,9 @@ export default {
     async loadCurrentUser(token) {
       const res = await axios.get("/api/user", { headers: { Authorization: `Bearer ${token}` } });
       this.user = res.data;
+    },
+    volverProductos() {
+      this.mostrarOpciones = false;
     },
     async obtenerClientes() {
       const token = localStorage.getItem("auth_token");
@@ -315,11 +300,6 @@ export default {
       } finally { this.loading = false; }
     },
     toggleMasOpciones() { this.mostrarOpciones = !this.mostrarOpciones; },
-    // Métodos de botones de opciones
-    opcion1() { alert("Opción 1 seleccionada"); },
-    opcion2() { alert("Opción 2 seleccionada"); },
-    opcion3() { alert("Opción 3 seleccionada"); },
-    opcion4() { alert("Opción 4 seleccionada"); },
   },
 };
 </script>
@@ -388,7 +368,6 @@ export default {
   color: #fff;
 }
 
-/* --- Botones de efectivo --- */
 .cash-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -428,6 +407,20 @@ export default {
   width: auto;
 }
 
+.producto-boton {
+  background-color: #4caf50;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: auto;
+}
+
 .reconciliation-btn {
   background-color: #2399EB;
   color: #fff;
@@ -447,7 +440,7 @@ export default {
 }
 
 .more-options-btn {
-  background-color: #2399EB;
+  background-color: #033963;
   color: #fff;
   font-weight: bold;
   border: none;
@@ -461,7 +454,7 @@ export default {
 }
 
 .more-options-btn:hover {
-  background-color: #1a7acb;
+  background-color: #022f4a;
 }
 
 

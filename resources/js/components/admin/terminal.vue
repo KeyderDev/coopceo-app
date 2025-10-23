@@ -1,11 +1,11 @@
 <template>
   <div class="pos-container">
+    <!-- Sección de cliente -->
     <div class="client-section">
       <label>Seleccionar cliente:</label>
       <input type="text" v-model="busquedaCliente" placeholder="Buscar por nombre o #socio..." class="search-bar"
         @focus="mostrarClientes = true" @blur="ocultarListaClientes" />
 
-      <!-- Lista de clientes filtrados -->
       <div v-if="mostrarClientes && clientesFiltrados.length" class="clientes-list">
         <div class="cliente-item" v-for="cliente in clientesFiltrados" :key="cliente.id"
           @mousedown.prevent="seleccionarCliente(cliente)">
@@ -15,9 +15,9 @@
       </div>
     </div>
 
-
-
+    <!-- Sección principal -->
     <div class="main-section">
+      <!-- Orden -->
       <div class="order-section">
         <h3>Orden</h3>
 
@@ -53,6 +53,7 @@
               <option value="athmovil">ATH Movil</option>
             </select>
           </div>
+
           <div v-if="metodoPago === 'efectivo'" class="cash-buttons">
             <button class="exacto-btn" @click="seleccionarExacto">Exacto</button>
             <button v-for="monto in [1, 5, 10, 20]" :key="monto" class="efectivo-btn" @click="seleccionarCash(monto)">
@@ -81,20 +82,33 @@
         </div>
       </div>
 
+      <!-- Productos -->
       <div class="products-section">
         <h3>Productos</h3>
 
         <input type="text" v-model="busqueda" placeholder="Buscar producto..." class="search-bar" />
 
         <div v-if="productos.length === 0">Cargando productos...</div>
-        <div class="product-card" v-for="producto in productosFiltrados" :key="producto.id">
-          <span>{{ producto.nombre }}</span>
-          <span>${{ Number(producto.precio).toFixed(2) }}</span>
-          <button @click="agregarProducto(producto)">Agregar</button>
+        <div v-else>
+          <div v-if="Object.keys(productosPorCategoria).length === 0">
+            No se encontraron productos
+          </div>
+
+          <!-- AGRUPADOS POR CATEGORÍA -->
+          <div v-for="(listaProductos, categoria) in productosPorCategoria" :key="categoria" class="categoria-bloque">
+            <h4 class="categoria-titulo">{{ categoria }}</h4>
+            <div class="productos-grid">
+              <button v-for="producto in listaProductos" :key="producto.id" class="producto-boton"
+                :class="obtenerClaseCategoria(producto)" @click="agregarProducto(producto)">
+                {{ producto.nombre }}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- Modal -->
     <div v-if="mostrarModal" class="modal-overlay">
       <div class="modal">
         <h3>Ingrese código superadmin para void</h3>
@@ -130,71 +144,91 @@ export default {
       mostrarClientes: false,
       clienteSeleccionado: null,
       user: {},
-      athLogo: '/images/athpng.png'
-
+      athLogo: "/images/athpng.png",
     };
   },
   computed: {
     subtotal() {
-      return this.orden.reduce((acc, item) => acc + Number(item.precio) * item.cantidad, 0);
-    },
-    clientesFiltrados() {
-      if (!this.busquedaCliente) return this.clientes;
-      return this.clientes.filter(cliente => {
-        const nombreCompleto = `${cliente.nombre || cliente.name} ${cliente.apellido || cliente.lastname}`.toLowerCase();
-        const numeroSocio = cliente.numero_socio ? cliente.numero_socio.toString() : "";
-        const busqueda = this.busquedaCliente.toLowerCase();
-        return nombreCompleto.includes(busqueda) || numeroSocio.includes(busqueda);
-      });
+      return this.orden.reduce(
+        (acc, item) => acc + Number(item.precio) * item.cantidad,
+        0
+      );
     },
     total() {
       return this.subtotal;
     },
     cambio() {
-      return this.cashRecibido - this.total > 0 ? this.cashRecibido - this.total : 0;
+      return this.cashRecibido - this.total > 0
+        ? this.cashRecibido - this.total
+        : 0;
+    },
+    clientesFiltrados() {
+      if (!this.busquedaCliente) return this.clientes;
+      return this.clientes.filter((cliente) => {
+        const nombreCompleto = `${cliente.nombre || cliente.name} ${cliente.apellido || cliente.lastname
+          }`.toLowerCase();
+        const numeroSocio = cliente.numero_socio
+          ? cliente.numero_socio.toString()
+          : "";
+        const busqueda = this.busquedaCliente.toLowerCase();
+        return (
+          nombreCompleto.includes(busqueda) || numeroSocio.includes(busqueda)
+        );
+      });
     },
     productosFiltrados() {
       if (!this.busqueda) return this.productos;
-      return this.productos.filter(p =>
-        p.nombre.toLowerCase().includes(this.busqueda.toLowerCase())
+      return this.productos.filter((p) =>
+        (p.nombre || "").toLowerCase().includes(this.busqueda.toLowerCase())
       );
-    }
+    },
+    productosPorCategoria() {
+      const grupos = {};
+      const ordenados = [...this.productosFiltrados].sort((a, b) => {
+        const ca = (a.categoria || "Sin categoría").toLowerCase();
+        const cb = (b.categoria || "Sin categoría").toLowerCase();
+        if (ca < cb) return -1;
+        if (ca > cb) return 1;
+        return (a.nombre || "").localeCompare(b.nombre || "");
+      });
+      ordenados.forEach((producto) => {
+        const categoria =
+          producto.categoria && producto.categoria !== ""
+            ? producto.categoria
+            : "Sin categoría";
+        if (!grupos[categoria]) grupos[categoria] = [];
+        grupos[categoria].push(producto);
+      });
+      return grupos;
+    },
   },
   async created() {
     try {
       const token = localStorage.getItem("auth_token");
-      if (!token) throw new Error("No hay token de autenticación");
-
       await this.loadCurrentUser(token);
       await this.obtenerClientes();
       await this.obtenerProductos();
     } catch (err) {
-      console.error("Error al cargar usuario:", err);
+      console.error("Error al cargar:", err);
     }
   },
   methods: {
-    async obtenerClientes() {
-      try {
-        const token = localStorage.getItem("auth_token");
-        const res = await axios.get("/api/users", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        this.clientes = res.data;
-      } catch (err) {
-        console.error("Error al cargar clientes:", err);
-      }
-    },
     async loadCurrentUser(token) {
-      try {
-        const res = await axios.get("/api/user", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        this.user = res.data;
-        console.log("Usuario logueado:", this.user);
-      } catch (err) {
-        console.error("Error al obtener usuario logueado:", err);
-        this.user = null;
-      }
+      const res = await axios.get("/api/user", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      this.user = res.data;
+    },
+    async obtenerClientes() {
+      const token = localStorage.getItem("auth_token");
+      const res = await axios.get("/api/users", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      this.clientes = res.data;
+    },
+    async obtenerProductos() {
+      const res = await axios.get("/api/products");
+      this.productos = res.data;
     },
     seleccionarCliente(cliente) {
       this.clienteId = cliente.id;
@@ -203,32 +237,27 @@ export default {
       this.mostrarClientes = false;
     },
     ocultarListaClientes() {
-      setTimeout(() => {
-        this.mostrarClientes = false;
-      }, 200);
-    },
-    toggleManual() {
-      this.mostrarManual = !this.mostrarManual;
-      if (!this.mostrarManual) this.cashRecibido = 0;
-    },
-    async obtenerProductos() {
-      try {
-        const res = await axios.get("/api/products");
-        this.productos = res.data;
-      } catch (err) {
-        console.error("Error al cargar productos:", err);
-      }
+      setTimeout(() => (this.mostrarClientes = false), 200);
     },
     agregarProducto(producto) {
-      const index = this.orden.findIndex(p => p.id === producto.id);
-      if (index !== -1) {
-        this.orden[index].cantidad += 1;
-      } else {
-        this.orden.push({ ...producto, cantidad: 1 });
-      }
+      const index = this.orden.findIndex((p) => p.id === producto.id);
+      if (index !== -1) this.orden[index].cantidad += 1;
+      else this.orden.push({ ...producto, cantidad: 1 });
+    },
+    obtenerClaseCategoria(producto) {
+      const cat = producto.categoria?.toLowerCase() || "";
+      if (cat.includes("bebidas")) {
+        return producto.nombre.toLowerCase().includes("agua")
+          ? "boton-agua"
+          : "boton-bebida";
+      } else if (cat.includes("refrigerio")) return "boton-refrigerio";
+      else if (cat.includes("dulce")) return "boton-dulce";
+      else if (cat.includes("chocolate")) return "boton-chocolates"; // <--- agregado
+      else if (cat.includes("comida")) return "boton-comida";
+      else return "boton-otros";
     },
     intentarEliminarProducto(index) {
-      if (this.metodoPago === 'efectivo' && this.cashRecibido > 0) {
+      if (this.metodoPago === "efectivo" && this.cashRecibido > 0) {
         this.productoAEliminar = index;
         this.mostrarModal = true;
       } else {
@@ -243,61 +272,47 @@ export default {
         this.eliminarProducto(this.productoAEliminar);
         this.mostrarModal = false;
         this.codigoSuperAdmin = "";
-        this.productoAEliminar = null;
-      } else {
-        alert("Código incorrecto. No se puede eliminar el producto.");
-      }
+      } else alert("Código incorrecto");
     },
     cancelarVoid() {
       this.mostrarModal = false;
       this.codigoSuperAdmin = "";
-      this.productoAEliminar = null;
     },
     seleccionarCash(monto) {
-      this.metodoPago = "efectivo";
       this.cashRecibido += monto;
     },
     seleccionarExacto() {
-      this.metodoPago = "efectivo";
       this.cashRecibido = this.total;
+    },
+    toggleManual() {
+      this.mostrarManual = !this.mostrarManual;
+      if (!this.mostrarManual) this.cashRecibido = 0;
     },
     async terminarOrden() {
       if (this.orden.length === 0) return;
       this.loading = true;
-
       const payload = {
         cliente_id: this.clienteId,
         cajero_id: this.user.id,
         total: this.total,
         metodo_pago: this.metodoPago,
-        productos: this.orden.map(item => ({ product_id: item.id }))
+        productos: this.orden.map((i) => ({ product_id: i.id })),
       };
-
       try {
         const token = localStorage.getItem("auth_token");
         const res = await axios.post("/api/sales", payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         alert(`Orden registrada con éxito! Dividendos actuales: ${res.data.dividendos_actuales}`);
         this.orden = [];
         this.clienteId = null;
-        this.metodoPago = "efectivo";
         this.cashRecibido = 0;
-      } catch (error) {
-        if (error.response) {
-          if (error.response.status === 422 && error.response.data.errors) {
-            alert("Error de validación: " + JSON.stringify(error.response.data.errors));
-          } else {
-            alert("Error al procesar la orden: " + (error.response.data.message || "desconocido"));
-          }
-        } else {
-          alert("Error al procesar la orden");
-        }
+      } catch (e) {
+        alert("Error al procesar la orden");
       } finally {
         this.loading = false;
       }
-    }
+    },
   },
 };
 </script>
@@ -376,7 +391,6 @@ export default {
 
 .cash-buttons button {
   flex: 1;
-  /* background-color: #4caf50; */
   color: #fff;
   border: none;
   padding: 0.8rem;
@@ -390,7 +404,6 @@ export default {
 .cash-buttons2 {
   display: flex;
   gap: 0.5rem;
-  /* border: 1px solid black; */
   margin-top: 0.5rem;
 }
 
@@ -401,7 +414,6 @@ export default {
   border: none;
   border-radius: 8px;
   padding: 0.2rem;
-  /* mínimo padding */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -416,7 +428,6 @@ export default {
   border: none;
   border-radius: 8px;
   padding: 0.2rem;
-  /* mínimo padding */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -458,7 +469,6 @@ export default {
   gap: 0.5rem;
   margin-bottom: 1rem;
   position: relative;
-  /* <-- importante para que la lista se posicione respecto al input */
 }
 
 .client-section select {
@@ -536,6 +546,86 @@ export default {
   flex-wrap: wrap;
 }
 
+/* --- AGRUPACIÓN POR CATEGORÍA --- */
+.categoria-bloque {
+  margin-bottom: 1rem;
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 0.8rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.categoria-titulo {
+  margin-bottom: 0.6rem;
+  font-weight: bold;
+  text-transform: capitalize;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 0.3rem;
+}
+
+.productos-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.5rem;
+}
+
+/* --- Colores por categoría --- */
+.boton-bebida {
+  background-color: #e53935;
+  color: #fff;
+}
+
+.boton-agua {
+  background-color: #2196f3;
+  color: #fff;
+}
+
+.boton-refrigerio {
+  background-color: #2196f3;
+  color: #fff;
+}
+
+.boton-dulce {
+  background-color: #e53935;
+  color: #fff;
+}
+
+.boton-comida {
+  background-color: #e53935;
+  color: #fff;
+}
+
+.boton-otros {
+  background-color: #757575;
+  color: #fff;
+}
+
+.boton-chocolates {
+  background-color: #8d6e63;
+  color: #fff;
+}
+
+
+.producto-boton {
+  border: none;
+  padding: 0.6rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.producto-boton:hover {
+  filter: brightness(0.9);
+}
+
 .product-card button {
   background-color: #4caf50;
   color: #fff;
@@ -592,7 +682,6 @@ export default {
   background-color: #fff;
   position: absolute;
   top: 100%;
-  /* justo debajo del input */
   left: 0;
   width: 100%;
   z-index: 10;
@@ -651,15 +740,12 @@ export default {
     max-height: none;
   }
 
-  /* ✅ Scroll SOLO en productos */
   .products-section {
     max-height: 50vh;
-    /* ocupa 60% de la pantalla */
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Scrollbar elegante */
   .products-section::-webkit-scrollbar {
     width: 6px;
   }
@@ -719,6 +805,11 @@ export default {
   .order-footer>button {
     font-size: 1rem;
     padding: 0.8rem;
+  }
+
+  .producto-boton {
+    flex: 1 1 calc(50% - 0.6rem);
+    padding: 0.6rem 1rem;
   }
 }
 </style>

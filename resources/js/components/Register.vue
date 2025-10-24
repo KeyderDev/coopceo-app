@@ -8,69 +8,35 @@
         <div class="form-row">
           <div class="form-group">
             <label for="nombre">Nombre</label>
-            <input
-              id="nombre"
-              v-model="nombre"
-              type="text"
-              placeholder="Tu nombre"
-              required
-            />
+            <input id="nombre" v-model="nombre" type="text" placeholder="Tu nombre" required />
           </div>
 
           <div class="form-group">
             <label for="apellido">Apellidos</label>
-            <input
-              id="apellido"
-              v-model="apellido"
-              type="text"
-              placeholder="Tus apellidos"
-              required
-            />
+            <input id="apellido" v-model="apellido" type="text" placeholder="Tus apellidos" required />
           </div>
         </div>
 
         <div class="form-group">
           <label for="telefono">Teléfono</label>
-          <input
-            id="telefono"
-            v-model="telefono"
-            type="text"
-            placeholder="Tu número de teléfono"
-          />
+          <input id="telefono" v-model="telefono" type="text" placeholder="Tu número de teléfono" />
         </div>
 
         <div class="form-group">
           <label for="email">Correo Electrónico</label>
-          <input
-            id="email"
-            v-model="email"
-            type="email"
-            placeholder="Email"
-            required
-          />
+          <input id="email" v-model="email" type="email" placeholder="Email" required />
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label for="password">Contraseña</label>
-            <input
-              id="password"
-              v-model="password"
-              type="password"
-              placeholder="Tu contraseña"
-              required
-            />
+            <input id="password" v-model="password" type="password" placeholder="Tu contraseña" required />
           </div>
 
           <div class="form-group">
             <label for="password_confirmation">Confirmar Contraseña</label>
-            <input
-              id="password_confirmation"
-              v-model="password_confirmation"
-              type="password"
-              placeholder="Repite tu contraseña"
-              required
-            />
+            <input id="password_confirmation" v-model="password_confirmation" type="password"
+              placeholder="Repite tu contraseña" required />
           </div>
         </div>
 
@@ -111,7 +77,7 @@ export default {
       this.error = null;
 
       try {
-        const response = await axios.post("https://coopceo.ddns.net:8000/api/register", {
+        const response = await axios.post(`${import.meta.env.VITE_APP_URL}/api/register`, {
           nombre: this.nombre,
           apellido: this.apellido,
           telefono: this.telefono,

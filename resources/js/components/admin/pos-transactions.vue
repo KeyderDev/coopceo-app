@@ -101,7 +101,7 @@ export default {
   async created() {
     try {
       const token = localStorage.getItem('auth_token');
-      const response = await axios.get('https://coopceo.ddns.net:8000/api/sales', {
+      const response = await axios.get(`${import.meta.env.VITE_APP_URL}/api/sales`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

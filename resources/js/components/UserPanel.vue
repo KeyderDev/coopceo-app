@@ -68,13 +68,12 @@ export default {
     async created() {
         const token = localStorage.getItem('auth_token');
         if (!token) {
-            // Si no hay token, redirigir al login
             window.location.href = "/user-panel/login";
             return;
         }
 
         try {
-            const response = await axios.get("https://coopceo.ddns.net:8000/api/user", {
+            const response = await axios.get(`${import.meta.env.VITE_APP_URL}/api/user`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             this.user = response.data;
@@ -88,14 +87,14 @@ export default {
         async logout() {
             const token = localStorage.getItem('auth_token');
             try {
-                await axios.post("https://coopceo.ddns.net:8000/api/logout", {}, {
+                await axios.post(`${import.meta.env.VITE_APP_URL}/api/logout`, {}, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             } catch (error) {
                 console.warn("Error en logout, pero continuando:", error);
             } finally {
                 localStorage.removeItem('auth_token');
-                window.location.href = "/user-panel/login";
+                window.location.href = "/user-panel/login"; P
             }
         }
     }

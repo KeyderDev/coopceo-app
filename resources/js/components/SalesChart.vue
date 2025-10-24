@@ -1,12 +1,7 @@
 <template>
   <div class="sales-chart-container">
     <div v-if="loaded">
-      <apexchart
-        type="bar"
-        height="350"
-        :series="series"
-        :options="chartOptions"
-      />
+      <apexchart type="bar" height="350" :series="series" :options="chartOptions" />
     </div>
     <p v-else>Cargando datos de ventas...</p>
   </div>
@@ -38,10 +33,10 @@ export default defineComponent({
         const token = localStorage.getItem("auth_token");
 
         const response = await axios.get(
-          "https://coopceo.ddns.net:8000/api/sales",
+          `${import.meta.env.VITE_APP_URL}/api/sales`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-
+        
         console.log("🔹 Datos recibidos de la API:", response.data);
 
         if (!Array.isArray(response.data)) {
@@ -100,13 +95,14 @@ export default defineComponent({
   background: #fff;
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  margin: 2rem 0 0 2rem; 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin: 2rem 0 0 2rem;
   width: 80%;
   max-width: 1000px;
 }
+
 .sales-chart-container h2 {
-  text-align: left; 
+  text-align: left;
   margin-bottom: 1rem;
   color: #044271;
 }

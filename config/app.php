@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://coopceo.ddns.net:8000'),
+    'url' => env('APP_URL', 'https://coopceo.ddns.net'),
 
     /*
     |--------------------------------------------------------------------------

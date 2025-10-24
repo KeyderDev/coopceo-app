@@ -30,15 +30,15 @@ export default defineComponent({
         const loadWeeklySales = async () => {
             try {
                 const token = localStorage.getItem("auth_token");
-                const response = await axios.get("https://coopceo.ddns.net:8000/api/sales", {
+                const response = await axios.get(`${import.meta.env.VITE_APP_URL}/api/sales`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
-                const sales = Array(7).fill(0); 
+                const sales = Array(7).fill(0);
                 const today = new Date();
-                const dayOfWeekToday = today.getDay(); 
+                const dayOfWeekToday = today.getDay();
                 const startOfWeek = new Date(today);
-                startOfWeek.setDate(today.getDate() - dayOfWeekToday); 
+                startOfWeek.setDate(today.getDate() - dayOfWeekToday);
 
                 response.data.forEach(sale => {
                     const saleDate = new Date(sale.created_at);

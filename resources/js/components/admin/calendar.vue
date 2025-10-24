@@ -16,12 +16,8 @@
     </div>
 
     <div class="days-grid">
-      <div
-        v-for="cell in monthGrid"
-        :key="cell.key"
-        :class="['day-cell', { 'other-month': cell.other, 'today': cell.isToday }]"
-        @click="openNote(cell.date)"
-      >
+      <div v-for="cell in monthGrid" :key="cell.key"
+        :class="['day-cell', { 'other-month': cell.other, 'today': cell.isToday }]" @click="openNote(cell.date)">
         <div class="day-number">{{ cell.day }}</div>
 
         <!-- 🔹 Mostrar mini-notas en la celda -->
@@ -42,12 +38,12 @@
         <div class="modal-date">{{ formatFullDate(modal.date) }}</div>
 
         <!-- Lista de notas -->
-<div class="note-list">
-  <div v-for="(note, idx) in modal.list" :key="note.id" class="note-item">
-    <span>{{ note.note }}</span>
-    <button @click="deleteSingleNote(note.id)">❌</button>
-  </div>
-</div>
+        <div class="note-list">
+          <div v-for="(note, idx) in modal.list" :key="note.id" class="note-item">
+            <span>{{ note.note }}</span>
+            <button @click="deleteSingleNote(note.id)">❌</button>
+          </div>
+        </div>
 
 
         <!-- Nueva nota -->
@@ -138,7 +134,7 @@ function getShortNotes(date) {
 
 async function fetchNotes() {
   try {
-    const res = await axios.get(`https://coopceo.ddns.net:8000/api/calendar-notes`, {
+    const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/calendar-notes`, {
       headers: { Authorization: `Bearer ${authToken}` }
     })
     notes.value = {}
@@ -168,37 +164,35 @@ function closeModal() { modal.value.show = false }
 // saveModal
 async function saveModal() {
   try {
-    const key = formatKey(modal.value.date)
-    if (!notes.value[key]) notes.value[key] = []
+    const key = formatKey(modal.value.date);
+    if (!notes.value[key]) notes.value[key] = [];
 
     if (modal.value.text.trim() !== '') {
-      const res = await axios.post(`https://coopceo.ddns.net:8000/api/calendar-notes`, {
+      const res = await axios.post(`${import.meta.env.VITE_APP_URL}/api/calendar-notes`, {
         date: key,
         note: modal.value.text.trim(),
-      }, { headers: { Authorization: `Bearer ${authToken}` } })
+      }, { headers: { Authorization: `Bearer ${authToken}` } });
 
       // Guardamos el objeto completo
-      const newNote = { id: res.data.id, note: res.data.note }
-      notes.value[key].push(newNote)
-      modal.value.list.push(newNote)
-      modal.value.text = ''
+      const newNote = { id: res.data.id, note: res.data.note };
+      notes.value[key].push(newNote);
+      modal.value.list.push(newNote);
+      modal.value.text = '';
     }
   } catch (error) {
-    console.error('Error al guardar nota:', error)
+    console.error('Error al guardar nota:', error);
   }
 }
 
 
-// deleteSingleNote
 async function deleteSingleNote(noteId) {
   try {
     const key = formatKey(modal.value.date)
 
-    await axios.delete(`https://coopceo.ddns.net:8000/api/calendar-notes/${noteId}`, {
+    await axios.delete(`${import.meta.env.VITE_APP_URL}/api/calendar-notes/${noteId}`, {
       headers: { Authorization: `Bearer ${authToken}` }
     })
 
-    // Eliminamos del array local
     notes.value[key] = notes.value[key].filter(n => n.id !== noteId)
     modal.value.list = modal.value.list.filter(n => n.id !== noteId)
   } catch (error) {
@@ -293,6 +287,7 @@ onMounted(() => {
   font-size: 1.1rem;
   transition: background 0.25s ease, transform 0.1s ease;
 }
+
 .nav button:hover {
   background: #8acb5e;
   transform: scale(1.05);
@@ -316,6 +311,7 @@ onMounted(() => {
   cursor: pointer;
   transition: all 0.25s ease;
 }
+
 .today-btn:hover {
   background: var(--secondary);
   color: white;
@@ -359,13 +355,16 @@ onMounted(() => {
   cursor: pointer;
   position: relative;
 }
+
 .day-cell:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 16px var(--shadow);
 }
+
 .day-cell.other-month {
   opacity: 0.4;
 }
+
 .day-cell.today {
   outline: 3px solid var(--primary);
   outline-offset: 2px;
@@ -446,6 +445,7 @@ onMounted(() => {
   overflow-y: auto;
   margin-bottom: 0.5rem;
 }
+
 .note-item {
   display: flex;
   justify-content: space-between;
@@ -456,6 +456,7 @@ onMounted(() => {
   border-radius: 5px;
   margin-bottom: 3px;
 }
+
 .note-item button {
   background: transparent;
   border: none;
@@ -492,6 +493,7 @@ onMounted(() => {
   cursor: pointer;
   transition: all 0.25s ease;
 }
+
 .btn:hover {
   background: #8acb5e;
 }
@@ -501,6 +503,7 @@ onMounted(() => {
   border: 2px solid var(--secondary);
   color: var(--secondary);
 }
+
 .btn.secondary:hover {
   background: var(--secondary);
   color: white;
@@ -516,6 +519,7 @@ onMounted(() => {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -527,6 +531,7 @@ onMounted(() => {
   .days-grid {
     gap: 8px;
   }
+
   .day-cell {
     min-height: 90px;
   }
@@ -536,13 +541,16 @@ onMounted(() => {
   .calendar-root {
     padding: 1rem;
   }
+
   .days-grid {
     gap: 6px;
   }
+
   .day-cell {
     min-height: 80px;
     padding: 0.5rem;
   }
+
   .month-title {
     font-size: 1.1rem;
   }
@@ -552,9 +560,11 @@ onMounted(() => {
   .weekdays {
     font-size: 0.85rem;
   }
+
   .day-cell {
     min-height: 70px;
   }
+
   .modal-card {
     padding: 1rem;
   }

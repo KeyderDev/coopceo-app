@@ -48,7 +48,7 @@ export default {
       this.error = null;
 
       try {
-        const response = await axios.post("https://coopceo.ddns.net:8000/api/login", {
+        const response = await axios.post(`${import.meta.env.VITE_APP_URL}/api/login`, {
           email: this.email,
           password: this.password,
         });

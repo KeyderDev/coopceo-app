@@ -105,7 +105,7 @@ export default {
 
             try {
                 console.log("Enviando solicitud DELETE al servidor...");
-                const response = await axios.delete(`https://coopceo.ddns.net:8000/api/users/${userId}`, {
+                const response = await axios.delete(`${import.meta.env.VITE_APP_URL}/api/users/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -130,7 +130,7 @@ export default {
         if (!token) return;
 
         try {
-            const res = await axios.get("https://coopceo.ddns.net:8000/api/users", {
+            const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/users`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             this.users = res.data;

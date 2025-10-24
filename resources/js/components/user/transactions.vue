@@ -35,19 +35,19 @@ export default {
       transactions: [],
     };
   },
-  async created() {
-    try {
-      const token = localStorage.getItem("auth_token");
-      const res = await axios.get("https://coopceo.ddns.net:8000/api/my-transactions", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      this.transactions = res.data;
-    } catch (err) {
-      console.error("Error cargando transacciones:", err);
-    }
-  },
+async created() {
+  try {
+    const token = localStorage.getItem("auth_token");
+    const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/my-transactions`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    this.transactions = res.data;
+  } catch (err) {
+    console.error("Error cargando transacciones:", err);
+  }
+},
 };
 </script>
 

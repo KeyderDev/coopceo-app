@@ -203,7 +203,7 @@ export default {
         async loadUser(token) {
             try {
                 this.loading = true;
-                const response = await axios.get("https://coopceo.ddns.net:8000/api/user", {
+                const response = await axios.get(`${import.meta.env.VITE_APP_URL}/api/user`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 this.user = response.data;
@@ -223,7 +223,7 @@ export default {
         },
         async loadUsers(token) {
             try {
-                const responseUsers = await axios.get("https://coopceo.ddns.net:8000/api/users", {
+                const responseUsers = await axios.get(`${import.meta.env.VITE_APP_URL}/api/users`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 this.users = responseUsers.data;
@@ -234,7 +234,7 @@ export default {
         async logout() {
             const token = localStorage.getItem('auth_token');
             try {
-                await axios.post("https://coopceo.ddns.net:8000/api/logout", {}, {
+                await axios.post(`${import.meta.env.VITE_APP_URL}/api/logout`, {}, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             } catch (error) {
@@ -246,7 +246,7 @@ export default {
         async loadSalesToday(token) {
             try {
                 const response = await axios.get(
-                    "https://coopceo.ddns.net:8000/api/sales",
+                    `${import.meta.env.VITE_APP_URL}/api/sales`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
 
@@ -315,7 +315,7 @@ export default {
     margin-top: 1.5rem;
 }
 
-.charts-container > * {
+.charts-container>* {
     flex: 1 1 45%;
     min-width: 300px;
     max-width: 600px;
@@ -602,7 +602,7 @@ export default {
         gap: 1.5rem;
     }
 
-    .charts-container > * {
+    .charts-container>* {
         width: 100%;
         max-width: none;
     }

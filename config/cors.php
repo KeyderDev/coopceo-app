@@ -33,7 +33,7 @@ return [
     |
     */
     'allowed_origins' => [
-        'https://coopceo.ddns.net:8000',
+        'https://coopceo.ddns.net',
     ],
 
     /*

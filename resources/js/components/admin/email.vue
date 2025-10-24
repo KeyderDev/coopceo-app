@@ -5,12 +5,7 @@
       <div class="modal">
         <h3>🔒 Acceso restringido</h3>
         <p>Por favor, ingresa la contraseña para continuar:</p>
-        <input
-          type="password"
-          v-model="enteredPassword"
-          placeholder="Contraseña"
-          @keyup.enter="checkPassword"
-        />
+        <input type="password" v-model="enteredPassword" placeholder="Contraseña" @keyup.enter="checkPassword" />
         <div class="modal-buttons">
           <button @click="checkPassword">Entrar</button>
         </div>
@@ -28,11 +23,7 @@
       <h3 class="subtitle">Selecciona usuarios</h3>
       <div class="users-list">
         <label class="user-label select-all">
-          <input
-            type="checkbox"
-            v-model="selectAll"
-            @change="toggleSelectAll"
-          />
+          <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" />
           Seleccionar todos
         </label>
 
@@ -67,7 +58,7 @@ export default {
   async created() {
     try {
       const token = localStorage.getItem("auth_token");
-      const res = await axios.get("https://coopceo.ddns.net:8000/api/users", {
+      const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       this.users = res.data;
@@ -97,7 +88,7 @@ export default {
       try {
         const token = localStorage.getItem("auth_token");
         await axios.post(
-          "https://coopceo.ddns.net:8000/api/send-email",
+          `${import.meta.env.VITE_APP_URL}/api/send-email`,
           {
             user_ids: this.selectedUsers,
             subject: this.subject,

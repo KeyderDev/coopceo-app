@@ -10,6 +10,7 @@
                 <label for="filter">Ordenar por:</label>
                 <select id="filter" v-model="selectedFilter" class="filter-select">
                     <option value="default">Predeterminado</option>
+                    <option value="administradores">Administradores</option>
                     <option value="numeroSocio">Número de socio</option>
                     <option value="balance">Balance</option>
                     <option value="recent">Recientes</option>
@@ -57,6 +58,7 @@ export default {
         filteredUsers() {
             let result = [...this.users];
 
+            // 🔍 Búsqueda
             if (this.searchQuery) {
                 const query = this.searchQuery.toLowerCase();
                 result = result.filter(u =>
@@ -67,6 +69,7 @@ export default {
                 );
             }
 
+            // 🔽 Filtros
             if (this.selectedFilter === "balance") {
                 result.sort((a, b) => (b.dividendos ?? 0) - (a.dividendos ?? 0));
             } else if (this.selectedFilter === "alphabetical") {
@@ -81,6 +84,8 @@ export default {
                 }
             } else if (this.selectedFilter === "numeroSocio") {
                 result.sort((a, b) => (b.numero_socio ?? 0) - (a.numero_socio ?? 0));
+            } else if (this.selectedFilter === "administradores") {
+                result = result.filter(u => u.admin === 1);
             }
 
             return result;

@@ -281,6 +281,7 @@ export default {
     async terminarOrden() {
       if (this.orden.length === 0) return;
       this.loading = true;
+
       const payload = {
         cliente_id: this.clienteId,
         cajero_id: this.user.id,
@@ -288,6 +289,7 @@ export default {
         metodo_pago: this.metodoPago,
         productos: this.orden.map(i => ({ product_id: i.id })),
       };
+
       try {
         const token = localStorage.getItem("auth_token");
         const res = await axios.post("/api/sales", payload, { headers: { Authorization: `Bearer ${token}` } });
@@ -295,9 +297,15 @@ export default {
         this.orden = [];
         this.clienteId = null;
         this.cashRecibido = 0;
+        this.busquedaCliente = "";
+        this.clienteSeleccionado = null;
+        this.mostrarClientes = false;
+
       } catch (e) {
         alert("Error al procesar la orden");
-      } finally { this.loading = false; }
+      } finally {
+        this.loading = false;
+      }
     },
     toggleMasOpciones() { this.mostrarOpciones = !this.mostrarOpciones; },
   },

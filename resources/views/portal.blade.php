@@ -6,15 +6,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal COOPCEO</title>
-
-    <meta name="description" content="Portal oficial de COOPCEO — Accede a tu cuenta de socio o al panel administrativo.">
+    <meta name="google-site-verification" content="M5DFDnqwNkwe0zeOGWKtkutRqLIngdrZU1x9S-1hsjc" />
+    <meta name="description"
+        content="Portal oficial de COOPCEO — Accede a tu cuenta de socio o al panel administrativo.">
     <meta name="keywords" content="COOPCEO, cooperativa, socios, administración, portal, finanzas">
     <meta name="author" content="COOPCEO">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Portal COOPCEO">
-    <meta property="og:description" content="Bienvenido al portal oficial de COOPCEO. Gestiona tu cuenta de socio o accede al panel administrativo.">
+    <meta property="og:description"
+        content="Bienvenido al portal oficial de COOPCEO. Gestiona tu cuenta de socio o accede al panel administrativo.">
     <meta property="og:image" content="{{ asset('images/coopceofixed.png') }}">
-    <meta property="og:url" content="https://coopceo.ddns.net">
+    <meta property="og:url" content="https://coopceo.online">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Portal COOPCEO">

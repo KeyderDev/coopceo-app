@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://coopceo.ddns.net'),
+    'url' => env('APP_URL', 'https://coopceo.online'),
 
     /*
     |--------------------------------------------------------------------------

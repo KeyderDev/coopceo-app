@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Api\RegistroCompraController;
 use App\Http\Controllers\Misc\LogController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ProductController;
@@ -11,6 +12,8 @@ use App\Http\Controllers\Api\CashReconciliationController;
 use App\Http\Controllers\Api\CustomEmailController;
 use App\Http\Controllers\CalendarNoteController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\GananciasController;
+
 
 Route::middleware('auth:api')->post('/send-email', [CustomEmailController::class, 'sendCustomEmail']);
 
@@ -23,6 +26,7 @@ Route::get('/logs', [LogController::class, 'index'])->middleware('auth:api');
 Route::get('/products', [ProductController::class, 'index']);
 Route::post('/products', [ProductController::class, 'store']);
 Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+Route::middleware('auth:api')->get('/ganancias', [GananciasController::class, 'index']);
 
 Route::middleware('auth.api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -42,6 +46,18 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/calendar-notes', [CalendarNoteController::class, 'index']);
     Route::post('/calendar-notes', [CalendarNoteController::class, 'store']);
     Route::delete('/calendar-notes/{date}', [CalendarNoteController::class, 'destroy']);
+});
+
+
+
+
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/compras', [RegistroCompraController::class, 'index']);
+    Route::post('/compras', [RegistroCompraController::class, 'store']);
+    Route::get('/compras/{id}', [RegistroCompraController::class, 'show']);
+    Route::put('/compras/{id}', [RegistroCompraController::class, 'update']);
+    Route::delete('/compras/{id}', [RegistroCompraController::class, 'destroy']);
 });
 
 

@@ -43,6 +43,16 @@
                         </div>
                         <ul v-show="openDropdown === 'gestion'" class="submenu">
                             <li>
+                                <router-link to="ganancias">
+                                    <i class="fa-solid fa-dollar-sign"></i> <span>Ganancias</span>
+                                </router-link>
+                            </li>
+                            <li>
+                                <router-link to="registro-compras">
+                                    <i class="fa-solid fa-cart-shopping"></i> <span>Registro de Compras</span>
+                                </router-link>
+                            </li>
+                            <li>
                                 <router-link to="horarios">
                                     <i class="fa-solid fa-clock"></i> <span>Horarios</span>
                                 </router-link>

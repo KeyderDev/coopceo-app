@@ -215,7 +215,7 @@
         <div class="news">
             <h2>📰 Novedades</h2>
             <ul>
-                <li>📢 Fecha de apertura oficial: 15 de octubre de 2025</li>
+                <li>📢 Vuelven los mantecados a la venta!</li>
             </ul>
         </div>
         <div class="card">

@@ -67,10 +67,11 @@
               <button class="manual-btn" @click="toggleManual">Manual</button>
             </div>
 
-            <div v-if="metodoPago === 'efectivo'" class="cash-buttons2">
-              <button class="athmovil-btn">
+            <div class="cash-buttons2">
+              <button class="athmovil-btn" @click="mostrarATH">
                 <img :src="athLogo" alt="ATH" class="icon" width="90" height="90" />
               </button>
+
               <button class="more-options-btn" @click="toggleMasOpciones">Mas Opciones</button>
               <button class="more-options-btn" @click="volverProductos">Atras</button>
             </div>
@@ -130,6 +131,11 @@
         </div>
       </div>
     </div>
+    <!-- Modal imagen ATH -->
+<div v-if="mostrarImagenATH" class="ath-overlay" @click="cerrarATH">
+                <img :src="getImageUrl('athceo.png')" alt="Logo" />
+</div>
+
   </div>
 </template>
 
@@ -138,6 +144,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      mostrarImagenATH: false,
       isLoading: true,
       clientes: [],
       productos: [],
@@ -227,11 +234,20 @@ export default {
     volverProductos() {
       this.mostrarOpciones = false;
     },
+    mostrarATH() {
+      this.mostrarImagenATH = true;
+    },
+    cerrarATH() {
+      this.mostrarImagenATH = false;
+    },
     async obtenerClientes() {
       const token = localStorage.getItem("auth_token");
       const res = await axios.get("/api/users", { headers: { Authorization: `Bearer ${token}` } });
       this.clientes = res.data;
     },
+    getImageUrl(name) {
+  return `${window.location.origin}/images/${name}`;
+},
     async obtenerProductos() {
       const res = await axios.get("/api/products");
       this.productos = res.data;
@@ -343,6 +359,41 @@ export default {
   flex-direction: column;
   gap: 0.5rem;
 }
+
+.ath-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  cursor: pointer;
+}
+
+.ath-image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+  animation: zoomIn 0.4s ease-out;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 
 .modal input {
   padding: 0.5rem;

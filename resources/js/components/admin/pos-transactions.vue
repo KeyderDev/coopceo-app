@@ -1,6 +1,7 @@
 <template>
   <div class="sales-list">
     <h2>Transacciones</h2>
+
     <div class="filter-container">
       <label>
         Desde:
@@ -10,7 +11,17 @@
         Hasta:
         <input type="date" v-model="filter.to" />
       </label>
-      <button @click="applyDateFilter">Filtrar</button>
+
+      <label>
+        Método de pago:
+        <select v-model="filter.metodo_pago">
+          <option value="">Todos</option>
+          <option value="efectivo">Efectivo</option>
+          <option value="athmovil">ATH Móvil</option>
+        </select>
+      </label>
+
+      <button @click="applyFilters">Filtrar</button>
       <button @click="resetFilter">Restablecer</button>
     </div>
 
@@ -57,7 +68,8 @@ export default {
       allSales: [],
       filter: {
         from: '',
-        to: ''
+        to: '',
+        metodo_pago: ''
       }
     };
   },
@@ -75,25 +87,35 @@ export default {
       });
     },
 
-    applyDateFilter() {
-      if (!this.filter.from || !this.filter.to) {
-        alert('Selecciona ambas fechas para filtrar.');
-        return;
+    applyFilters() {
+      let filtered = [...this.allSales];
+
+      // Filtro por fechas
+      if (this.filter.from && this.filter.to) {
+        const from = new Date(this.filter.from);
+        const to = new Date(this.filter.to);
+        to.setHours(23, 59, 59, 999);
+
+        filtered = filtered.filter(sale => {
+          const saleDate = new Date(sale.created_at);
+          return saleDate >= from && saleDate <= to;
+        });
       }
 
-      const from = new Date(this.filter.from);
-      const to = new Date(this.filter.to);
-      to.setHours(23, 59, 59, 999);
+      // Filtro por método de pago
+      if (this.filter.metodo_pago) {
+        filtered = filtered.filter(
+          sale => sale.metodo_pago?.toLowerCase() === this.filter.metodo_pago.toLowerCase()
+        );
+      }
 
-      this.sales = this.allSales.filter(sale => {
-        const saleDate = new Date(sale.created_at);
-        return saleDate >= from && saleDate <= to;
-      });
+      this.sales = filtered;
     },
 
     resetFilter() {
       this.filter.from = '';
       this.filter.to = '';
+      this.filter.metodo_pago = '';
       this.sales = [...this.allSales];
     }
   },
@@ -105,22 +127,18 @@ export default {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      console.log('Respuesta API:', response.data);
-
       const sorted = response.data.sort(
         (a, b) => new Date(b.created_at) - new Date(a.created_at)
       );
 
       this.sales = sorted;
-      this.allSales = sorted; 
-
+      this.allSales = sorted;
     } catch (error) {
       console.error('Error al obtener las transacciones:', error);
     }
   }
 };
 </script>
-
 
 <style scoped>
 .sales-list {
@@ -152,6 +170,7 @@ table {
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
 .filter-container {
   display: flex;
   align-items: center;
@@ -160,7 +179,8 @@ table {
   color: #fff;
 }
 
-.filter-container input[type="date"] {
+.filter-container input[type="date"],
+.filter-container select {
   background-color: #044b7f;
   color: #fff;
   border: 1px solid #97d569;
@@ -278,5 +298,4 @@ td {
     overflow-x: auto;
   }
 }
-
 </style>

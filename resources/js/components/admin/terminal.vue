@@ -99,6 +99,7 @@
             <router-link to="/cuadre" custom v-slot="{ navigate }">
               <button class="reconciliation-btn" @click="navigate">Cuadre</button>
             </router-link>
+            <button class="reconciliation-btn">ATH Movil Summary</button>
           </div>
 
           <div v-else>

@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\CustomEmailController;
 use App\Http\Controllers\CalendarNoteController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\GananciasController;
+use App\Http\Controllers\MonthlyReportController;
 
 
 Route::middleware('auth:api')->post('/send-email', [CustomEmailController::class, 'sendCustomEmail']);
@@ -36,6 +37,7 @@ Route::middleware('auth.api')->group(function () {
 Route::get('/users', [ScheduleController::class, 'users']);
 Route::post('/schedules', [ScheduleController::class, 'store']);
 Route::post('/schedules/send-email', [ScheduleController::class, 'sendEmail']);
+Route::get('/sales/resumen-mensual/{mes}', [App\Http\Controllers\MonthlyReportController::class, 'resumenMensual']);
 
 
 Route::get('/ping', function () {

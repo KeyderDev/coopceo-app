@@ -14,6 +14,7 @@ import Calendar from './components/admin/calendar.vue'
 import horarios from './components/admin/horarios.vue'
 import ganancias from './components/admin/ganancias.vue'
 import registroCompras from './components/admin/registro-compras.vue'
+import documentos from './components/admin/documentos.vue'
 
 const routes = [
   {
@@ -33,6 +34,7 @@ const routes = [
       { path: 'horarios', component: horarios, name: 'horarios' },
       { path: 'ganancias', component: ganancias, name: 'ganancias' },
       { path: 'registro-compras', component: registroCompras, name: 'registro-compras' },
+      { path: 'documentos', component: documentos, name: 'documentos' },
     ]
   },
   { path: '/login', component: Login, name: 'login' },

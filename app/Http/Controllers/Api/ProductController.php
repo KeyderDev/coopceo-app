@@ -26,6 +26,17 @@ class ProductController extends Controller
         return response()->json($producto, 201);
     }
 
+    public function updateStock(Request $request, Product $product) {
+    $request->validate([
+        'stock' => 'required|integer|min:0'
+    ]);
+
+    $product->stock = $request->stock;
+    $product->save();
+
+    return response()->json($product);
+}
+
     public function destroy($id)
 {
     $producto = Product::find($id);

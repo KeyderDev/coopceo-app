@@ -72,6 +72,8 @@
                 <img :src="athLogo" alt="ATH" class="icon" width="90" height="90" />
               </button>
 
+              <button style="background-color: #3A63E8;" class="more-options-btn">Pago Mixto</button>
+
               <button class="more-options-btn" @click="toggleMasOpciones">Mas Opciones</button>
               <button class="more-options-btn" @click="volverProductos">Atras</button>
             </div>
@@ -94,12 +96,12 @@
             v-if="!mostrarOpciones" />
 
           <div v-if="mostrarOpciones" class="productos-botones">
-            <button class="producto-boton">Codigo Promocional</button>
-            <button class="producto-boton" style="background-color: goldenrod;">Refund</button>
+            <button class="boton-extra">Codigo Promocional</button>
+            <button class="boton-extra" style="background-color: goldenrod;">Refund</button>
             <router-link to="/cuadre" custom v-slot="{ navigate }">
-              <button class="reconciliation-btn" @click="navigate">Cuadre</button>
+              <button class="boton-extra" @click="navigate">Cuadre</button>
             </router-link>
-            <button class="reconciliation-btn">ATH Movil Summary</button>
+            <button class="boton-extra">ATH Movil Summary</button>
           </div>
 
           <div v-else>
@@ -133,9 +135,9 @@
       </div>
     </div>
     <!-- Modal imagen ATH -->
-<div v-if="mostrarImagenATH" class="ath-overlay" @click="cerrarATH">
-                <img :src="getImageUrl('athceo.png')" alt="Logo" />
-</div>
+    <div v-if="mostrarImagenATH" class="ath-overlay" @click="cerrarATH">
+      <img :src="getImageUrl('athceo.png')" alt="Logo" />
+    </div>
 
   </div>
 </template>
@@ -247,8 +249,8 @@ export default {
       this.clientes = res.data;
     },
     getImageUrl(name) {
-  return `${window.location.origin}/images/${name}`;
-},
+      return `${window.location.origin}/images/${name}`;
+    },
     async obtenerProductos() {
       const res = await axios.get("/api/products");
       this.productos = res.data;
@@ -304,13 +306,20 @@ export default {
         cajero_id: this.user.id,
         total: this.total,
         metodo_pago: this.metodoPago,
-        productos: this.orden.map(i => ({ product_id: i.id })),
+        productos: this.orden.map(i => ({
+          product_id: i.id,
+          quantity: i.cantidad  // <-- importante, antes no estaba
+        })),
       };
 
       try {
         const token = localStorage.getItem("auth_token");
-        const res = await axios.post("/api/sales", payload, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await axios.post("/api/sales", payload, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
         alert(`Orden registrada con éxito! Dividendos actuales: ${res.data.dividendos_actuales}`);
+
         this.orden = [];
         this.clienteId = null;
         this.cashRecibido = 0;
@@ -324,6 +333,7 @@ export default {
         this.loading = false;
       }
     },
+
     toggleMasOpciones() { this.mostrarOpciones = !this.mostrarOpciones; },
   },
 };
@@ -389,6 +399,7 @@ export default {
     transform: scale(0.7);
     opacity: 0;
   }
+
   to {
     transform: scale(1);
     opacity: 1;
@@ -479,6 +490,24 @@ export default {
   justify-content: center;
   cursor: pointer;
   width: auto;
+}
+
+.boton-extra {
+  background-color: #4caf50;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  width: 130px;
+  /* 👈 ancho fijo */
+  height: 50px;
+  /* 👈 alto fijo */
 }
 
 .reconciliation-btn {

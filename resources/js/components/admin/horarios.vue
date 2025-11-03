@@ -53,7 +53,6 @@
             <th>SÁBADO</th>
             <th>DOMINGO</th>
             <th>Total horas</th>
-
           </tr>
         </thead>
         <tbody>
@@ -67,7 +66,6 @@
             <td>{{ u.SABADO }}</td>
             <td>{{ u.DOMINGO }}</td>
             <td>{{ u.totalHours }}</td>
-
           </tr>
         </tbody>
       </table>
@@ -96,25 +94,20 @@ export default {
   computed: {
     scheduleTable() {
       const table = {};
-
       this.schedules.forEach(s => {
         const user = this.users.find(u => u.id === s.user_id);
         if (!user) return;
-
         if (!table[s.user_id]) {
           table[s.user_id] = { user: user.nombre };
           this.days.forEach(d => table[s.user_id][d] = '');
           table[s.user_id].totalHours = 0;
         }
-
         table[s.user_id][s.day] = `${s.start_time} - ${s.end_time}`;
-
         const [startH, startM] = s.start_time.split(':').map(Number);
         const [endH, endM] = s.end_time.split(':').map(Number);
         const hours = (endH + endM / 60) - (startH + startM / 60);
         table[s.user_id].totalHours += hours;
       });
-
       return Object.values(table).map(u => {
         u.totalHours = u.totalHours.toFixed(2);
         return u;
@@ -154,119 +147,156 @@ export default {
     },
     async sendEmail() {
       if (!this.schedules.length) return;
-
       const schedulesByUser = this.schedules.reduce((acc, s) => {
         const user = this.users.find(u => u.id === s.user_id);
         if (!user) return acc;
-
         if (!acc[s.user_id]) acc[s.user_id] = { user, schedules: [] };
         acc[s.user_id].schedules.push({ ...s, name: user.nombre });
         return acc;
       }, {});
-
       try {
         for (const key in schedulesByUser) {
-          const { user, schedules } = schedulesByUser[key];
-
+          const { schedules } = schedulesByUser[key];
           await axios.post('/api/schedules/send-email', { schedules }, {
             headers: { Authorization: `Bearer ${this.authToken}` }
           });
         }
-
         alert('Horarios enviados por correo a todos los usuarios con horarios.');
       } catch (err) {
         console.error('Error al enviar horarios:', err.response ? err.response.data : err);
       }
     }
-
   }
 }
 </script>
 
 <style scoped>
 .container {
-  max-width: 900px;
-  margin: auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 25px 30px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f7f7f7;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
-h1,
-h2 {
+h1 {
   text-align: center;
-  color: #333;
+  color: #03355c;
+  font-size: 2.2rem;
+  margin-bottom: 25px;
+}
+
+h2 {
+  color: #03355c;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #97d569;
+  padding-bottom: 5px;
 }
 
 .section {
-  margin-top: 20px;
-  padding: 15px;
+  margin-top: 25px;
+  padding: 20px;
   background: #fff;
-  border-radius: 8px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .form-row {
   display: flex;
   align-items: center;
-  margin: 10px 0;
+  margin: 12px 0;
+  gap: 15px;
 }
 
 .form-row label {
-  width: 120px;
+  width: 140px;
   font-weight: bold;
+  color: #03355c;
 }
 
 .form-row input,
 .form-row select {
   flex: 1;
-  padding: 6px 10px;
-  border-radius: 5px;
+  padding: 8px 12px;
+  border-radius: 6px;
   border: 1px solid #ccc;
+  font-size: 1rem;
 }
 
 .btn {
-  padding: 8px 16px;
-  margin-top: 10px;
-  background-color: #4a90e2;
+  padding: 10px 20px;
+  margin-top: 15px;
+  background-color: #97d569;
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
+  transition: 0.3s;
 }
 
 .btn:hover {
-  background-color: #357ab8;
+  background-color: #7ebd50;
 }
 
 .btn-send {
   display: block;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 25px;
+  background-color: #03355c;
+}
+
+.btn-send:hover {
+  background-color: #021f3d;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
+  margin-top: 18px;
+  font-size: 0.95rem;
 }
 
 table th,
 table td {
   border: 1px solid #ccc;
-  padding: 8px;
+  padding: 10px;
   text-align: center;
+  transition: background 0.3s;
 }
 
 table th {
-  background-color: #f0f0f0;
+  background-color: #03355c;
+  color: #fff;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #f3f8f2;
+}
+
+table tbody tr:hover {
+  background-color: #e6f2d9;
 }
 
 .alert {
   color: #b00020;
   font-weight: bold;
-  margin: 10px 0;
+  margin: 12px 0;
+  text-align: center;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .form-row label {
+    width: 100%;
+    margin-bottom: 5px;
+  }
 }
 </style>

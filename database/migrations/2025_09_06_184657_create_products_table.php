@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('nombre');      
             $table->decimal('precio', 10, 2); 
             $table->string('categoria');      
+            $table->integer('stock')->default(value: 0); 
             $table->timestamps();
         });
     }

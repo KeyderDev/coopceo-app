@@ -25,6 +25,16 @@
           <input type="text" v-model="nuevoProducto.categoria" required />
         </div>
 
+        <div>
+          <label>Stock:</label>
+          <input
+            type="number"
+            v-model.number="nuevoProducto.stock"
+            min="0"
+            required
+          />
+        </div>
+
         <button type="submit">Agregar Producto</button>
       </div>
     </form>
@@ -40,6 +50,7 @@
             <th>Nombre</th>
             <th>Precio</th>
             <th>Categoría</th>
+            <th>Stock</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -49,6 +60,20 @@
             <td>${{ Number(producto.precio).toFixed(2) }}</td>
             <td>{{ producto.categoria }}</td>
             <td>
+              <input
+                type="number"
+                v-model.number="producto.stock"
+                min="0"
+                class="stock-input"
+              />
+            </td>
+            <td>
+              <button
+                class="save-btn"
+                @click="actualizarStock(producto)"
+              >
+                Guardar
+              </button>
               <button class="delete-btn" @click="eliminarProducto(producto.id)">
                 Eliminar
               </button>
@@ -73,6 +98,21 @@
           <div class="info">
             <strong>Categoría:</strong> {{ producto.categoria }}
           </div>
+          <div class="info">
+            <strong>Stock:</strong>
+            <input
+              type="number"
+              v-model.number="producto.stock"
+              min="0"
+              class="stock-input"
+            />
+          </div>
+          <button
+            class="save-btn"
+            @click="actualizarStock(producto)"
+          >
+            Guardar
+          </button>
           <button class="delete-btn" @click="eliminarProducto(producto.id)">
             Eliminar
           </button>
@@ -89,7 +129,7 @@ export default {
   data() {
     return {
       productos: [],
-      nuevoProducto: { nombre: "", precio: 0, categoria: "" },
+      nuevoProducto: { nombre: "", precio: 0, categoria: "", stock: 0 },
     };
   },
   created() {
@@ -108,7 +148,7 @@ export default {
       try {
         const res = await axios.post("/api/products", this.nuevoProducto);
         this.productos.push(res.data);
-        this.nuevoProducto = { nombre: "", precio: 0, categoria: "" };
+        this.nuevoProducto = { nombre: "", precio: 0, categoria: "", stock: 0 };
       } catch (error) {
         console.error("Error al crear producto:", error);
       }
@@ -120,6 +160,21 @@ export default {
         this.productos = this.productos.filter((p) => p.id !== id);
       } catch (error) {
         console.error("Error al eliminar producto:", error);
+      }
+    },
+    async actualizarStock(producto) {
+      try {
+        producto.loading = true;
+        const token = localStorage.getItem("auth_token");
+        await axios.put(`/api/products/${producto.id}`, { stock: producto.stock }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        alert(`Stock actualizado para ${producto.nombre}`);
+      } catch (err) {
+        alert("Error al actualizar stock");
+        console.error(err);
+      } finally {
+        producto.loading = false;
       }
     },
   },
@@ -144,6 +199,31 @@ h3 {
   color: #033861;
   margin-bottom: 1.5rem;
   font-weight: 600;
+}
+
+.stock-input {
+  width: 80px;
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid #cfd8dc;
+}
+
+.save-btn {
+  padding: 0.4rem 0.8rem;
+  background-color: #097969;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.save-btn:hover {
+  background-color: #064d3f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 77, 63, 0.3);
 }
 
 /* === FORMULARIO (desktop mejorado) === */

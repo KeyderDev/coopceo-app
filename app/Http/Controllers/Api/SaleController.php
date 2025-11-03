@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sale;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Mail\OrderCompletedMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 class SaleController extends Controller
 {
@@ -22,36 +24,59 @@ class SaleController extends Controller
             'cajero_id' => 'required|exists:users,id',
             'productos' => 'required|array|min:1',
             'productos.*.product_id' => 'required|exists:products,id',
+            'productos.*.quantity' => 'required|integer|min:1',
             'total' => 'required|numeric',
             'metodo_pago' => 'required|string'
         ]);
 
-        $sale = Sale::create([
-            'cliente_id' => $request->cliente_id,
-            'cajero_id' => $request->cajero_id,
-            'total' => $request->total,
-            'metodo_pago' => $request->metodo_pago
-        ]);
+        DB::beginTransaction();
 
-        if ($sale->cliente) {
-            $dividendosSumar = $request->total * 0.3322785;
-            $sale->cliente->dividendos += $dividendosSumar;
-            $sale->cliente->save();
+        try {
+            $sale = Sale::create([
+                'cliente_id' => $request->cliente_id,
+                'cajero_id' => $request->cajero_id,
+                'total' => $request->total,
+                'metodo_pago' => $request->metodo_pago
+            ]);
 
-            Mail::to($sale->cliente->email)
-                ->send(new OrderCompletedMail($sale, $sale->cliente));
+            foreach ($request->productos as $producto) {
+                $product = Product::find($producto['product_id']);
+
+                if ($product->stock < $producto['quantity']) {
+                    throw new \Exception("Stock insuficiente para el producto {$product->nombre}");
+                }
+
+                $subtotal = $product->precio * $producto['quantity'];
+
+                $sale->products()->attach($product->id, [
+                    'quantity' => $producto['quantity'],
+                ]);
+
+                $product->decrement('stock', $producto['quantity']);
+            }
+
+            if ($sale->cliente) {
+                $dividendosSumar = $request->total * 0.3322785;
+                $sale->cliente->dividendos += $dividendosSumar;
+                $sale->cliente->save();
+
+                Mail::to($sale->cliente->email)
+                    ->send(new OrderCompletedMail($sale, $sale->cliente));
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Venta registrada correctamente',
+                'venta' => $sale->load('products', 'cliente', 'cajero'),
+                'dividendos_actuales' => $sale->cliente ? $sale->cliente->dividendos : null
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-
-        foreach ($request->productos as $producto) {
-            $sale->products()->attach($producto['product_id']);
-        }
-
-        return response()->json([
-            'venta' => $sale->load('products', 'cliente', 'cajero'),
-            'dividendos_actuales' => $sale->cliente ? $sale->cliente->dividendos : null
-        ], 201);
     }
-
 
     public function myTransactions(Request $request)
     {
@@ -62,5 +87,4 @@ class SaleController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
     }
-
 }

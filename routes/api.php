@@ -14,6 +14,8 @@ use App\Http\Controllers\CalendarNoteController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\GananciasController;
 use App\Http\Controllers\MonthlyReportController;
+use App\Http\Controllers\ProductCuadreController;
+
 
 
 Route::middleware('auth:api')->post('/send-email', [CustomEmailController::class, 'sendCustomEmail']);
@@ -27,7 +29,9 @@ Route::get('/logs', [LogController::class, 'index'])->middleware('auth:api');
 Route::get('/products', [ProductController::class, 'index']);
 Route::post('/products', [ProductController::class, 'store']);
 Route::delete('/products/{id}', [ProductController::class, 'destroy']);
-Route::middleware('auth:api')->get('/ganancias', [GananciasController::class, 'index']);
+Route::middleware('auth:api')->group(function () {
+    Route::put('/products/{product}', [ProductController::class, 'updateStock']);
+});Route::middleware('auth:api')->get('/ganancias', [GananciasController::class, 'index']);
 
 Route::middleware('auth.api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -38,6 +42,7 @@ Route::get('/users', [ScheduleController::class, 'users']);
 Route::post('/schedules', [ScheduleController::class, 'store']);
 Route::post('/schedules/send-email', [ScheduleController::class, 'sendEmail']);
 Route::get('/sales/resumen-mensual/{mes}', [App\Http\Controllers\MonthlyReportController::class, 'resumenMensual']);
+Route::middleware('auth:api')->post('/products/cuadre', [ProductCuadreController::class, 'store']);
 
 
 Route::get('/ping', function () {

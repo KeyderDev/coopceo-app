@@ -548,19 +548,19 @@ export default {
 
 
 .efectivo-btn {
-  background-color: #4caf50;
+  background-color: #607d8b;
 }
 
 .exacto-btn {
-  background-color: #4caf50;
+  background-color: #607d8b;
 }
 
 .manual-btn {
-  background-color: #4caf50;
+  background-color: #607d8b;
 }
 
 .cash-buttons button:hover {
-  background-color: #43a047;
+  background-color: #455a64;
 }
 
 .cash-info {
@@ -686,37 +686,37 @@ export default {
 
 /* --- Colores por categoría --- */
 .boton-bebida {
-  background-color: #e53935;
+  background-color: #4caf50; /* verde agradable */
   color: #fff;
 }
 
 .boton-agua {
-  background-color: #2196f3;
+  background-color: #03a9f4; /* azul limpio */
   color: #fff;
 }
 
 .boton-refrigerio {
-  background-color: #2196f3;
+  background-color: #2196f3; /* mantener como está */
   color: #fff;
 }
 
 .boton-dulce {
-  background-color: #e53935;
+  background-color: #ff9800; /* naranja brillante pero elegante */
   color: #fff;
 }
 
 .boton-comida {
-  background-color: #e53935;
+  background-color: #ff5722; /* rojo-anaranjado más cálido */
   color: #fff;
 }
 
 .boton-otros {
-  background-color: #757575;
+  background-color: #607d8b; /* gris azulado neutro */
   color: #fff;
 }
 
 .boton-chocolates {
-  background-color: #8d6e63;
+  background-color: #795548; /* marrón chocolate */
   color: #fff;
 }
 

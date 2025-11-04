@@ -5,11 +5,7 @@
     <div class="downloads-list">
       <h3>Informes disponibles</h3>
 
-      <div
-        class="download-item"
-        v-for="file in informes"
-        :key="file.id"
-      >
+      <div class="download-item" v-for="file in informes" :key="file.id">
         <div class="file-info">
           <span class="file-icon">📄</span>
           <div class="file-text">
@@ -18,15 +14,10 @@
           </div>
         </div>
 
-        <!-- Selección de mes para el informe real -->
         <div v-if="file.real && file.selectMonth" class="month-select">
           <select v-model="selectedMonth">
             <option disabled value="">Selecciona un mes</option>
-            <option
-              v-for="m in months"
-              :key="m.value"
-              :value="m.value"
-            >
+            <option v-for="m in months" :key="m.value" :value="m.value">
               {{ m.label }}
             </option>
           </select>
@@ -35,11 +26,7 @@
           </button>
         </div>
 
-        <!-- Botón principal -->
-        <button
-          v-else
-          @click="file.real ? activarSeleccionMes(file) : descargarFicticio(file)"
-        >
+        <button v-else @click="file.real ? activarSeleccionMes(file) : descargarFicticio(file)">
           Descargar
         </button>
       </div>
@@ -106,14 +93,15 @@ const descargarFicticio = (file) => {
 
 <style scoped>
 .download-panel {
-  max-width: 700px;
+  max-width: 1000px;
+  width: 90%;
   margin: 3rem auto;
   padding: 2rem;
   background: #03355c;
   border-radius: 16px;
   color: #fff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
 .download-panel h2 {
@@ -138,7 +126,7 @@ const descargarFicticio = (file) => {
   border-radius: 10px;
   margin-bottom: 10px;
   transition: background 0.3s;
-  gap: 10px;
+  gap: 20px;
 }
 
 .download-item:hover {
@@ -148,8 +136,9 @@ const descargarFicticio = (file) => {
 .file-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   min-width: 0;
+  flex: 2;
 }
 
 .file-text {
@@ -173,7 +162,8 @@ button {
   background-color: #97d569;
   color: #03355c;
   font-weight: 600;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.2rem;
+  /* Botón más ancho */
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -207,18 +197,25 @@ button:disabled {
   font-size: 0.95rem;
 }
 
-/* Responsivo */
+@media (max-width: 1000px) {
+  .download-panel {
+    width: 95%;
+  }
+}
+
 @media (max-width: 600px) {
   .download-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
+
   .month-select {
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
   }
+
   .month-select select,
   .month-select button {
     width: 100%;

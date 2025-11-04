@@ -3,7 +3,7 @@ import UserPanel from './components/UserPanel.vue'
 import Login from './components/Login.vue'
 import Register from './components/Register.vue'
 import transactions from './components/user/transactions.vue'
-
+import ForgotPassword from './components/ForgotPassword.vue'
 
 
 
@@ -18,6 +18,7 @@ const routes = [
   },
   { path: '/login', component: Login, name: 'login' },
   { path: '/register', component: Register, name: 'register' },
+  { path: '/forgot-password', component: ForgotPassword, name: 'forgot-password' }
 ]
 
 

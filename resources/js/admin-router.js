@@ -16,6 +16,7 @@ import ganancias from './components/admin/ganancias.vue'
 import registroCompras from './components/admin/registro-compras.vue'
 import documentos from './components/admin/documentos.vue'
 import inventario from './components/admin/inventario.vue'
+import ForgotPassword from './components/ForgotPassword.vue'
 
 const routes = [
   {
@@ -41,6 +42,7 @@ const routes = [
   },
   { path: '/login', component: Login, name: 'login' },
   { path: '/register', component: Register, name: 'register' },
+  { path: '/forgot-password', component: ForgotPassword, name: 'forgot-password' },
 
 ]
 

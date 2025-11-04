@@ -15,6 +15,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\GananciasController;
 use App\Http\Controllers\MonthlyReportController;
 use App\Http\Controllers\ProductCuadreController;
+use App\Http\Controllers\Api\PasswordController;
 
 
 
@@ -44,7 +45,9 @@ Route::post('/schedules/send-email', [ScheduleController::class, 'sendEmail']);
 Route::get('/sales/resumen-mensual/{mes}', [App\Http\Controllers\MonthlyReportController::class, 'resumenMensual']);
 Route::middleware('auth:api')->post('/products/cuadre', [ProductCuadreController::class, 'store']);
 
-
+Route::post('/password/otp', [PasswordController::class, 'sendOtp']);
+Route::post('/password/verify-otp', [PasswordController::class, 'verifyOtp']);
+Route::post('/password/reset', [PasswordController::class, 'resetPassword']);
 Route::get('/ping', function () {
     return response()->json(['pong' => true]);
 });

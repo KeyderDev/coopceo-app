@@ -25,6 +25,9 @@
       <p class="signup-text">
         ¿No tienes cuenta? <router-link to="/register">Regístrate</router-link>
       </p>
+            <p class="signup-text">
+        <router-link to="/forgot-password">Olvide mi contraseña</router-link>
+      </p>
     </div>
   </div>
 </template>

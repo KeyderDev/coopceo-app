@@ -72,8 +72,6 @@
                 <img :src="athLogo" alt="ATH" class="icon" width="90" height="90" />
               </button>
 
-              <button style="background-color: #3A63E8;" class="more-options-btn">Pago Mixto</button>
-
               <button class="more-options-btn" @click="toggleMasOpciones">Mas Opciones</button>
               <button class="more-options-btn" @click="volverProductos">Atras</button>
             </div>
@@ -96,6 +94,7 @@
             v-if="!mostrarOpciones" />
 
           <div v-if="mostrarOpciones" class="productos-botones">
+            <button style="background-color: #3A63E8;" class="boton-extra">Pago Mixto</button>
             <button class="boton-extra">Codigo Promocional</button>
             <button class="boton-extra" style="background-color: goldenrod;">Refund</button>
             <router-link to="/cuadre" custom v-slot="{ navigate }">
@@ -686,37 +685,44 @@ export default {
 
 /* --- Colores por categoría --- */
 .boton-bebida {
-  background-color: #4caf50; /* verde agradable */
+  background-color: #4caf50;
+  /* verde agradable */
   color: #fff;
 }
 
 .boton-agua {
-  background-color: #03a9f4; /* azul limpio */
+  background-color: #03a9f4;
+  /* azul limpio */
   color: #fff;
 }
 
 .boton-refrigerio {
-  background-color: #2196f3; /* mantener como está */
+  background-color: #2196f3;
+  /* mantener como está */
   color: #fff;
 }
 
 .boton-dulce {
-  background-color: #ff9800; /* naranja brillante pero elegante */
+  background-color: #ff9800;
+  /* naranja brillante pero elegante */
   color: #fff;
 }
 
 .boton-comida {
-  background-color: #ff5722; /* rojo-anaranjado más cálido */
+  background-color: #ff5722;
+  /* rojo-anaranjado más cálido */
   color: #fff;
 }
 
 .boton-otros {
-  background-color: #607d8b; /* gris azulado neutro */
+  background-color: #607d8b;
+  /* gris azulado neutro */
   color: #fff;
 }
 
 .boton-chocolates {
-  background-color: #795548; /* marrón chocolate */
+  background-color: #795548;
+  /* marrón chocolate */
   color: #fff;
 }
 

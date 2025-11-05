@@ -13,6 +13,10 @@
                 <i class="fas fa-boxes"></i>
                 <p>Reconciliations</p>
             </router-link>
+            <router-link to ="/horarios" class="menu-item">
+                <i class="fa-solid fa-clock"></i>
+                <p>Schedules</p>
+            </router-link>
 
 
             <!-- <div class="menu-item">

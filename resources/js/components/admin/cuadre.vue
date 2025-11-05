@@ -32,8 +32,11 @@
       <p>Diferencia: <span :class="{ negative: difference < 0 }">{{ difference.toFixed(2) }}</span></p>
     </div>
 
-    <button @click="saveReconciliation">Guardar cuadre</button>
+    <button class="btn-guardar" @click="saveReconciliation">Guardar cuadre</button>
   </div>
+      <button class="btn-volver" @click="volverMenu">
+      <i class="fa-solid fa-house"></i> Menú Principal
+    </button>
 </template>
 
 <script>
@@ -124,7 +127,9 @@ export default {
         event.target.value = '';
       }
     },
-
+    volverMenu() {
+      this.$router.push("/");
+    },
     async saveReconciliation() {
       const rolledAdd = this.rolledCoinsAddition;
 
@@ -218,6 +223,23 @@ h3 {
   border-radius: 10px;
 }
 
+.btn-volver {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+  z-index: 1000;
+}
+
 .totals p {
   display: flex;
   justify-content: space-between;
@@ -230,7 +252,7 @@ h3 {
   color: #ff4d4d;
 }
 
-button {
+.btn-guardar {
   width: 100%;
   padding: 10px;
   margin-top: 25px;

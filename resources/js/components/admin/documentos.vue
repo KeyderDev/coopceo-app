@@ -32,13 +32,18 @@
       </div>
     </div>
   </div>
+  <button class="btn-volver" @click="volverMenu">
+      <i class="fa-solid fa-house"></i> Menú Principal
+    </button>
 </template>
 
 <script setup>
 import axios from "axios";
 import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 
-// Lista de informes
+const router = useRouter();
+
 const informes = reactive([
   { id: 1, name: "Informe Operacional", type: "PDF", frequency: "Mensual", real: true, selectMonth: false },
   { id: 2, name: "Reporte de Inventario", type: "Excel", frequency: "Semanal", real: false },
@@ -60,6 +65,10 @@ for (let y = currentYear; y >= currentYear - 5; y--) {
 
 const activarSeleccionMes = (file) => {
   file.selectMonth = true;
+};
+
+const volverMenu = () => {
+  router.push("/"); 
 };
 
 const descargarPDFReal = async () => {
@@ -91,6 +100,7 @@ const descargarFicticio = (file) => {
 };
 </script>
 
+
 <style scoped>
 .download-panel {
   max-width: 1000px;
@@ -102,6 +112,20 @@ const descargarFicticio = (file) => {
   color: #fff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.btn-volver {
+    position: fixed;
+    bottom: 25px;
+    right: 30px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.3rem;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
 }
 
 .download-panel h2 {
@@ -163,7 +187,6 @@ button {
   color: #03355c;
   font-weight: 600;
   padding: 0.5rem 1.2rem;
-  /* Botón más ancho */
   border: none;
   border-radius: 8px;
   cursor: pointer;

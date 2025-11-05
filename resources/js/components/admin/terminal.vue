@@ -94,6 +94,8 @@
             v-if="!mostrarOpciones" />
 
           <div v-if="mostrarOpciones" class="productos-botones">
+            <button class="boton-extra" @click="volverMenu">Menu Principal</button>
+
             <button style="background-color: #3A63E8;" class="boton-extra">Pago Mixto</button>
             <button class="boton-extra">Codigo Promocional</button>
             <button class="boton-extra" style="background-color: goldenrod;">Refund</button>
@@ -137,8 +139,8 @@
     <div v-if="mostrarImagenATH" class="ath-overlay" @click="cerrarATH">
       <img :src="getImageUrl('athceo.png')" alt="Logo" />
     </div>
-
   </div>
+
 </template>
 
 <script>
@@ -229,6 +231,10 @@ export default {
     }
   },
   methods: {
+    volverMenu() {
+      this.$router.push("/");
+    },
+
     async loadCurrentUser(token) {
       const res = await axios.get("/api/user", { headers: { Authorization: `Bearer ${token}` } });
       this.user = res.data;
@@ -869,6 +875,28 @@ export default {
   flex-wrap: wrap;
 }
 
+.btn-volver {
+  position: fixed;
+  bottom: 25px;
+  right: 30px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.3rem;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+  z-index: 1000;
+}
+
+.btn-volver:hover {
+  background-color: #43a047;
+  transform: translateY(-3px);
+}
+
 .order-footer>button {
   width: 100%;
   padding: 0.6rem;
@@ -913,6 +941,8 @@ export default {
   .products-section::-webkit-scrollbar {
     width: 6px;
   }
+
+
 
   .products-section::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.2);

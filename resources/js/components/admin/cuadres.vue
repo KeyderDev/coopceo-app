@@ -1,7 +1,9 @@
 <template>
   <div class="cash-reconciliations">
     <h2>Todos los Cuadres</h2>
-    <div class="table-container">
+
+    <div class="table-wrapper">
+      <!-- 💻 Tabla de escritorio -->
       <table class="desktop-table">
         <thead>
           <tr>
@@ -41,6 +43,7 @@
         </tbody>
       </table>
 
+      <!-- 📱 Vista móvil -->
       <div class="mobile-cards">
         <div class="card" v-for="cuadre in cuadrés" :key="cuadre.id">
           <p><strong>ID:</strong> {{ cuadre.id }}</p>
@@ -49,10 +52,10 @@
           <p><strong>$10:</strong> {{ cuadre.bill_10 }}</p>
           <p><strong>$5:</strong> {{ cuadre.bill_5 }}</p>
           <p><strong>$1:</strong> {{ cuadre.bill_1 }}</p>
-          <p><strong>Coin 10:</strong> {{ cuadre.coin_10 }}</p>
-          <p><strong>Coin 5:</strong> {{ cuadre.coin_5 }}</p>
-          <p><strong>Coin 1:</strong> {{ cuadre.coin_1 }}</p>
-          <p><strong>Coin 25:</strong> {{ cuadre.coin_25 }}</p>
+          <p><strong>Coin 0.10:</strong> {{ cuadre.coin_10 }}</p>
+          <p><strong>Coin 0.05:</strong> {{ cuadre.coin_5 }}</p>
+          <p><strong>Coin 0.01:</strong> {{ cuadre.coin_1 }}</p>
+          <p><strong>Coin 0.25:</strong> {{ cuadre.coin_25 }}</p>
           <p><strong>Total Contado:</strong> {{ cuadre.total_counted }}</p>
           <p><strong>Total Ventas Efectivo:</strong> {{ cuadre.total_sales_cash }}</p>
           <p><strong>Diferencia:</strong> {{ cuadre.difference }}</p>
@@ -61,146 +64,157 @@
       </div>
     </div>
   </div>
+    <button class="btn-volver" @click="volverMenu">
+      <i class="fa-solid fa-house"></i> Menú Principal
+    </button>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
-    return {
-      cuadrés: []
-    };
+    return { cuadrés: [] };
   },
-
   async created() {
     try {
-      const token = localStorage.getItem('auth_token'); 
-      const response = await axios.get('/api/cash-reconciliations', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      const token = localStorage.getItem("auth_token");
+      const response = await axios.get("/api/cash-reconciliations", {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      this.cuadrés = response.data.map(c => ({
+      this.cuadrés = response.data.map((c) => ({
         ...c,
-        created_at_local: this.formatLocalDate(c.created_at)
+        created_at_local: this.formatLocalDate(c.created_at),
       }));
     } catch (error) {
-      console.error('Error al obtener los cuadres:', error);
+      console.error("Error al obtener los cuadres:", error);
     }
   },
-
   methods: {
     formatLocalDate(utcDate) {
-      return new Date(utcDate).toLocaleString('es-PR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
+      return new Date(utcDate).toLocaleString("es-PR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
       });
-    }
-  }
+    },
+    volverMenu() {
+      this.$router.push("/");
+    },
+  },
 };
 </script>
 
 <style scoped>
 .cash-reconciliations {
-  padding: 1rem;
-  background-color: #03365e;
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Ocupa todo el alto visible */
+  width: 100%;
+  padding: 1rem 2rem;
+  background: linear-gradient(160deg, #022744, #044b7f);
   color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
 }
 
 h2 {
-  color: #97d569;
+  color: #a8e060;
+  font-size: 2rem;
   margin-bottom: 1rem;
-  font-size: 1.8rem;
-  letter-spacing: 0.5px;
+  text-align: center;
 }
 
-.table-container {
-  width: 100%;
-  overflow-x: auto;
+.table-wrapper {
+  flex: 1;
+  overflow: auto;
+  background: #044b7f;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 .desktop-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  background-color: #044b7f;
-  border-radius: 8px;
+  border-collapse: collapse;
+  min-width: 1200px;
 }
 
 th,
 td {
-  padding: 0.6rem 0.8rem;
+  padding: 0.8rem;
   text-align: center;
-  color: #fff;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   white-space: nowrap;
 }
 
 thead {
-  background-color: #97d569;
-  color: #03365e;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  background: #a8e060;
+  color: #022744;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 5;
 }
 
 tbody tr:nth-child(even) {
-  background-color: #0562a3;
-}
-
-tbody tr {
-  transition: background 0.3s, transform 0.2s;
-  transform: translateY(0);
+  background: #055b95;
 }
 
 tbody tr:hover {
-  background-color: #0971c2;
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+  background: #0a7ac2;
+  transform: scale(1.01);
+  transition: 0.2s;
 }
 
+/* === Mobile cards === */
 .mobile-cards {
   display: none;
   flex-direction: column;
+  padding: 1rem;
   gap: 1rem;
 }
 
+.btn-volver {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+  z-index: 1000;
+}
+
 .card {
-  background-color: #044b7f;
-  padding: 0.8rem;
+  background: #055b95;
+  padding: 1rem;
   border-radius: 8px;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .card p {
-  margin: 0.2rem 0;
-  font-size: 0.85rem;
+  margin: 0.3rem 0;
+  font-size: 0.9rem;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* === Responsive === */
+@media (max-width: 900px) {
   .desktop-table {
     display: none;
   }
   .mobile-cards {
-    display: flex; 
+    display: flex;
   }
   h2 {
-    font-size: 1.4rem;
-  }
-  .card p {
-    font-size: 0.8rem;
+    font-size: 1.6rem;
   }
 }
 </style>
-

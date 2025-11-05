@@ -1,61 +1,111 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏦 JuCoop — Sistema de Gestión para Cooperativas Estudiantiles
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+JuCoop es una aplicación web moderna desarrollada con **Laravel** y **Vue.js** que permite administrar de forma completa las operaciones de una **cooperativa estudiantil**.  
+Desde la gestión de socios hasta el control de inventario, balances, transacciones y puntos de venta, todo en una sola plataforma web elegante, intuitiva y accesible.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🌐 Características principales
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 👥 Gestión de Socios
+- Registro y administración de socios con información detallada.  
+- Búsqueda rápida, filtrado y ordenamiento de usuarios.  
+- Balance individual y número de socio asignado automáticamente.  
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 💰 Control Financiero
+- Registro de **transacciones POS** con métodos de pago (efectivo, ATH Móvil, etc.).  
+- Sección de **cuadre de caja** con desglose de billetes, monedas y depósitos.  
+- Reportes automáticos de ganancias, ventas y compras.  
 
-## Learning Laravel
+### 🛒 Inventario Inteligente
+- Creación y edición de productos con nombre, precio, categoría y stock.  
+- Actualización de stock en tiempo real desde el panel de administración.  
+- Reportes de inventario en formato **Excel, PDF o CSV**.  
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🧾 Reportes y Descargas
+- Panel de descargas con informes operacionales, listas de clientes y reportes automáticos.  
+- Selección de frecuencia y mes para cada informe.  
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 💻 Interfaz moderna y responsive
+- Diseño profesional inspirado en sistemas administrativos como Discord o NCR Back Office.  
+- Totalmente adaptable a **computadoras, tablets y móviles**.  
+- Tema oscuro elegante para mejor legibilidad.  
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🏗️ Tecnologías utilizadas
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| Frontend | Backend | Base de datos | Realtime | Infraestructura |
+|-----------|----------|---------------|-----------|------------------|
+| Vue 3 | Laravel 9 | MySQL | Socket.IO / Redis | Docker, Nginx |
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## ⚙️ Instalación y configuración
 
-## Contributing
+1. **Clona el repositorio:**
+   ```bash
+   git clone https://github.com/tuusuario/jucoop.git
+   cd jucoop
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. **Instala las dependencias de Laravel:**
+   ```bash
+   composer install
+   ```
 
-## Code of Conduct
+3. **Instala las dependencias de Vue:**
+   ```bash
+   npm install
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. **Copia el archivo de entorno:**
+   ```bash
+   cp .env.example .env
+   ```
 
-## Security Vulnerabilities
+5. **Configura tu base de datos y ejecuta las migraciones:**
+   ```bash
+   php artisan migrate --seed
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+6. **Ejecuta el servidor:**
+   ```bash
+   php artisan serve
+   npm run dev
+   ```
 
-## License
+7. **Accede a la aplicación:**
+   ```
+   http://localhost:8000
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 📸 Vista previa
+
+![Interfaz de JuCoop](public/images/interface.png)
+
+> *(Reemplaza la ruta por la imagen de tu proyecto, o usa un enlace directo desde GitHub o Imgur.)*
+
+---
+
+## 🧠 Desarrollador
+
+**Angel Molina**  
+Full Stack Developer — Laravel & Vue.js  
+📧 [angelmolina02111@gmail.com](mailto:angelmolina02111@gmail.com)
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia **MIT**.  
+Puedes usarlo, modificarlo y distribuirlo libremente con atribución al autor original.
+
+---
+
+## ⭐ Contribuye
+
+Si te gusta el proyecto, ¡no olvides dejar una estrella en el repositorio!  
+Cualquier sugerencia o mejora es bienvenida mediante *Pull Requests* o *Issues*.

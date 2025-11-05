@@ -5,7 +5,6 @@ import Register from './components/Register.vue'
 import Users from './components/admin/users.vue'
 import Logs from './components/admin/logs.vue'
 import terminal from './components/admin/terminal.vue'
-import Productos from './components/admin/productos.vue'
 import cuadre from './components/admin/cuadre.vue'
 import cuadres from './components/admin/cuadres.vue'
 import posTransactions from './components/admin/pos-transactions.vue'
@@ -15,9 +14,9 @@ import horarios from './components/admin/horarios.vue'
 import ganancias from './components/admin/ganancias.vue'
 import registroCompras from './components/admin/registro-compras.vue'
 import documentos from './components/admin/documentos.vue'
-import inventario from './components/admin/inventario.vue'
 import ForgotPassword from './components/ForgotPassword.vue'
-
+import management from './components/admin/management.vue'
+import inventory from './components/admin/inventory.vue'
 const routes = [
   {
     path: '/', 
@@ -27,7 +26,6 @@ const routes = [
       { path: 'users', component: Users, name: 'users' }, 
       { path: 'logs', component: Logs, name: 'logs' }, 
       { path: 'terminal', component: terminal, name: 'terminal' },
-      { path: 'productos', component: Productos, name: 'productos' },
       { path: 'cuadre', component: cuadre, name: 'reconciliation' },
       { path: 'cuadres', component: cuadres, name: 'cuadres' },
       { path: 'pos-transactions', component: posTransactions, name: 'pos-transactions' },
@@ -37,7 +35,9 @@ const routes = [
       { path: 'ganancias', component: ganancias, name: 'ganancias' },
       { path: 'registro-compras', component: registroCompras, name: 'registro-compras' },
       { path: 'documentos', component: documentos, name: 'documentos' },
-      { path: 'inventario', component: inventario, name: 'inventario' },
+      { path: 'management', component: management, name: 'management' },
+      { path: 'inventory', component: inventory, name: 'inventory' }
+      
     ]
   },
   { path: '/login', component: Login, name: 'login' },

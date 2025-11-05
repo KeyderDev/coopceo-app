@@ -86,7 +86,6 @@ Desde la gestión de socios hasta el control de inventario, balances, transaccio
 
 ![Interfaz de JuCoop](public/images/interface.png)
 
-> *(Reemplaza la ruta por la imagen de tu proyecto, o usa un enlace directo desde GitHub o Imgur.)*
 
 ---
 

@@ -30,7 +30,7 @@
       Total de socios registrados: <strong>{{ users.length }}</strong>
     </div>
 
-    <!-- 👥 Listado de usuarios -->
+    <!-- 👥 Listado -->
     <div class="users-list">
       <div v-for="user in filteredUsers" :key="user.id" class="user-card">
         <div class="user-main">
@@ -45,17 +45,16 @@
             <p class="amount">${{ user.dividendos ?? 0 }}</p>
           </div>
         </div>
-
         <button class="delete-btn" @click="deleteUser(user.id)">
           <i class="fa-solid fa-trash"></i>
         </button>
       </div>
     </div>
 
-    <button class="btn-volver" @click="volverMenu">
+  </div>
+      <button class="btn-volver" @click="volverMenu">
       <i class="fa-solid fa-house"></i> Menú Principal
     </button>
-  </div>
 </template>
 
 <script>
@@ -154,16 +153,158 @@ export default {
 
 <style scoped>
 .usuarios-container {
-  width: 95%;
-  max-width: 1300px;
+  width: 100%;
+  max-width: 1500px;
   margin: 2rem auto;
-  background: #f8fafc;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-  overflow-x: hidden;
+  background: #f9fafb;
+  padding: 2.5rem 3rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  min-height: 90vh;
 }
 
+.search-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.search-box {
+  flex: 1;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #044271;
+  font-size: 1.2rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.9rem 1rem 0.9rem 3rem;
+  border-radius: 10px;
+  border: 1px solid #044271;
+  background: #e8f6dc;
+  font-size: 1rem;
+  color: #044271;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 8px rgba(4, 66, 113, 0.3);
+}
+
+.filter-section {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-weight: 600;
+  color: #044271;
+}
+
+.filter-select {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #044271;
+  background: #97d569;
+  color: #044271;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-select:hover {
+  background: #a8e07b;
+}
+
+/* 🧮 Total usuarios */
+.total-users {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #044271;
+  text-align: right;
+  margin-bottom: 1.5rem;
+}
+
+/* 👥 Cards */
+.users-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 1.5rem;
+}
+
+.user-card {
+  background: #fff;
+  border-left: 6px solid #97d569;
+  border-radius: 12px;
+  padding: 1.5rem;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.user-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.user-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.user-info h3 {
+  color: #044271;
+  font-size: 1.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.user-info p {
+  color: #555;
+  margin: 0.2rem 0;
+}
+
+.user-balance {
+  text-align: right;
+}
+
+.user-balance .amount {
+  font-size: 1.5rem;
+  color: #044271;
+  font-weight: bold;
+}
+
+/* 🗑️ Eliminar */
+.delete-btn {
+  position: absolute;
+  bottom: 15px;
+  right: 18px;
+  background: transparent;
+  border: none;
+  color: #dc2626;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  color: #b91c1c;
+  transform: scale(1.2);
+}
+
+/* 🏠 Volver */
 .btn-volver {
   position: fixed;
   bottom: 25px;
@@ -175,264 +316,11 @@ export default {
   border-radius: 12px;
   font-weight: bold;
   font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   cursor: pointer;
 }
 
-/* 🔍 Sección de búsqueda */
-.search-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.search-box {
-  flex: 1 1 400px;
-  position: relative;
-  min-width: 250px;
-}
-
-.search-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #044271;
-  font-size: 1.2rem;
-}
-
-.search-input {
-  width: 100%;
-  padding: 0.8rem 1rem 0.8rem 2.8rem;
-  border-radius: 12px;
-  border: 1px solid #044271;
-  background: #97d569;
-  font-size: 1rem;
-  color: #044271;
-  transition: box-shadow 0.2s ease;
-  box-sizing: border-box;
-}
-
-.search-input::placeholder {
-  color: #044271;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #044271;
-  box-shadow: 0 0 8px rgba(4, 66, 113, 0.5);
-}
-
-/* 🧩 Filtros */
-.filter-section {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  color: #044271;
-  flex-shrink: 0;
-}
-
-.filter-select {
-  padding: 0.5rem 0.8rem;
-  border-radius: 8px;
-  border: 1px solid #044271;
-  background: #97d569;
-  color: #044271;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.filter-select:hover {
-  border-color: #044271;
-  background: #a6dd79;
-}
-
-/* 🧮 Total */
-.total-users {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #044271;
-  margin-bottom: 1rem;
-  text-align: right;
-}
-
-/* 👥 Tarjetas */
-.users-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  max-height: calc(100vh - 250px);
-  overflow-y: auto;
-  padding-right: 0.5rem;
-}
-
-.user-card {
-  background: #fff;
-  border-left: 6px solid #97d569;
-  border-radius: 10px;
-  padding: 1.5rem 1.5rem 2.5rem;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  overflow-wrap: break-word; /* 👈 fuerza el salto de línea */
-  word-break: break-word; /* 👈 corta palabras largas */
-  hyphens: auto; /* 👈 mejora legibilidad al cortar */
-}
-
-.user-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-}
-
-.user-main {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.user-info h3 {
-  font-size: 1.3rem;
-  color: #044271;
-  margin-bottom: 0.3rem;
-  word-break: break-word;
-}
-
-.user-info p {
-  margin: 0.2rem 0;
-  color: #555;
-  word-break: break-all; /* 👈 para emails o cadenas sin espacios */
-  overflow-wrap: anywhere;
-}
-
-.user-balance {
-  text-align: right;
-  min-width: 150px;
-}
-
-.user-balance span {
-  color: #777;
-  font-size: 0.9rem;
-}
-
-.user-balance .amount {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #044271;
-}
-
-/* 🗑️ Botón eliminar */
-.delete-btn {
-  position: absolute;
-  bottom: 12px;
-  right: 18px;
-  background: transparent;
-  border: none;
-  color: #dc2626;
-  font-size: 1.3rem;
-  cursor: pointer;
-  transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.delete-btn:hover {
-  color: darkred;
-  transform: scale(1.2);
-}
-
-/* 📱 Responsive */
-@media (max-width: 768px) {
-  .usuarios-container {
-    width: 100%;
-    padding: 1rem;
-  }
-
-  .search-section {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filter-section {
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-
-  .search-box {
-    flex: 1 1 100%;
-  }
-
-  .search-input {
-    width: 100%;
-    font-size: 1rem;
-  }
-
-  .user-main {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .user-balance {
-    text-align: left;
-  }
-
-  .delete-btn {
-    bottom: 10px;
-    right: 10px;
-  }
-
-  .btn-volver {
-    bottom: 15px;
-    right: 15px;
-    font-size: 0.9rem;
-    padding: 0.6rem 1rem;
-  }
-}
-
-/* 📱 Extra pequeño (móviles <480px) */
-@media (max-width: 480px) {
-  .usuarios-container {
-    padding: 0.8rem;
-  }
-
-  .search-section {
-    gap: 0.8rem;
-  }
-
-  .search-box {
-    width: 100%;
-  }
-
-  .search-input {
-    padding: 0.7rem 1rem 0.7rem 2.5rem;
-    font-size: 0.95rem;
-  }
-
-  .filter-section {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.3rem;
-  }
-
-  .filter-select {
-    width: 100%;
-  }
-
-  .total-users {
-    text-align: left;
-    font-size: 1rem;
-  }
-
-  .user-info h3 {
-    font-size: 1.1rem;
-  }
-
-  .user-balance .amount {
-    font-size: 1.2rem;
-  }
+.btn-volver:hover {
+  background-color: #43a047;
 }
 </style>
-

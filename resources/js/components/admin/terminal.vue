@@ -26,6 +26,7 @@
       <div class="main-section">
         <div class="order-section">
           <h3>Orden</h3>
+
           <div class="order-items-container">
             <div v-if="orden.length === 0">No hay productos agregados</div>
             <div v-else>
@@ -67,6 +68,12 @@
               <button class="manual-btn" @click="toggleManual">Manual</button>
             </div>
 
+            <div v-if="metodoPago === 'efectivo' && mostrarManual" class="cash-input">
+              <label>Monto recibido:</label>
+              <input type="number" min="0" step="0.01" v-model.number="cashRecibido" placeholder="Ej. 37.50" />
+            </div>
+
+            <!-- 🔘 OTROS BOTONES -->
             <div class="cash-buttons2">
               <button class="athmovil-btn" @click="mostrarATH">
                 <img :src="athLogo" alt="ATH" class="icon" width="90" height="90" />
@@ -76,17 +83,13 @@
               <button class="more-options-btn" @click="volverProductos">Atras</button>
             </div>
 
-            <div v-if="metodoPago === 'efectivo' && mostrarManual" class="cash-input">
-              <label>Monto recibido:</label>
-              <input type="number" min="0" step="0.01" v-model.number="cashRecibido" placeholder="Ej. 37.50" />
-            </div>
-
             <button @click="terminarOrden" :disabled="orden.length === 0 || loading">
               {{ loading ? "Procesando..." : "Terminar Orden" }}
             </button>
           </div>
         </div>
 
+        <!-- 🛒 PRODUCTOS -->
         <div class="products-section">
           <h3>Productos</h3>
 
@@ -95,7 +98,6 @@
 
           <div v-if="mostrarOpciones" class="productos-botones">
             <button class="boton-extra" @click="volverMenu">Menu Principal</button>
-
             <button style="background-color: #3A63E8;" class="boton-extra">Pago Mixto</button>
             <button class="boton-extra">Codigo Promocional</button>
             <button class="boton-extra" style="background-color: goldenrod;">Refund</button>
@@ -109,6 +111,7 @@
             <div v-if="productos.length === 0">Cargando productos...</div>
             <div v-else>
               <div v-if="Object.keys(productosPorCategoria).length === 0">No se encontraron productos</div>
+
               <div v-for="(listaProductos, categoria) in productosPorCategoria" :key="categoria"
                 class="categoria-bloque">
                 <h4 class="categoria-titulo">{{ categoria }}</h4>
@@ -124,6 +127,14 @@
         </div>
       </div>
 
+      <div v-if="mostrarErrorModal" class="modal-overlay">
+        <div class="modal error-modal">
+          <h3>⚠ Orden no totalizada</h3>
+          <p>Debes ingresar o seleccionar una cantidad de efectivo antes de finalizar la orden.</p>
+          <button @click="cerrarErrorModal">Aceptar</button>
+        </div>
+      </div>
+
       <div v-if="mostrarModal" class="modal-overlay">
         <div class="modal">
           <h3>Ingrese código superadmin para void</h3>
@@ -134,13 +145,12 @@
           </div>
         </div>
       </div>
-    </div>
-    <!-- Modal imagen ATH -->
-    <div v-if="mostrarImagenATH" class="ath-overlay" @click="cerrarATH">
-      <img :src="getImageUrl('athceo.png')" alt="Logo" />
+
+      <div v-if="mostrarImagenATH" class="ath-overlay" @click="cerrarATH">
+        <img :src="getImageUrl('athceo.png')" alt="ATH Móvil" class="ath-image" />
+      </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -160,6 +170,7 @@ export default {
       busqueda: "",
       mostrarManual: false,
       mostrarModal: false,
+      mostrarErrorModal: false,
       productoAEliminar: null,
       codigoSuperAdmin: "",
       busquedaCliente: "",
@@ -169,6 +180,14 @@ export default {
       athLogo: "/images/athpng.png",
       mostrarOpciones: false,
     };
+  },
+  watch: {
+    mostrarErrorModal(nuevoValor) {
+      if (nuevoValor) {
+        const sonido = new Audio("/sounds/error.mp3");
+        sonido.play().catch(() => console.warn("No se pudo reproducir el sonido"));
+      }
+    },
   },
   computed: {
     subtotal() {
@@ -182,80 +201,56 @@ export default {
     },
     clientesFiltrados() {
       if (!this.busquedaCliente) return this.clientes;
-      return this.clientes.filter(cliente => {
-        const nombreCompleto = `${cliente.nombre || cliente.name} ${cliente.apellido || cliente.lastname}`.toLowerCase();
-        const numeroSocio = cliente.numero_socio ? cliente.numero_socio.toString() : "";
-        const busqueda = this.busquedaCliente.toLowerCase();
-        return nombreCompleto.includes(busqueda) || numeroSocio.includes(busqueda);
+      const search = this.busquedaCliente.toLowerCase();
+      return this.clientes.filter((c) => {
+        const nombre = `${c.nombre || c.name} ${c.apellido || c.lastname}`.toLowerCase();
+        return nombre.includes(search) || (c.numero_socio && c.numero_socio.toString().includes(search));
       });
     },
-    productosFiltrados() {
-      if (!this.busqueda) return this.productos;
-      return this.productos.filter(p => (p.nombre || "").toLowerCase().includes(this.busqueda.toLowerCase()));
-    },
+
     productosPorCategoria() {
       const grupos = {};
-      const ordenados = [...this.productosFiltrados].sort((a, b) => {
-        const ca = (a.categoria || "Sin categoría").toLowerCase();
-        const cb = (b.categoria || "Sin categoría").toLowerCase();
-        if (ca < cb) return -1;
-        if (ca > cb) return 1;
-        return (a.nombre || "").localeCompare(b.nombre || "");
-      });
-      ordenados.forEach(producto => {
-        const categoria = producto.categoria && producto.categoria !== "" ? producto.categoria : "Sin categoría";
-        if (!grupos[categoria]) grupos[categoria] = [];
-        grupos[categoria].push(producto);
+      const ordenados = [...this.productos].sort((a, b) =>
+        (a.categoria || "").localeCompare(b.categoria || "")
+      );
+      ordenados.forEach((p) => {
+        const cat = p.categoria || "Sin categoría";
+        if (!grupos[cat]) grupos[cat] = [];
+        grupos[cat].push(p);
       });
       return grupos;
     },
   },
   async created() {
-    const MIN_LOADING_TIME = 1500;
-    const startTime = Date.now();
+    const MIN_LOADING_TIME = 1200;
+    const start = Date.now();
     try {
       const token = localStorage.getItem("auth_token");
       await this.loadCurrentUser(token);
       await this.obtenerClientes();
       await this.obtenerProductos();
-    } catch (err) {
-      console.error("Error al cargar:", err);
     } finally {
-      const elapsed = Date.now() - startTime;
-      const remaining = MIN_LOADING_TIME - elapsed;
-      if (remaining > 0) {
-        setTimeout(() => { this.isLoading = false; }, remaining);
-      } else {
-        this.isLoading = false;
-      }
+      const elapsed = Date.now() - start;
+      setTimeout(() => (this.isLoading = false), Math.max(0, MIN_LOADING_TIME - elapsed));
     }
   },
   methods: {
-    volverMenu() {
-      this.$router.push("/");
-    },
-
+    volverMenu() { this.$router.push("/"); },
     async loadCurrentUser(token) {
       const res = await axios.get("/api/user", { headers: { Authorization: `Bearer ${token}` } });
       this.user = res.data;
     },
-    volverProductos() {
-      this.mostrarOpciones = false;
-    },
-    mostrarATH() {
-      this.mostrarImagenATH = true;
-    },
-    cerrarATH() {
-      this.mostrarImagenATH = false;
-    },
+    volverProductos() { this.mostrarOpciones = false; },
+    toggleMasOpciones() { this.mostrarOpciones = !this.mostrarOpciones; },
+    mostrarATH() { this.mostrarImagenATH = true; },
+    cerrarATH() { this.mostrarImagenATH = false; },
+    getImageUrl(name) { return `${window.location.origin}/images/${name}`; },
     async obtenerClientes() {
       const token = localStorage.getItem("auth_token");
       const res = await axios.get("/api/users", { headers: { Authorization: `Bearer ${token}` } });
       this.clientes = res.data;
     },
-    getImageUrl(name) {
-      return `${window.location.origin}/images/${name}`;
-    },
+
     async obtenerProductos() {
       const res = await axios.get("/api/products");
       this.productos = res.data;
@@ -263,23 +258,23 @@ export default {
     seleccionarCliente(cliente) {
       this.clienteId = cliente.id;
       this.clienteSeleccionado = cliente;
-      this.busquedaCliente = `${cliente.numero_socio ? '#' + cliente.numero_socio + ' - ' : ''}${cliente.nombre || cliente.name} ${cliente.apellido || cliente.lastname}`;
+      this.busquedaCliente = `${cliente.numero_socio ? "#" + cliente.numero_socio + " - " : ""}${cliente.nombre || cliente.name} ${cliente.apellido || cliente.lastname}`;
       this.mostrarClientes = false;
     },
     ocultarListaClientes() { setTimeout(() => (this.mostrarClientes = false), 200); },
     agregarProducto(producto) {
-      const index = this.orden.findIndex(p => p.id === producto.id);
+      const index = this.orden.findIndex((p) => p.id === producto.id);
       if (index !== -1) this.orden[index].cantidad += 1;
       else this.orden.push({ ...producto, cantidad: 1 });
     },
     obtenerClaseCategoria(producto) {
       const cat = producto.categoria?.toLowerCase() || "";
       if (cat.includes("bebidas")) return producto.nombre.toLowerCase().includes("agua") ? "boton-agua" : "boton-bebida";
-      else if (cat.includes("refrigerio")) return "boton-refrigerio";
-      else if (cat.includes("dulce")) return "boton-dulce";
-      else if (cat.includes("chocolate")) return "boton-chocolates";
-      else if (cat.includes("comida")) return "boton-comida";
-      else return "boton-otros";
+      if (cat.includes("refrigerio")) return "boton-refrigerio";
+      if (cat.includes("dulce")) return "boton-dulce";
+      if (cat.includes("chocolate")) return "boton-chocolates";
+      if (cat.includes("comida")) return "boton-comida";
+      return "boton-otros";
     },
     intentarEliminarProducto(index) {
       if (this.metodoPago === "efectivo" && this.cashRecibido > 0) {
@@ -295,51 +290,48 @@ export default {
         this.codigoSuperAdmin = "";
       } else alert("Código incorrecto");
     },
-    cancelarVoid() {
-      this.mostrarModal = false;
-      this.codigoSuperAdmin = "";
-    },
+    cancelarVoid() { this.mostrarModal = false; this.codigoSuperAdmin = ""; },
     seleccionarCash(monto) { this.cashRecibido += monto; },
     seleccionarExacto() { this.cashRecibido = this.total; },
     toggleManual() { this.mostrarManual = !this.mostrarManual; if (!this.mostrarManual) this.cashRecibido = 0; },
+    cerrarErrorModal() { this.mostrarErrorModal = false; },
+
     async terminarOrden() {
       if (this.orden.length === 0) return;
-      this.loading = true;
 
+      if (this.metodoPago === "efectivo" && this.cashRecibido <= 0) {
+        this.mostrarErrorModal = true;
+        return;
+      }
+
+      this.loading = true;
       const payload = {
         cliente_id: this.clienteId,
         cajero_id: this.user.id,
         total: this.total,
         metodo_pago: this.metodoPago,
-        productos: this.orden.map(i => ({
+        productos: this.orden.map((i) => ({
           product_id: i.id,
-          quantity: i.cantidad  // <-- importante, antes no estaba
+          quantity: i.cantidad,
         })),
       };
 
       try {
         const token = localStorage.getItem("auth_token");
         const res = await axios.post("/api/sales", payload, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         alert(`Orden registrada con éxito! Dividendos actuales: ${res.data.dividendos_actuales}`);
-
         this.orden = [];
-        this.clienteId = null;
         this.cashRecibido = 0;
-        this.busquedaCliente = "";
-        this.clienteSeleccionado = null;
-        this.mostrarClientes = false;
-
-      } catch (e) {
+        this.clienteId = null;
+      } catch {
         alert("Error al procesar la orden");
       } finally {
         this.loading = false;
       }
     },
-
-    toggleMasOpciones() { this.mostrarOpciones = !this.mostrarOpciones; },
   },
 };
 </script>
@@ -374,6 +366,23 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.error-modal {
+  background-color: #ffebee;
+  border: 2px solid #f44336;
+  color: #b71c1c;
+  text-align: center;
+}
+
+.error-modal button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
 }
 
 .ath-overlay {

@@ -180,42 +180,47 @@ async function guardarCompra() {
 <style scoped>
 .page-wrapper {
   min-height: 100vh;
-  background: #e0e0e0;
+  background: #f1f1f1;
   color: #333;
   display: flex;
   flex-direction: column;
-  padding: 2rem 3rem;
+  justify-content: flex-start;
+  padding: 1rem;
   font-family: "Inter", sans-serif;
-}
-
-/* === GRID PRINCIPAL === */
-.compra-section {
-  display: grid;
-  grid-template-columns: 60% 40%;
-  gap: 2.5rem;
   width: 100%;
+  box-sizing: border-box;
 }
 
-/* === PANEL FORMULARIO === */
+.compra-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* PANEL FORMULARIO */
 .form-panel {
+  flex: 2 1 600px;
   background: white;
-  border-radius: 16px;
-  padding: 2.5rem 2rem 3rem;
-  border: 2px solid #4caf50;
-  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #4caf50;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
 }
 
 .form-panel h2 {
-  margin-bottom: 2rem;
-  color: #4caf50;
-  font-size: 1.7rem;
+  margin-bottom: 1.5rem;
+  color: #388e3c;
+  font-size: 1.6rem;
+  text-align: center;
 }
 
-/* === FORMULARIO === */
+/* FORMULARIO */
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
 }
 
 .form-group {
@@ -223,49 +228,55 @@ async function guardarCompra() {
   flex-direction: column;
 }
 
+label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
 input,
 select {
-  background: #f8f8f8;
-  color: #333;
+  background: #fafafa;
   border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  padding: 0.8rem;
   font-size: 1rem;
-  transition: all 0.25s ease;
+  transition: 0.2s;
 }
 
 input:focus,
 select:focus {
-  outline: none;
   border-color: #4caf50;
-  box-shadow: 0 0 10px #4caf5055;
+  box-shadow: 0 0 6px #4caf5055;
+  outline: none;
 }
 
-/* === BOTONES === */
+/* BOTÓN */
 .btn-container {
-  display: flex;
-  justify-content: flex-end;
   margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
 }
 
 .btn-guardar {
+  width: 100%;
   background: #4caf50;
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 8px;
-  padding: 1rem 1.8rem;
+  padding: 1rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.25s;
+  transition: background 0.3s;
 }
 
 .btn-guardar:hover {
   background: #43a047;
 }
 
-/* === TABLA === */
+/* TABLA */
 .tabla-wrapper {
+  margin-top: 1.5rem;
   overflow-x: auto;
 }
 
@@ -273,62 +284,61 @@ table {
   width: 100%;
   border-collapse: collapse;
   background: #f8f8f8;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 th,
 td {
-  padding: 1rem;
-  border-bottom: 1px solid #ddd;
+  padding: 0.8rem;
   text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
 th {
   background: #4caf50;
-  color: #fff;
+  color: white;
   font-weight: 600;
 }
 
 tr:hover {
-  background: #eafbea;
+  background: #e8f5e9;
 }
 
-/* === PANEL DERECHO === */
+/* PANEL VISTA PREVIA */
 .visual-panel {
+  flex: 1 1 320px;
   background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  border: 2px solid #4caf50;
-  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #4caf50;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  align-self: flex-start;
 }
 
 .preview-card {
-  background: #f4f4f4;
-  border-radius: 12px;
-  padding: 1.2rem;
-  border: 1px solid #ccc;
+  background: #f7f7f7;
+  padding: 1rem;
+  border-radius: 10px;
 }
 
 .preview-card h4 {
-  color: #4caf50;
+  color: #388e3c;
   margin-bottom: 0.8rem;
 }
 
-/* === BOTÓN VOLVER === */
+/* BOTÓN VOLVER */
 .btn-volver {
-  position: fixed;
-  bottom: 25px;
-  right: 30px;
+  margin-top: 2rem;
+  width: 100%;
   background-color: #4caf50;
   color: white;
   border: none;
-  padding: 0.9rem 1.4rem;
-  border-radius: 12px;
+  padding: 1rem;
+  border-radius: 10px;
   font-weight: bold;
   font-size: 1rem;
   cursor: pointer;
   transition: 0.25s;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .btn-volver:hover {
@@ -336,49 +346,36 @@ tr:hover {
 }
 
 /* === RESPONSIVE === */
-@media (max-width: 1000px) {
-  .compra-section {
-    grid-template-columns: 1fr;
-  }
-
-  .visual-panel {
-    margin-top: 2rem;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .page-wrapper {
-    padding: 1.2rem;
+    padding: 0.5rem;
+  }
+
+  .compra-section {
+    flex-direction: column;
   }
 
   .form-panel,
   .visual-panel {
-    padding: 1.5rem;
+    width: 100%;
+    padding: 1.2rem;
   }
 
   h2 {
     font-size: 1.4rem;
   }
 
-  .btn-guardar {
-    width: 100%;
+  table {
+    font-size: 0.9rem;
   }
 
   th,
   td {
-    padding: 0.7rem;
-    font-size: 0.9rem;
+    padding: 0.6rem;
   }
 
   .btn-volver {
-    position: static;
-    margin-top: 1.5rem;
-    width: 100%;
-    text-align: center;
+    margin-bottom: 2rem;
   }
 }
 </style>

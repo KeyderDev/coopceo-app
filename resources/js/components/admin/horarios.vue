@@ -105,10 +105,6 @@
     <button class="btn send" @click="sendEmail">
       <i class="fa-solid fa-paper-plane"></i> Enviar horarios por correo
     </button>
-
-    <button class="btn-volver" @click="volverMenu">
-      <i class="fa-solid fa-house"></i> Menú Principal
-    </button>
   </div>
 </template>
 

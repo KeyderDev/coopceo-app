@@ -17,18 +17,21 @@ import documentos from './components/admin/documentos.vue'
 import ForgotPassword from './components/ForgotPassword.vue'
 import management from './components/admin/management.vue'
 import inventory from './components/admin/inventory.vue'
+import userDetails from './components/admin/userDetails.vue'
+
 const routes = [
   {
-    path: '/', 
+    path: '/',
     component: AdminPanel,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresAdmin: true },
     children: [
-      { path: 'users', component: Users, name: 'users' }, 
-      { path: 'logs', component: Logs, name: 'logs' }, 
+      { path: 'users', component: Users, name: 'users' },
+      { path: 'logs', component: Logs, name: 'logs' },
       { path: 'terminal', component: terminal, name: 'terminal' },
       { path: 'cuadre', component: cuadre, name: 'reconciliation' },
       { path: 'cuadres', component: cuadres, name: 'cuadres' },
       { path: 'pos-transactions', component: posTransactions, name: 'pos-transactions' },
+      { path: 'users/:id', component: userDetails, name: 'user-details' },
       { path: 'email', component: email, name: 'email' },
       { path: 'calendar', component: Calendar, name: 'calendar' },
       { path: 'horarios', component: horarios, name: 'horarios' },
@@ -37,30 +40,48 @@ const routes = [
       { path: 'documentos', component: documentos, name: 'documentos' },
       { path: 'management', component: management, name: 'management' },
       { path: 'inventory', component: inventory, name: 'inventory' }
-      
     ]
   },
   { path: '/login', component: Login, name: 'login' },
   { path: '/register', component: Register, name: 'register' },
   { path: '/forgot-password', component: ForgotPassword, name: 'forgot-password' },
-
 ]
 
 const router = createRouter({
-  history: createWebHistory('/admin-panel'), 
+  history: createWebHistory('/admin-panel'),
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const token = localStorage.getItem('auth_token')
 
   if (to.meta.requiresAuth && !token) {
-    next({ name: 'login' })
-  } else if (to.name === 'login' && token) {
-    next('/')
-  } else {
-    next()
+    return next({ name: 'login' })
   }
+
+  if (to.name === 'login' && token) {
+    return next('/')
+  }
+
+  if (to.meta.requiresAdmin && token) {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_APP_URL}/api/user`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const user = await res.json()
+
+      if (!user.admin) {
+        return next('/')
+      }
+
+      return next()
+    } catch (error) {
+      console.error('Error al verificar el usuario:', error)
+      localStorage.removeItem('auth_token')
+      return next({ name: 'login' })
+    }
+  }
+  next()
 })
 
 export default router

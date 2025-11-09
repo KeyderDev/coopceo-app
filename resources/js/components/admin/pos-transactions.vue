@@ -51,10 +51,6 @@
         </tbody>
       </table>
     </div>
-
-    <button class="btn-volver" @click="volverMenu">
-      <i class="fa-solid fa-house"></i> Menú Principal
-    </button>
   </div>
 </template>
 

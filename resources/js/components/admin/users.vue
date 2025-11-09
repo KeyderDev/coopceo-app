@@ -47,6 +47,9 @@
         </div>
 
         <div class="user-actions">
+          <button class="manage-btn" @click="goToUser(user.id)">
+            <i class="fa-solid fa-gear"></i> Administrar
+          </button>
           <button class="delete-btn" @click="deleteUser(user.id)">
             <i class="fa-solid fa-trash"></i> Eliminar
           </button>
@@ -114,6 +117,10 @@ export default {
     },
   },
   methods: {
+    goToUser(userId) {
+      this.$router.push(`/users/${userId}`);
+    },
+
     async deleteUser(userId) {
       if (!confirm("¿Seguro que deseas eliminar este usuario?")) return;
       const token = localStorage.getItem("auth_token");
@@ -157,7 +164,6 @@ export default {
   box-sizing: border-box;
 }
 
-/* 🔍 Buscador */
 .search-section {
   display: flex;
   justify-content: space-between;
@@ -171,6 +177,38 @@ export default {
   flex: 1;
   position: relative;
   min-width: 230px;
+}
+
+.user-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  gap: 0.7rem;
+}
+
+.manage-btn {
+  background: rgba(157, 216, 106, 0.15);
+  color: #9dd86a;
+  border: 1px solid rgba(157, 216, 106, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.manage-btn i {
+  font-size: 1rem;
+}
+
+.manage-btn:hover {
+  background: #9dd86a;
+  color: #1a1a1a;
+  transform: translateY(-2px);
 }
 
 .search-icon {

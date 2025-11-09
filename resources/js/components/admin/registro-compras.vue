@@ -23,7 +23,7 @@
                 <option disabled value="">Selecciona un método</option>
                 <option value="efectivo">Efectivo</option>
                 <option value="athmovil">ATH Móvil</option>
-                <option value="transferencia">Transferencia bancaria</option>
+                <option value="tarjeta">Tarjeta</option>
                 <option value="cheque">Cheque</option>
               </select>
             </div>
@@ -91,10 +91,6 @@
         </div>
       </div>
     </section>
-
-    <button class="btn-volver" @click="volverMenu">
-      <i class="fa-solid fa-house"></i> Menú Principal
-    </button>
   </div>
 </template>
 

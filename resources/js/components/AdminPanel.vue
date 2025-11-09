@@ -3,7 +3,6 @@
         <!-- 🔝 Topbar -->
         <header class="topbar">
             <div class="topbar-left">
-                <!-- <h2><i class="fa-solid fa-user-shield"></i> {{ user.posicion }}</h2> -->
                 <h2><i class="fa-solid fa-user-shield"></i>JuCoop Back Office</h2>
 
             </div>
@@ -14,7 +13,6 @@
             </div>
         </header>
 
-        <!-- 🧩 Main Content -->
         <main class="main-content">
             <div v-if="$route.path === '/' || $route.path === '/admin-panel'" class="menu-grid">
                 <router-link to="/management" class="menu-item">
@@ -149,7 +147,6 @@ export default {
 </script>
 
 <style scoped>
-/* 🌌 Fondo general */
 #app {
     font-family: "Inter", sans-serif;
     background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
@@ -159,7 +156,6 @@ export default {
     flex-direction: column;
 }
 
-/* 🔝 Topbar */
 .topbar {
     height: 70px;
     background: rgba(157, 216, 106, 0.08);
@@ -198,15 +194,12 @@ export default {
     transform: translateY(-2px);
 }
 
-/* 🟩 Espacio entre los botones */
 .topbar-right {
     display: flex;
     gap: 0.8rem;
-    /* Espacio entre botones */
     align-items: center;
 }
 
-/* 🧩 Main Content */
 .main-content {
     flex: 1;
     background: rgba(20, 22, 25, 0.7);
@@ -217,7 +210,6 @@ export default {
     animation: fadeIn 0.6s ease-in-out;
 }
 
-/* 🧮 Grid principal */
 .menu-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -226,7 +218,6 @@ export default {
     margin: 0 auto;
 }
 
-/* 🧭 Menú Item */
 .menu-item {
     background: rgba(157, 216, 106, 0.1);
     border: 1px solid rgba(157, 216, 106, 0.15);
@@ -260,7 +251,6 @@ export default {
     font-size: 1rem;
 }
 
-/* 🌙 Vista de componente hijo */
 .child-component {
     width: 100%;
     background: rgba(25, 27, 31, 0.85);
@@ -270,7 +260,6 @@ export default {
     animation: fadeIn 0.6s ease-in-out;
 }
 
-/* 🦶 Footer */
 .footer {
     background: rgba(25, 27, 31, 0.8);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -298,7 +287,6 @@ export default {
     gap: 0.5rem;
 }
 
-/* ✨ Animación */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -311,7 +299,6 @@ export default {
     }
 }
 
-/* 📱 Responsive */
 @media (max-width: 768px) {
     .topbar {
         flex-direction: column;

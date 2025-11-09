@@ -33,6 +33,53 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+    public function update(Request $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            $validated = $request->validate([
+                'nombre' => 'nullable|string|max:255',
+                'apellido' => 'nullable|string|max:255',
+                'telefono' => 'nullable|string|max:255',
+                'email' => 'nullable|email|max:255',
+                'admin' => 'nullable|boolean',
+            ]);
+
+            $user->update($validated);
+
+            return response()->json([
+                'message' => 'Usuario actualizado correctamente',
+                'user' => $user
+            ], 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Error al actualizar usuario: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Error al actualizar usuario',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function show($id)
+    {
+        try {
+            $user = User::find($id);
+
+            if (!$user) {
+                return response()->json(['error' => 'Usuario no encontrado'], 404);
+            }
+
+            return response()->json($user, 200);
+        } catch (\Exception $e) {
+            \Log::error('Error al obtener usuario: ' . $e->getMessage());
+            return response()->json(['error' => 'Error interno del servidor'], 500);
+        }
+    }
+
+
     public function destroy(Request $request, $id)
     {
         $token = $request->bearerToken();
@@ -65,7 +112,4 @@ class UserController extends Controller
             ], 500);
         }
     }
-
-
-
 }

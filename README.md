@@ -84,7 +84,7 @@ Desde la gestión de socios hasta el control de inventario, balances, transaccio
 
 ## 📸 Vista previa
 
-![Interfaz de JuCoop](public/images/interface.png)
+![Interfaz de JuCoop](public/images/v3.png)
 
 
 ---

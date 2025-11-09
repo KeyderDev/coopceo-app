@@ -3,7 +3,7 @@
     <section class="compra-section">
       <!-- PANEL IZQUIERDO -->
       <div class="form-panel">
-        <h2>Registrar nueva compra</h2>
+        <h2><i class="fa-solid fa-receipt"></i> Registrar nueva compra</h2>
 
         <form @submit.prevent="guardarCompra" class="compra-form">
           <div class="form-grid">
@@ -120,10 +120,7 @@ onMounted(() => {
 });
 
 const router = useRouter();
-
-const volverMenu = () => {
-  router.push("/");
-};
+const volverMenu = () => router.push("/");
 
 async function cargarCompras() {
   try {
@@ -137,6 +134,7 @@ async function cargarCompras() {
     console.error(error);
   }
 }
+
 function formatFecha(fecha) {
   if (!fecha) return "—";
   return new Date(fecha).toISOString().slice(0, 10);
@@ -178,79 +176,78 @@ async function guardarCompra() {
 </script>
 
 <style scoped>
+/* 🌌 Fondo general */
 .page-wrapper {
   min-height: 100vh;
-  background: #f1f1f1;
-  color: #333;
+  background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
+  color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 1rem;
+  padding: 2rem;
   font-family: "Inter", sans-serif;
-  width: 100%;
   box-sizing: border-box;
 }
 
+/* === Estructura === */
 .compra-section {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 1.8rem;
   width: 100%;
   margin: 0 auto;
 }
 
-/* PANEL FORMULARIO */
+/* === Panel formulario === */
 .form-panel {
   flex: 2 1 600px;
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  border: 1px solid #4caf50;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  background: rgba(25, 27, 31, 0.85);
+  border: 1px solid rgba(157, 216, 106, 0.15);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  animation: fadeIn 0.6s ease-in-out;
 }
 
 .form-panel h2 {
   margin-bottom: 1.5rem;
-  color: #388e3c;
+  color: #9dd86a;
   font-size: 1.6rem;
   text-align: center;
 }
 
-/* FORMULARIO */
+/* === Inputs y selects === */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 1rem;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
 label {
   font-weight: 600;
   margin-bottom: 0.4rem;
+  color: #9dd86a;
 }
 
 input,
 select {
-  background: #fafafa;
-  border: 1px solid #ccc;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(157, 216, 106, 0.2);
   border-radius: 8px;
   padding: 0.8rem;
+  color: #fff;
   font-size: 1rem;
   transition: 0.2s;
 }
 
 input:focus,
 select:focus {
-  border-color: #4caf50;
-  box-shadow: 0 0 6px #4caf5055;
+  border-color: #9dd86a;
+  box-shadow: 0 0 6px rgba(157, 216, 106, 0.5);
   outline: none;
 }
 
-/* BOTÓN */
+/* === Botón guardar === */
 .btn-container {
   margin-top: 1.5rem;
   display: flex;
@@ -259,7 +256,7 @@ select:focus {
 
 .btn-guardar {
   width: 100%;
-  background: #4caf50;
+  background: linear-gradient(135deg, #9dd86a, #7ab55c);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -267,14 +264,15 @@ select:focus {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
 }
 
 .btn-guardar:hover {
-  background: #43a047;
+  background: linear-gradient(135deg, #b9f089, #91d46d);
+  transform: translateY(-2px);
 }
 
-/* TABLA */
+/* === Tabla === */
 .tabla-wrapper {
   margin-top: 1.5rem;
   overflow-x: auto;
@@ -283,72 +281,69 @@ select:focus {
 table {
   width: 100%;
   border-collapse: collapse;
-  background: #f8f8f8;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 th,
 td {
   padding: 0.8rem;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 th {
-  background: #4caf50;
-  color: white;
-  font-weight: 600;
+  background: rgba(157, 216, 106, 0.1);
+  color: #9dd86a;
+  text-transform: uppercase;
+  font-size: 0.9rem;
 }
 
-tr:hover {
-  background: #e8f5e9;
-}
-
-/* PANEL VISTA PREVIA */
+/* === Vista previa === */
 .visual-panel {
   flex: 1 1 320px;
-  background: white;
-  border-radius: 12px;
+  background: rgba(25, 27, 31, 0.85);
+  border-radius: 20px;
+  border: 1px solid rgba(157, 216, 106, 0.15);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
   padding: 1.5rem;
-  border: 1px solid #4caf50;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
   align-self: flex-start;
 }
 
 .preview-card {
-  background: #f7f7f7;
+  background: rgba(255, 255, 255, 0.05);
   padding: 1rem;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
 .preview-card h4 {
-  color: #388e3c;
-  margin-bottom: 0.8rem;
+  color: #9dd86a;
+  margin-bottom: 1rem;
 }
 
-/* BOTÓN VOLVER */
+/* === Botón volver === */
 .btn-volver {
   margin-top: 2rem;
-  width: 100%;
-  background-color: #4caf50;
-  color: white;
+  background: linear-gradient(135deg, #9dd86a, #7ab55c);
+  color: #fff;
   border: none;
-  padding: 1rem;
-  border-radius: 10px;
-  font-weight: bold;
+  padding: 1rem 1.4rem;
+  border-radius: 12px;
+  font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: 0.25s;
+  transition: 0.3s;
+  align-self: center;
 }
 
 .btn-volver:hover {
-  background-color: #43a047;
+  background: linear-gradient(135deg, #b9f089, #91d46d);
+  transform: translateY(-2px);
 }
 
-/* === RESPONSIVE === */
+/* === Responsive === */
 @media (max-width: 768px) {
   .page-wrapper {
-    padding: 0.5rem;
+    padding: 1rem;
   }
 
   .compra-section {
@@ -361,21 +356,20 @@ tr:hover {
     padding: 1.2rem;
   }
 
-  h2 {
-    font-size: 1.4rem;
-  }
-
   table {
     font-size: 0.9rem;
   }
+}
 
-  th,
-  td {
-    padding: 0.6rem;
+/* ✨ Animación */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-
-  .btn-volver {
-    margin-bottom: 2rem;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>

@@ -34,9 +34,6 @@
 
     <button class="btn-guardar" @click="saveReconciliation">Guardar cuadre</button>
   </div>
-      <button class="btn-volver" @click="volverMenu">
-      <i class="fa-solid fa-house"></i> Menú Principal
-    </button>
 </template>
 
 <script>
@@ -167,114 +164,177 @@ export default {
 
 <style scoped>
 .cash-reconciliation {
-  max-width: 650px;
-  width: 85%;
-  margin: 30px auto;
-  padding: 25px 30px;
-  background-color: #043861;
-  color: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  font-family: 'Arial', sans-serif;
+  max-width: 700px;
+  width: 90%;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: rgba(30, 30, 30, 0.9);
+  color: #f5f7fa;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  font-family: "Inter", sans-serif;
+  backdrop-filter: blur(10px);
 }
 
+/* 🧾 Títulos */
 h2 {
   text-align: center;
-  margin-bottom: 20px;
-  color: #97d569;
-  font-size: 24px;
+  margin-bottom: 1.5rem;
+  color: #9dd86a;
+  font-size: 1.8rem;
+  border-bottom: 2px solid rgba(157, 216, 106, 0.3);
+  padding-bottom: 0.4rem;
+  text-shadow: 0 0 6px rgba(157, 216, 106, 0.3);
 }
 
 h3 {
-  margin-top: 20px;
-  margin-bottom: 12px;
-  color: #97d569;
-  font-size: 18px;
-  border-bottom: 1px solid #97d569;
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem;
+  color: #9dd86a;
+  font-size: 1.2rem;
+  border-bottom: 1px solid rgba(157, 216, 106, 0.3);
   padding-bottom: 4px;
 }
 
+/* 🧮 Campos */
 .field {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 10px 0;
+  margin: 0.7rem 0;
 }
 
 .field label {
-  font-weight: bold;
-  font-size: 15px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #e0e0e0;
 }
 
 .field input {
-  width: 100px;
-  padding: 6px 10px;
-  border: none;
-  border-radius: 6px;
+  width: 110px;
+  padding: 0.5rem 0.7rem;
+  background: rgba(14, 17, 23, 0.95);
+  color: #f5f7fa;
+  border: 1px solid rgba(157, 216, 106, 0.3);
+  border-radius: 8px;
   text-align: right;
-  font-size: 15px;
-}
-
-.totals {
-  margin-top: 25px;
-  padding: 15px;
-  background-color: #97d569;
-  color: #043861;
-  border-radius: 10px;
-}
-
-.btn-volver {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 0.7rem 1.2rem;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  font-size: 0.95rem;
   transition: all 0.25s ease;
-  z-index: 1000;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: #9dd86a;
+  box-shadow: 0 0 8px rgba(157, 216, 106, 0.4);
+}
+
+/* 💰 Totales */
+.totals {
+  margin-top: 2rem;
+  padding: 1rem 1.2rem;
+  background: rgba(25, 27, 31, 0.85);
+  color: #f5f7fa;
+  border-radius: 12px;
+  border: 1px solid rgba(157, 216, 106, 0.2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 }
 
 .totals p {
   display: flex;
   justify-content: space-between;
-  margin: 6px 0;
-  font-weight: bold;
-  font-size: 15px;
+  margin: 0.6rem 0;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.totals span {
+  color: #b9f089;
 }
 
 .totals .negative {
   color: #ff4d4d;
 }
 
+/* 💾 Botón Guardar */
 .btn-guardar {
   width: 100%;
-  padding: 10px;
-  margin-top: 25px;
-  background-color: #97d569;
-  color: #043861;
+  padding: 0.9rem;
+  margin-top: 1.8rem;
+  background: linear-gradient(135deg, #9dd86a, #7ab55c);
+  color: #fff;
   border: none;
   border-radius: 10px;
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
 }
 
-button:hover {
-  background-color: #81c25d;
+.btn-guardar:hover {
+  background: linear-gradient(135deg, #b9f089, #91d46d);
+  transform: translateY(-3px);
 }
 
-@media (min-width: 700px) {
-  .field-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px 25px;
+/* 🏠 Botón Volver */
+.btn-volver {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: linear-gradient(135deg, #9dd86a, #7ab55c);
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.3rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+  z-index: 1000;
+}
+
+.btn-volver:hover {
+  background: linear-gradient(135deg, #b9f089, #91d46d);
+  transform: translateY(-3px);
+}
+
+/* 🌗 Scrollbar personalizada */
+.cash-reconciliation::-webkit-scrollbar {
+  width: 10px;
+}
+.cash-reconciliation::-webkit-scrollbar-thumb {
+  background: rgba(157, 216, 106, 0.3);
+  border-radius: 10px;
+}
+.cash-reconciliation::-webkit-scrollbar-thumb:hover {
+  background: rgba(157, 216, 106, 0.6);
+}
+.cash-reconciliation::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  .cash-reconciliation {
+    width: 95%;
+    padding: 1.2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .field input {
+    width: 90px;
+  }
+
+  .btn-volver {
+    bottom: 15px;
+    right: 15px;
+    font-size: 0.9rem;
+    padding: 0.7rem 1rem;
   }
 }
 </style>
+

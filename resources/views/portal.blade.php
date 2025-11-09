@@ -1,235 +1,221 @@
 <!-- resources/views/portal.blade.php -->
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal COOPCEO</title>
-    <meta name="google-site-verification" content="M5DFDnqwNkwe0zeOGWKtkutRqLIngdrZU1x9S-1hsjc" />
-    <meta name="description"
-        content="Portal oficial de COOPCEO — Accede a tu cuenta de socio o al panel administrativo.">
-    <meta name="keywords" content="COOPCEO, cooperativa, socios, administración, portal, finanzas">
-    <meta name="author" content="COOPCEO">
-    <meta name="robots" content="index, follow">
-    <meta property="og:title" content="Portal COOPCEO">
-    <meta property="og:description"
-        content="Bienvenido al portal oficial de COOPCEO. Gestiona tu cuenta de socio o accede al panel administrativo.">
-    <meta property="og:image" content="{{ asset('images/coopceofixed.png') }}">
-    <meta property="og:url" content="https://coopceo.online">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Portal COOPCEO">
-    <meta name="twitter:description" content="Accede al sistema de gestión de COOPCEO.">
-    <meta name="twitter:image" content="{{ asset('images/coopceofixed.png') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal COOPCEO</title>
+  <meta name="description" content="Portal oficial de COOPCEO — Accede a tu cuenta de socio o al panel administrativo.">
+  <meta property="og:image" content="{{ asset('images/coopceofixed.png') }}">
+  <link rel="icon" type="image/png" href="/images/coopceofixed.png" />
 
-    <link rel="icon" type="image/png" href="/images/coopceofixed.png">
+  <style>
+    /* 🌌 Fondo */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
 
-    <style>
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow-x: hidden;
-        }
+    .page {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: stretch;
+      width: 100%;
+      max-width: 1100px;
+      min-height: 80vh;
+      margin: 2rem;
+      border-radius: 20px;
+      background: rgba(25, 27, 31, 0.85);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+      animation: fadeIn 0.8s ease-in-out;
+    }
 
-        * {
-            box-sizing: border-box;
-        }
+    /* 🌿 Panel izquierdo */
+    .portal-section {
+      flex: 1;
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
 
-        .page {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #044271 0%, #0a5a95 100%);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            padding: 2rem;
-            gap: 2rem;
-            flex-wrap: wrap;
-            align-items: flex-start;
-        }
+    .logo-img {
+      width: 130px;
+      height: auto;
+      margin-bottom: 1.5rem;
+      filter: drop-shadow(0 0 10px rgba(157, 216, 106, 0.4));
+    }
 
-        @media (min-width: 1024px) {
-            .page {
-                padding-top: 12rem;
-            }
-        }
+    .title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #9dd86a;
+      margin-bottom: 0.4rem;
+    }
 
-        .card {
-            background: #ffffff;
-            color: #044271;
-            border-radius: 1rem;
-            padding: 2rem;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
-            text-align: center;
-            max-width: 420px;
-            width: 100%;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+    .subtitle {
+      font-size: 1rem;
+      color: #ccc;
+      margin-bottom: 2rem;
+    }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
-        }
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      max-width: 280px;
+    }
 
-        .title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
+    .btn {
+      padding: 0.9rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 10px;
+      text-decoration: none;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
 
-        .subtitle {
-            font-size: 1rem;
-            color: #6b7c93;
-            margin-bottom: 1.5rem;
-        }
+    .btn-account {
+      background: linear-gradient(135deg, #9dd86a, #7ab55c);
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(157, 216, 106, 0.4);
+    }
 
-        .buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
+    .btn-account:hover {
+      background: linear-gradient(135deg, #b9f089, #91d46d);
+      transform: translateY(-2px);
+    }
 
-        .btn {
-            padding: 0.85rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s ease;
-            width: 100%;
-            text-decoration: none;
-            text-align: center;
-        }
+    .btn-admin {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #9dd86a;
+    }
 
-        .btn-account {
-            background: #9ad369;
-            color: #044271;
-        }
+    .btn-admin:hover {
+      background: rgba(157, 216, 106, 0.15);
+      color: #b9f089;
+      transform: translateY(-2px);
+    }
 
-        .btn-account:hover {
-            background: #82b859;
-        }
+    /* 📰 Panel derecho */
+    .news-section {
+      flex: 1;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+    }
 
-        .btn-admin {
-            background: #044271;
-            color: #fff;
-            border: 1px solid #03365c;
-        }
+    .news-section h2 {
+      font-size: 1.6rem;
+      color: #9dd86a;
+      margin-bottom: 1.2rem;
+      text-align: left;
+    }
 
-        .btn-admin:hover {
-            background: #03365c;
-        }
+    .news-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
 
-        .logo-img {
-            width: 140px;
-            height: auto;
-            margin-bottom: 1.2rem;
-        }
+    .news-section ul li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 1rem;
+      color: #eaeaea;
+      line-height: 1.6;
+    }
 
-        /* Noticias */
-        .news {
-            background: #ffffff;
-            color: #044271;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
-            max-width: 500px;
-            width: 100%;
-        }
+    .news-section ul li:last-child {
+      border-bottom: none;
+    }
 
-        .news h2 {
-            margin-top: 0;
-            font-size: 1.4rem;
-            margin-bottom: 1rem;
-        }
+    /* 🌀 Animaciones */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .news ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+    /* 📱 Responsive */
+    @media (max-width: 900px) {
+      .page {
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+        margin: 1rem;
+      }
 
-        .news ul li {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #ccc;
-            font-size: 0.95rem;
-        }
+      .portal-section {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 2rem 1.5rem;
+      }
 
-        .news ul li:last-child {
-            border-bottom: none;
-        }
+      .news-section {
+        padding: 2rem 1.5rem;
+        text-align: center;
+      }
 
-        /* Responsividad */
-        @media (max-width: 768px) {
-            .page {
-                flex-direction: column;
-                align-items: center;
-                padding: 1rem;
-                gap: 1.5rem;
-            }
+      .news-section h2 {
+        text-align: center;
+      }
 
-            .card,
-            .news {
-                max-width: 100%;
-                padding: 1.5rem;
-            }
+      .news-section ul li {
+        font-size: 0.95rem;
+      }
+    }
 
-            .title {
-                font-size: 1.6rem;
-            }
-
-            .subtitle {
-                font-size: 0.95rem;
-            }
-
-            .logo-img {
-                width: 120px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .title {
-                font-size: 1.4rem;
-            }
-
-            .btn {
-                font-size: 0.9rem;
-                padding: 0.7rem;
-            }
-
-            .news h2 {
-                font-size: 1.2rem;
-            }
-        }
-    </style>
-
+    @media (max-width: 480px) {
+      .title { font-size: 1.8rem; }
+      .subtitle { font-size: 0.9rem; }
+      .btn { font-size: 0.9rem; padding: 0.8rem; }
+      .logo-img { width: 110px; }
+    }
+  </style>
 </head>
 
 <body>
-    <div class="page">
-        <div class="news">
-            <h2>📰 Novedades</h2>
-            <ul>
-                <li>📢 Vuelven los mantecados a la venta!</li>
-            </ul>
-        </div>
-        <div class="card">
-            <div class="logo">
-                <img src="{{ asset('images/coopceofixed.png') }}" alt="COOPCEO Logo" class="logo-img" />
-            </div>
-            <h1 class="title">Portal COOPCEO</h1>
-            <p class="subtitle">Bienvenido al sistema de gestión de COOPCEO</p>
-            <div class="buttons">
-                <a href="{{ url('/user-panel') }}" class="btn btn-account">Manejar mi cuenta - Socio</a>
-                <a href="{{ url('/admin-panel') }}" class="btn btn-admin">Administración</a>
-            </div>
-        </div>
-    </div>
-</body>
+  <div class="page">
+    <div class="portal-section">
+      <img src="{{ asset('images/coopceofixed.png') }}" alt="COOPCEO Logo" class="logo-img" />
+      <h1 class="title">Portal COOPCEO</h1>
+      <p class="subtitle">Bienvenido al sistema de gestión de COOPCEO</p>
 
+      <div class="buttons">
+        <a href="{{ url('/user-panel') }}" class="btn btn-account">Manejar mi cuenta - Socio</a>
+        <a href="{{ url('/admin-panel') }}" class="btn btn-admin">Administración</a>
+      </div>
+    </div>
+
+    <div class="news-section">
+      <h2>📰 Novedades</h2>
+      <ul>
+        <li>📢 ¡Vuelven los mantecados a la venta en la cooperativa!</li>
+        <li>💡 Consulta tus dividendos actualizados en el portal de socios.</li>
+      </ul>
+    </div>
+  </div>
+</body>
 </html>

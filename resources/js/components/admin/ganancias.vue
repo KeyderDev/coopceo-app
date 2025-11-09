@@ -54,16 +54,11 @@
         </table>
       </div>
 
-      <!-- 📈 GRÁFICAS -->
       <div v-if="mostrarGraficas" class="charts-container">
         <SalesChart />
         <WeeklySalesChart />
       </div>
     </div>
-
-    <button class="btn-volver" @click="volverMenu">
-      <i class="fa-solid fa-house"></i> Menú Principal
-    </button>
   </div>
 </template>
 
@@ -131,65 +126,76 @@ export default {
 <style scoped>
 .ganancias-wrapper {
   min-height: 100vh;
-  background-color: #e0e0e0;
+  background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
+  color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem 0 5rem 0;
+  padding: 2rem 1rem 6rem;
+  font-family: "Inter", sans-serif;
 }
 
+/* --- HEADER --- */
 .ganancias-header {
+  width: 95%;
+  max-width: 1100px;
+  background: rgba(25, 27, 31, 0.85);
+  backdrop-filter: blur(12px);
+  border-left: 5px solid #9dd86a;
+  border-radius: 16px;
+  padding: 1.2rem 1.6rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 90%;
-  max-width: 1200px;
-  margin-bottom: 1rem;
-  background-color: #4caf50;
-  color: white;
-  border-radius: 12px;
-  padding: 1rem 1.2rem;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   flex-wrap: wrap;
-  gap: 0.8rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  margin-bottom: 1.5rem;
 }
 
 .ganancias-header h1 {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 700;
+  color: #9dd86a;
   flex: 1;
+  margin-bottom: 0.5rem;
 }
 
 .filtros {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  background-color: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
 }
 
 .filtros label {
-  color: #333;
   font-weight: 600;
-  font-size: 0.9rem;
+  color: #9dd86a;
 }
 
 .filtros input {
-  padding: 0.3rem 0.5rem;
-  border: 1px solid #bbb;
+  padding: 0.3rem 0.6rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(157, 216, 106, 0.3);
   border-radius: 6px;
+  color: #fff;
+  outline: none;
 }
 
+/* --- CONTENEDOR --- */
 .ganancias-container {
-  width: 90%;
-  max-width: 1200px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  padding: 1.2rem;
+  width: 95%;
+  max-width: 1100px;
+  background: rgba(25, 27, 31, 0.8);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  padding: 1.5rem;
 }
 
+/* --- TABLA --- */
 .tabla-container {
   width: 100%;
   overflow-x: auto;
@@ -198,130 +204,75 @@ export default {
 .tabla-ganancias {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .tabla-ganancias thead {
-  background-color: #4caf50;
-  color: white;
+  background: #9dd86a;
+  color: #1a1a1a;
 }
 
 .tabla-ganancias th,
 .tabla-ganancias td {
-  padding: 0.8rem 1rem;
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   text-align: left;
-  border-bottom: 1px solid #ddd;
+}
+
+.tabla-ganancias tr:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .highlight {
-  background-color: #f0f9f0;
+  background: rgba(157, 216, 106, 0.1);
   font-weight: bold;
 }
 
 .positivo {
-  color: #2e7d32;
-  font-weight: 600;
+  color: #9dd86a;
 }
 
 .negativo {
-  color: #c62828;
-  font-weight: 600;
+  color: #f44336;
 }
 
+/* --- GRÁFICAS --- */
 .charts-container {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
   margin-top: 1.5rem;
   justify-content: center;
-  background: #f9f9f9;
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 12px;
   padding: 1rem;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
-.btn-volver {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 0.7rem 1.2rem;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-  transition: all 0.25s ease;
-  z-index: 1000;
-}
 
-.btn-volver:hover {
-  background-color: #43a047;
-  transform: translateY(-2px);
-}
-
+/* 📱 Responsivo */
 @media (max-width: 768px) {
   .ganancias-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.8rem;
   }
 
-  .ganancias-header h1 {
-    font-size: 1.3rem;
-    text-align: center;
-    width: 100%;
-  }
-
-  .filtros {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .ganancias-container {
-    width: 95%;
-    padding: 1rem;
-  }
-
-  .tabla-ganancias th,
-  .tabla-ganancias td {
-    padding: 0.7rem;
-    font-size: 0.9rem;
-  }
-
-  .charts-container {
-    padding: 0.8rem;
-    gap: 1rem;
+  .btn-volver {
+    position: fixed;
+    bottom: 20px;
+    right: 50%;
+    transform: translateX(50%);
+    font-size: 0.95rem;
+    padding: 0.8rem 1.4rem;
   }
 }
 
 @media (max-width: 480px) {
-  .ganancias-header {
-    padding: 0.8rem;
-  }
-
-  .ganancias-header h1 {
-    font-size: 1.1rem;
-  }
-
-  .filtros {
-    flex-direction: column;
-    gap: 0.4rem;
-    padding: 0.5rem;
-  }
-
-  .tabla-ganancias th,
-  .tabla-ganancias td {
-    font-size: 0.85rem;
-  }
-
   .btn-volver {
     bottom: 15px;
-    right: 15px;
-    padding: 0.6rem 1rem;
+    right: 50%;
+    transform: translateX(50%);
     font-size: 0.9rem;
+    padding: 0.7rem 1.2rem;
   }
 }
 </style>

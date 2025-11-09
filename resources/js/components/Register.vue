@@ -1,8 +1,12 @@
 <template>
   <div class="register-page">
     <div class="register-card">
-      <h1 class="register-title">Regístrate</h1>
-      <p class="register-subtitle">Crea tu cuenta para comenzar</p>
+      <div class="logo-container">
+        <i class="fa-solid fa-user-plus logo-icon"></i>
+      </div>
+
+      <h1 class="title">Regístrate</h1>
+      <p class="subtitle">Crea tu cuenta para comenzar</p>
 
       <form @submit.prevent="handleRegister" class="register-form">
         <div class="form-row">
@@ -24,7 +28,7 @@
 
         <div class="form-group">
           <label for="email">Correo Electrónico</label>
-          <input id="email" v-model="email" type="email" placeholder="Email" required />
+          <input id="email" v-model="email" type="email" placeholder="ejemplo@correo.com" required />
         </div>
 
         <div class="form-row">
@@ -35,20 +39,27 @@
 
           <div class="form-group">
             <label for="password_confirmation">Confirmar Contraseña</label>
-            <input id="password_confirmation" v-model="password_confirmation" type="password"
-              placeholder="Repite tu contraseña" required />
+            <input
+              id="password_confirmation"
+              v-model="password_confirmation"
+              type="password"
+              placeholder="Repite tu contraseña"
+              required
+            />
           </div>
         </div>
 
         <button type="submit" class="register-button" :disabled="loading">
-          {{ loading ? 'Registrando...' : 'Registrarse' }}
+          <span v-if="!loading">Registrarse</span>
+          <span v-else class="spinner"></span>
         </button>
 
         <p v-if="error" class="error-message">{{ error }}</p>
       </form>
 
       <p class="signup-text">
-        ¿Ya tienes cuenta? <router-link to="/login">Inicia Sesión</router-link>
+        ¿Ya tienes cuenta?
+        <router-link to="/login">Inicia Sesión</router-link>
       </p>
     </div>
   </div>
@@ -93,16 +104,15 @@ export default {
         localStorage.setItem("user", JSON.stringify(user));
 
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
         this.$router.push("/login");
       } catch (err) {
         if (err.response && err.response.data) {
           this.error =
             err.response.data.message ||
             Object.values(err.response.data.errors || {}).flat()[0] ||
-            "Error al registrar";
+            "Error al registrar.";
         } else {
-          this.error = "Error de conexión. Intenta nuevamente";
+          this.error = "Error de conexión. Intenta nuevamente.";
         }
       } finally {
         this.loading = false;
@@ -113,45 +123,58 @@ export default {
 </script>
 
 <style scoped>
+/* 🌌 Fondo general */
 .register-page {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #044271, #022d50);
-  font-family: 'Inter', sans-serif;
+  background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
+  font-family: "Inter", sans-serif;
   padding: 1rem;
 }
 
+/* 🪪 Tarjeta */
 .register-card {
-  background-color: #ffffff;
-  padding: 2.5rem 2.5rem;
-  border-radius: 16px;
-  width: 450px;
-  max-width: 95%;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  background: rgba(25, 27, 31, 0.95);
+  padding: 2.5rem 2rem;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 460px;
   text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.6s ease-in-out;
 }
 
-.register-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+/* 🧩 Icono superior */
+.logo-container {
+  margin-bottom: 1rem;
 }
 
-.register-title {
-  color: #044271;
+.logo-icon {
+  font-size: 3rem;
+  color: #9dd86a;
+  background: rgba(157, 216, 106, 0.1);
+  padding: 15px;
+  border-radius: 50%;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+/* 🖋️ Títulos */
+.title {
+  color: #ffffff;
   font-size: 2rem;
-  margin-bottom: 0.25rem;
   font-weight: 700;
+  margin-bottom: 0.4rem;
 }
 
-.register-subtitle {
-  color: #555;
-  font-size: 1rem;
+.subtitle {
+  color: #ccc;
+  font-size: 0.95rem;
   margin-bottom: 2rem;
 }
 
+/* 📋 Formulario */
 .register-form {
   display: flex;
   flex-direction: column;
@@ -169,63 +192,133 @@ export default {
 }
 
 label {
-  display: block;
-  margin-bottom: 0.4rem;
+  color: #aaa;
   font-weight: 600;
-  color: #044271;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  display: block;
 }
 
 input {
   width: 100%;
-  padding: 0.65rem 0.9rem;
-  border: 2px solid #ccd6f1;
+  padding: 0.7rem 0.9rem;
   border-radius: 10px;
-  outline: none;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: #2c2f36;
+  border: 2px solid transparent;
+  color: #fff;
   font-size: 0.95rem;
+  transition: all 0.3s ease;
 }
 
 input:focus {
-  border-color: #99d36c;
-  box-shadow: 0 0 8px rgba(153, 211, 108, 0.5);
+  border-color: #9dd86a;
+  box-shadow: 0 0 8px rgba(157, 216, 106, 0.5);
+  outline: none;
 }
 
+/* 🔘 Botón */
 .register-button {
-  background-color: #99d36c;
-  color: #ffffff;
+  background: linear-gradient(135deg, #9dd86a, #7ab55c);
+  color: #fff;
   font-weight: 700;
-  padding: 0.75rem;
+  padding: 0.85rem;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: all 0.3s ease;
 }
 
-.register-button:hover {
-  background-color: #7cbf5a;
+.register-button:hover:not(:disabled) {
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(157, 216, 106, 0.4);
 }
 
+.register-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ⏳ Spinner */
+.spinner {
+  border: 3px solid #2c2f36;
+  border-top: 3px solid #9dd86a;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* ⚠️ Errores */
+.error-message {
+  color: #ff6666;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+/* 🔗 Texto de registro */
 .signup-text {
   margin-top: 1.5rem;
   font-size: 0.9rem;
-  color: #444;
+  color: #ccc;
 }
 
 .signup-text a {
-  color: #99d36c;
+  color: #9dd86a;
   font-weight: 600;
   text-decoration: none;
 }
 
 .signup-text a:hover {
+  color: #b9f089;
   text-decoration: underline;
 }
 
-.error-message {
-  color: red;
-  font-size: 0.9rem;
-  margin-top: -0.5rem;
+/* ✨ Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 📱 Responsive */
+@media (max-width: 480px) {
+  .register-card {
+    padding: 2rem 1.5rem;
+    border-radius: 14px;
+  }
+
+  .title {
+    font-size: 1.7rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 </style>

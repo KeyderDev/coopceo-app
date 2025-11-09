@@ -45,16 +45,15 @@
             <p class="amount">${{ user.dividendos ?? 0 }}</p>
           </div>
         </div>
-        <button class="delete-btn" @click="deleteUser(user.id)">
-          <i class="fa-solid fa-trash"></i>
-        </button>
+
+        <div class="user-actions">
+          <button class="delete-btn" @click="deleteUser(user.id)">
+            <i class="fa-solid fa-trash"></i> Eliminar
+          </button>
+        </div>
       </div>
     </div>
-
   </div>
-      <button class="btn-volver" @click="volverMenu">
-      <i class="fa-solid fa-house"></i> Menú Principal
-    </button>
 </template>
 
 <script>
@@ -131,9 +130,6 @@ export default {
         alert("Error al eliminar usuario");
       }
     },
-    volverMenu() {
-      this.$router.push("/");
-    },
   },
   async created() {
     const token = localStorage.getItem("auth_token");
@@ -153,174 +149,246 @@ export default {
 
 <style scoped>
 .usuarios-container {
-  width: 100%;
-  max-width: 1500px;
-  margin: 2rem auto;
-  background: #f9fafb;
-  padding: 2.5rem 3rem;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
-  min-height: 90vh;
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
+  padding: 1.5rem 1rem 6rem;
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  box-sizing: border-box;
 }
 
+/* 🔍 Buscador */
 .search-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1.5rem;
   flex-wrap: wrap;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .search-box {
   flex: 1;
   position: relative;
+  min-width: 230px;
 }
 
 .search-icon {
   position: absolute;
-  left: 15px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #044271;
+  color: #9dd86a;
   font-size: 1.2rem;
 }
 
 .search-input {
   width: 100%;
-  padding: 0.9rem 1rem 0.9rem 3rem;
+  padding: 0.8rem 1rem 0.8rem 2.8rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(157, 216, 106, 0.3);
   border-radius: 10px;
-  border: 1px solid #044271;
-  background: #e8f6dc;
+  color: #fff;
   font-size: 1rem;
-  color: #044271;
-  transition: all 0.2s ease;
+  transition: 0.25s;
 }
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 8px rgba(4, 66, 113, 0.3);
+  box-shadow: 0 0 8px rgba(157, 216, 106, 0.6);
 }
 
+/* 🔽 Filtro */
 .filter-section {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.filter-section label {
   font-weight: 600;
-  color: #044271;
+  color: #9dd86a;
+  font-size: 0.95rem;
 }
 
 .filter-select {
   padding: 0.6rem 1rem;
   border-radius: 8px;
-  border: 1px solid #044271;
-  background: #97d569;
-  color: #044271;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(157, 216, 106, 0.3);
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-size: 0.95rem;
 }
 
 .filter-select:hover {
-  background: #a8e07b;
+  background: rgba(157, 216, 106, 0.1);
 }
 
-/* 🧮 Total usuarios */
+/* 🧮 Total */
 .total-users {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #044271;
   text-align: right;
-  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: #9dd86a;
+  margin-bottom: 1rem;
 }
 
-/* 👥 Cards */
+/* 👥 Lista */
 .users-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 1.2rem;
 }
 
 .user-card {
-  background: #fff;
-  border-left: 6px solid #97d569;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 5px solid #9dd86a;
   border-radius: 12px;
-  padding: 1.5rem;
-  position: relative;
-  transition: all 0.2s ease;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  padding: 1.2rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  word-break: break-word;
 }
 
 .user-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-}
-
-.user-main {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-  flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .user-info h3 {
-  color: #044271;
-  font-size: 1.4rem;
-  margin-bottom: 0.4rem;
+  color: #9dd86a;
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+  word-wrap: break-word;
 }
 
 .user-info p {
-  color: #555;
-  margin: 0.2rem 0;
+  color: #ccc;
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
 }
 
 .user-balance {
   text-align: right;
+  margin-top: 0.5rem;
+}
+
+.user-balance span {
+  color: #9dd86a;
+  font-size: 0.9rem;
 }
 
 .user-balance .amount {
-  font-size: 1.5rem;
-  color: #044271;
+  font-size: 1.3rem;
+  color: #fff;
   font-weight: bold;
 }
 
-/* 🗑️ Eliminar */
+/* 🧰 Acciones */
+.user-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+/* 🗑️ Botón eliminar */
 .delete-btn {
-  position: absolute;
-  bottom: 15px;
-  right: 18px;
-  background: transparent;
-  border: none;
-  color: #dc2626;
-  font-size: 1.3rem;
+  background: rgba(244, 67, 54, 0.15);
+  color: #ff6b6b;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.delete-btn i {
+  font-size: 1rem;
 }
 
 .delete-btn:hover {
-  color: #b91c1c;
-  transform: scale(1.2);
+  background: #f44336;
+  color: #fff;
+  border-color: #f44336;
+  transform: translateY(-2px);
 }
 
 /* 🏠 Volver */
 .btn-volver {
   position: fixed;
   bottom: 25px;
-  right: 30px;
-  background-color: #4caf50;
-  color: white;
+  right: 25px;
+  background: linear-gradient(135deg, #9dd86a, #7ac75d);
+  color: #1a1a1a;
   border: none;
-  padding: 0.8rem 1.3rem;
+  padding: 0.9rem 1.5rem;
   border-radius: 12px;
-  font-weight: bold;
+  font-weight: 600;
   font-size: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  transition: all 0.3s ease;
+  z-index: 1000;
 }
 
 .btn-volver:hover {
-  background-color: #43a047;
+  transform: translateY(-3px);
+  filter: brightness(1.1);
+}
+
+/* 📱 Responsivo */
+@media (max-width: 768px) {
+  .usuarios-container {
+    padding: 1rem;
+  }
+
+  .search-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-section {
+    justify-content: space-between;
+  }
+
+  .users-list {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .user-card {
+    padding: 1rem;
+  }
+
+  .user-info h3 {
+    font-size: 1.1rem;
+  }
+
+  .user-info p {
+    font-size: 0.9rem;
+  }
+
+  .user-balance .amount {
+    font-size: 1.2rem;
+  }
+
+  .btn-volver {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.8rem 1.3rem;
+    font-size: 0.95rem;
+  }
 }
 </style>
+

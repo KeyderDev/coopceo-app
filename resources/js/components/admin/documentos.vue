@@ -32,9 +32,6 @@
       </div>
     </div>
   </div>
-  <button class="btn-volver" @click="volverMenu">
-      <i class="fa-solid fa-house"></i> Menú Principal
-    </button>
 </template>
 
 <script setup>
@@ -107,62 +104,66 @@ const descargarFicticio = (file) => {
   width: 90%;
   margin: 3rem auto;
   padding: 2rem;
-  background: #03355c;
+  background: rgba(30, 30, 30, 0.9);
   border-radius: 16px;
-  color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: #f5f7fa;
+  font-family: "Inter", sans-serif;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
 }
 
-.btn-volver {
-    position: fixed;
-    bottom: 25px;
-    right: 30px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    padding: 0.8rem 1.3rem;
-    border-radius: 12px;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
+/* 🧭 Título principal */
 .download-panel h2 {
-  color: #97d569;
+  color: #9dd86a;
   text-align: center;
   font-size: 2rem;
   margin-bottom: 1.5rem;
+  border-bottom: 2px solid rgba(157, 216, 106, 0.3);
+  padding-bottom: 0.4rem;
+  text-shadow: 0 0 6px rgba(157, 216, 106, 0.3);
 }
 
+/* 📂 Subtítulo */
 .downloads-list h3 {
-  color: #97d569;
+  color: #9dd86a;
   margin-bottom: 1rem;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  border-left: 4px solid #9dd86a;
+  padding-left: 0.6rem;
 }
 
+/* 📄 Cada item */
 .download-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #1e1e1e;
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  transition: background 0.3s;
+  background: rgba(25, 27, 31, 0.85);
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  margin-bottom: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
   gap: 20px;
 }
 
 .download-item:hover {
-  background: #2c2c2c;
+  background: rgba(35, 37, 41, 0.9);
+  border-color: rgba(157, 216, 106, 0.25);
+  transform: translateY(-2px);
 }
 
+/* 📘 Info del archivo */
 .file-info {
   display: flex;
   align-items: center;
   gap: 16px;
   min-width: 0;
   flex: 2;
+}
+
+.file-icon {
+  font-size: 1.5rem;
 }
 
 .file-text {
@@ -174,52 +175,102 @@ const descargarFicticio = (file) => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: #f5f7fa;
 }
 
 .file-type {
   font-size: 0.85rem;
-  color: #ccc;
+  color: #b3b3b3;
   white-space: nowrap;
 }
 
+/* 🟩 Botones */
 button {
-  background-color: #97d569;
-  color: #03355c;
+  background: linear-gradient(135deg, #9dd86a, #7ab55c);
+  color: #fff;
   font-weight: 600;
-  padding: 0.5rem 1.2rem;
+  padding: 0.6rem 1.3rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 button:hover:not(:disabled) {
-  background-color: #7ebd50;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #b9f089, #91d46d);
+  transform: translateY(-3px);
 }
 
 button:disabled {
-  background-color: #555;
+  background: rgba(100, 100, 100, 0.5);
   cursor: not-allowed;
 }
 
+/* 🗓️ Selección de mes */
 .month-select {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .month-select select {
-  padding: 0.4rem 0.6rem;
-  border-radius: 6px;
-  border: 1px solid #97d569;
-  background: #1e1e1e;
-  color: #fff;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(157, 216, 106, 0.3);
+  background: rgba(14, 17, 23, 0.9);
+  color: #f5f7fa;
   font-size: 0.95rem;
+  transition: all 0.25s ease;
 }
 
+.month-select select:focus {
+  outline: none;
+  border-color: #9dd86a;
+  box-shadow: 0 0 8px rgba(157, 216, 106, 0.3);
+}
+
+/* 🏠 Botón Volver */
+.btn-volver {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: linear-gradient(135deg, #9dd86a, #7ab55c);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.3rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+  z-index: 1000;
+}
+
+.btn-volver:hover {
+  background: linear-gradient(135deg, #b9f089, #91d46d);
+  transform: translateY(-3px);
+}
+
+/* 🌗 Scrollbar personalizada */
+.download-panel::-webkit-scrollbar {
+  width: 10px;
+}
+.download-panel::-webkit-scrollbar-thumb {
+  background: rgba(157, 216, 106, 0.3);
+  border-radius: 10px;
+}
+.download-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(157, 216, 106, 0.6);
+}
+.download-panel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* 📱 Responsive */
 @media (max-width: 1000px) {
   .download-panel {
     width: 95%;
@@ -230,7 +281,7 @@ button:disabled {
   .download-item {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 10px;
   }
 
   .month-select {
@@ -243,5 +294,6 @@ button:disabled {
   .month-select button {
     width: 100%;
   }
+
 }
 </style>

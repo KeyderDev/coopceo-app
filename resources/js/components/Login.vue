@@ -1,33 +1,48 @@
 <template>
   <div class="login-page">
     <div class="login-card">
+      <div class="logo-container">
+        <i class="fa-solid fa-user-shield logo-icon"></i>
+      </div>
       <h1 class="login-title">Bienvenido</h1>
-      <p class="login-subtitle">Ingresa con tu usuario y contraseña</p>
+      <p class="login-subtitle">Inicia sesión para continuar</p>
 
       <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
-          <label for="email">Correo Electronico</label>
-          <input id="email" v-model="email" type="text" placeholder="Email" autocomplete="off" required />
+          <label for="email">Correo Electrónico</label>
+          <input
+            id="email"
+            v-model="email"
+            type="text"
+            placeholder="ejemplo@correo.com"
+            autocomplete="off"
+            required
+          />
         </div>
 
         <div class="form-group">
           <label for="password">Contraseña</label>
-          <input id="password" v-model="password" type="password" placeholder="Tu contraseña" required />
+          <input
+            id="password"
+            v-model="password"
+            type="password"
+            placeholder="Tu contraseña"
+            required
+          />
         </div>
 
         <button type="submit" class="login-button" :disabled="loading">
-          {{ loading ? 'Ingresando...' : 'Entrar' }}
+          <span v-if="!loading">Entrar</span>
+          <span v-else class="spinner"></span>
         </button>
 
         <p v-if="error" class="error-message">{{ error }}</p>
       </form>
 
-      <p class="signup-text">
-        ¿No tienes cuenta? <router-link to="/register">Regístrate</router-link>
-      </p>
-            <p class="signup-text">
-        <router-link to="/forgot-password">Olvide mi contraseña</router-link>
-      </p>
+      <div class="footer-links">
+        <router-link to="/forgot-password" class="link">¿Olvidaste tu contraseña?</router-link>
+        <router-link to="/register" class="link">Crear cuenta</router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -62,26 +77,14 @@ export default {
         localStorage.setItem("auth_token", token);
         localStorage.setItem("user", JSON.stringify(user));
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        console.log("Login exitoso:", response.data);
 
-        // Redirigir al panel
         this.$router.push("/");
-
       } catch (err) {
-        console.log("Error completo:", err);
-
         if (err.response) {
-          console.log("Status code:", err.response.status);
-          console.log("Headers:", err.response.headers);
-          console.log("Data del backend:", err.response.data);
-
-          this.error =
-            err.response.data.message || JSON.stringify(err.response.data);
+          this.error = err.response.data.message || "Credenciales inválidas.";
         } else if (err.request) {
-          console.log("No se recibió respuesta del servidor:", err.request);
           this.error = "No se pudo conectar con el servidor.";
         } else {
-          console.log("Error inesperado:", err.message);
           this.error = "Ocurrió un error inesperado.";
         }
       } finally {
@@ -92,50 +95,59 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
+/* 🎨 Fondo general */
 .login-page {
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #044271, #022d50);
-  font-family: 'Inter', sans-serif;
+  background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
+  font-family: "Inter", sans-serif;
+  padding: 1rem;
 }
 
+/* 🪪 Tarjeta principal */
 .login-card {
-  background-color: #ffffff;
+  background: rgba(25, 27, 31, 0.95);
   padding: 2.5rem 2rem;
-  border-radius: 16px;
-  width: 380px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
   text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: fadeIn 0.6s ease-in-out;
 }
 
-.login-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.4);
-}
-
+/* ✨ Logo animado */
 .logo-container {
   margin-bottom: 1rem;
 }
 
+.logo-icon {
+  font-size: 3rem;
+  color: #9dd86a;
+  background: rgba(157, 216, 106, 0.1);
+  padding: 15px;
+  border-radius: 50%;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+/* 🖋️ Título */
 .login-title {
-  color: #044271;
+  color: #ffffff;
   font-size: 2rem;
-  margin-bottom: 0.25rem;
   font-weight: 700;
+  margin-bottom: 0.5rem;
 }
 
 .login-subtitle {
-  color: #555;
+  color: #ccc;
   font-size: 0.95rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
+/* 📋 Formulario */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -147,57 +159,129 @@ export default {
 }
 
 label {
-  display: block;
-  margin-bottom: 0.4rem;
+  color: #aaa;
   font-weight: 600;
-  color: #044271;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  display: block;
 }
 
 input {
   width: 100%;
-  padding: 0.65rem 0.9rem;
-  border: 2px solid #ccd6f1;
+  padding: 0.7rem 0.9rem;
   border-radius: 10px;
-  outline: none;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: #2c2f36;
+  border: 2px solid transparent;
+  color: #fff;
   font-size: 0.95rem;
+  transition: all 0.3s ease;
 }
 
 input:focus {
-  border-color: #99d36c;
-  box-shadow: 0 0 8px rgba(153, 211, 108, 0.5);
+  border-color: #9dd86a;
+  box-shadow: 0 0 8px rgba(157, 216, 106, 0.5);
+  outline: none;
 }
 
+/* 🔘 Botón */
 .login-button {
-  background-color: #99d36c;
-  color: #ffffff;
+  background: linear-gradient(135deg, #9dd86a, #7ab55c);
+  color: #fff;
   font-weight: 700;
-  padding: 0.75rem;
+  padding: 0.9rem;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: all 0.3s ease;
 }
 
-.login-button:hover {
-  background-color: #7cbf5a;
+.login-button:hover:not(:disabled) {
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(157, 216, 106, 0.4);
 }
 
-.signup-text {
-  margin-top: 1.5rem;
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ⏳ Spinner */
+.spinner {
+  border: 3px solid #2c2f36;
+  border-top: 3px solid #9dd86a;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* ⚠️ Error */
+.error-message {
+  color: #ff6666;
   font-size: 0.9rem;
-  color: #444;
+  margin-top: 1rem;
 }
 
-.signup-text a {
-  color: #99d36c;
+/* 🔗 Links */
+.footer-links {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.link {
+  color: #9dd86a;
   font-weight: 600;
   text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
 }
 
-.signup-text a:hover {
-  text-decoration: underline;
+.link:hover {
+  color: #b9f089;
+}
+
+/* 🌀 Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 📱 Responsive */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 2rem 1.5rem;
+    border-radius: 14px;
+  }
+
+  .login-title {
+    font-size: 1.7rem;
+  }
 }
 </style>

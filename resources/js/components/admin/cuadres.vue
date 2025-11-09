@@ -3,7 +3,6 @@
     <h2>Todos los Cuadres</h2>
 
     <div class="table-wrapper">
-      <!-- 💻 Tabla de escritorio -->
       <table class="desktop-table">
         <thead>
           <tr>
@@ -64,9 +63,6 @@
       </div>
     </div>
   </div>
-    <button class="btn-volver" @click="volverMenu">
-      <i class="fa-solid fa-house"></i> Menú Principal
-    </button>
 </template>
 
 <script>
@@ -112,30 +108,35 @@ export default {
 .cash-reconciliations {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Ocupa todo el alto visible */
+  height: 100vh;
   width: 100%;
   padding: 1rem 2rem;
-  background: linear-gradient(160deg, #022744, #044b7f);
-  color: #fff;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: rgba(14, 17, 23, 0.98);
+  color: #f5f7fa;
+  font-family: "Inter", sans-serif;
   overflow: hidden;
 }
 
+/* 🧭 Título */
 h2 {
-  color: #a8e060;
+  color: #9dd86a;
   font-size: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   text-align: center;
+  text-shadow: 0 0 6px rgba(157, 216, 106, 0.4);
 }
 
+/* 🧾 Contenedor tabla */
 .table-wrapper {
   flex: 1;
   overflow: auto;
-  background: #044b7f;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  background: rgba(30, 30, 30, 0.85);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+/* 💻 Tabla de escritorio */
 .desktop-table {
   width: 100%;
   border-collapse: collapse;
@@ -148,27 +149,33 @@ td {
   text-align: center;
   font-size: 0.9rem;
   white-space: nowrap;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* 🧩 Encabezado */
 thead {
-  background: #a8e060;
-  color: #022744;
+  background: rgba(157, 216, 106, 0.15);
+  color: #9dd86a;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   position: sticky;
   top: 0;
   z-index: 5;
+  backdrop-filter: blur(6px);
 }
 
+/* 🌗 Filas */
 tbody tr:nth-child(even) {
-  background: #055b95;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 tbody tr:hover {
-  background: #0a7ac2;
+  background: rgba(157, 216, 106, 0.1);
   transform: scale(1.01);
-  transition: 0.2s;
+  transition: all 0.2s ease;
 }
 
-/* === Mobile cards === */
+/* 📱 Vista móvil */
 .mobile-cards {
   display: none;
   flex-direction: column;
@@ -176,45 +183,94 @@ tbody tr:hover {
   gap: 1rem;
 }
 
-.btn-volver {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 0.7rem 1.2rem;
+/* 🪪 Card móvil */
+.card {
+  background: rgba(30, 30, 30, 0.9);
+  padding: 1rem;
   border-radius: 10px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-  transition: all 0.25s ease;
-  z-index: 1000;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
 }
 
-.card {
-  background: #055b95;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+.card:hover {
+  border-color: rgba(157, 216, 106, 0.3);
+  transform: translateY(-3px);
 }
 
 .card p {
   margin: 0.3rem 0;
   font-size: 0.9rem;
+  color: #e4e6eb;
 }
 
-/* === Responsive === */
+.card strong {
+  color: #9dd86a;
+}
+
+/* 🏠 Botón volver */
+.btn-volver {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: linear-gradient(135deg, #9dd86a, #7ab55c);
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.4rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+  z-index: 1000;
+}
+
+.btn-volver:hover {
+  background: linear-gradient(135deg, #b9f089, #91d46d);
+  transform: translateY(-3px);
+}
+
+/* 🧠 Scrollbar estilizada */
+.table-wrapper::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(157, 216, 106, 0.3);
+  border-radius: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(157, 216, 106, 0.6);
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+/* 📱 Responsive */
 @media (max-width: 900px) {
   .desktop-table {
     display: none;
   }
+
   .mobile-cards {
     display: flex;
   }
+
   h2 {
     font-size: 1.6rem;
   }
+
+  .btn-volver {
+    bottom: 15px;
+    right: 15px;
+    font-size: 0.9rem;
+    padding: 0.7rem 1rem;
+  }
 }
 </style>
+

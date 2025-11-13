@@ -50,6 +50,22 @@
               <td>Total Ventas Efectivo</td>
               <td>${{ formatCurrency(totalEfectivo) }}</td>
             </tr>
+
+            <tr>
+              <td>Producto más vendido (general)</td>
+              <td>
+                {{ prodMasVendido?.producto || '—' }}
+                <span v-if="prodMasVendido">({{ prodMasVendido.cantidad }} vendidos)</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td>Producto más vendido del día</td>
+              <td>
+                {{ prodMasVendidoDia?.producto || '—' }}
+                <span v-if="prodMasVendidoDia">({{ prodMasVendidoDia.cantidad }} vendidos)</span>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -80,6 +96,8 @@ export default {
       transaccionesEfectivo: 0,
       totalAth: 0,
       totalEfectivo: 0,
+      prodMasVendido: null,
+      prodMasVendidoDia: null,
       loading: true,
       mostrarGraficas: true,
     };
@@ -104,6 +122,8 @@ export default {
         this.transaccionesEfectivo = data.transacciones_efectivo || 0;
         this.transaccionesAth = data.transacciones_ath_movil || 0;
         this.gananciaNeta = data.ganancia_neta || 0;
+        this.prodMasVendido = data.producto_mas_vendido || null;
+        this.prodMasVendidoDia = data.producto_mas_vendido_dia || null;
       } catch (error) {
         console.error("Error al cargar datos de ganancias:", error);
       } finally {
@@ -115,10 +135,7 @@ export default {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       });
-    },
-    volverMenu() {
-      this.$router.push("/");
-    },
+    }
   },
 };
 </script>
@@ -135,7 +152,6 @@ export default {
   font-family: "Inter", sans-serif;
 }
 
-/* --- HEADER --- */
 .ganancias-header {
   width: 95%;
   max-width: 1100px;
@@ -184,7 +200,6 @@ export default {
   outline: none;
 }
 
-/* --- CONTENEDOR --- */
 .ganancias-container {
   width: 95%;
   max-width: 1100px;
@@ -195,7 +210,6 @@ export default {
   padding: 1.5rem;
 }
 
-/* --- TABLA --- */
 .tabla-container {
   width: 100%;
   overflow-x: auto;
@@ -236,7 +250,6 @@ export default {
   color: #f44336;
 }
 
-/* --- GRÁFICAS --- */
 .charts-container {
   display: flex;
   flex-wrap: wrap;
@@ -246,33 +259,5 @@ export default {
   background: rgba(255, 255, 255, 0.03);
   border-radius: 12px;
   padding: 1rem;
-}
-
-
-/* 📱 Responsivo */
-@media (max-width: 768px) {
-  .ganancias-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .btn-volver {
-    position: fixed;
-    bottom: 20px;
-    right: 50%;
-    transform: translateX(50%);
-    font-size: 0.95rem;
-    padding: 0.8rem 1.4rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .btn-volver {
-    bottom: 15px;
-    right: 50%;
-    transform: translateX(50%);
-    font-size: 0.9rem;
-    padding: 0.7rem 1.2rem;
-  }
 }
 </style>

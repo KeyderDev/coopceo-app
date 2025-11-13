@@ -38,7 +38,6 @@
           <i class="fa-solid" :class="editMode ? 'fa-xmark' : 'fa-pen-to-square'"></i>
           {{ editMode ? "Cancelar edición" : "Editar información" }}
         </button>
-
       </div>
 
       <transition name="fade">
@@ -49,7 +48,6 @@
             <input v-model="user.apellido" placeholder="Apellido" />
             <input v-model="user.telefono" placeholder="Teléfono" />
             <input v-model="user.email" placeholder="Email" />
-
             <div class="admin-toggle">
               <label>Administrador:</label>
               <label class="switch">
@@ -58,7 +56,6 @@
               </label>
             </div>
           </div>
-
           <button @click="guardarCambios" class="save-btn">
             <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
           </button>
@@ -66,7 +63,6 @@
       </transition>
     </div>
 
-    <!-- 💸 Transacciones -->
     <div v-if="filteredTransactions.length" class="transactions-card">
       <h3><i class="fa-solid fa-receipt"></i> Últimas transacciones</h3>
       <div class="transactions-list">
@@ -74,6 +70,7 @@
           <div class="tx-left">
             <p class="tx-id">Venta #{{ tx.id }}</p>
             <p class="tx-date">{{ formatDate(tx.created_at) }}</p>
+            <p class="tx-cajero">Cajero: {{ getCajeroNombre(tx.cajero_id) }}</p>
           </div>
           <div class="tx-right">
             <p class="tx-total">${{ tx.total }}</p>
@@ -94,6 +91,7 @@ export default {
     return {
       user: null,
       transactions: [],
+      usersMap: {},
       editMode: false,
     };
   },
@@ -114,21 +112,32 @@ export default {
     const token = localStorage.getItem("auth_token");
 
     try {
-      const [userRes, salesRes] = await Promise.all([
+      const [userRes, salesRes, usersRes] = await Promise.all([
         axios.get(`${import.meta.env.VITE_APP_URL}/api/users/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         axios.get(`${import.meta.env.VITE_APP_URL}/api/sales`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
+        axios.get(`${import.meta.env.VITE_APP_URL}/api/users`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       ]);
+
       this.user = userRes.data;
       this.transactions = salesRes.data;
+      this.usersMap = Object.fromEntries(
+        usersRes.data.map((u) => [u.id, u])
+      );
     } catch (err) {
       console.error("Error al obtener datos:", err);
     }
   },
   methods: {
+    getCajeroNombre(id) {
+      const u = this.usersMap[id];
+      return u ? `${u.nombre}` : "Desconocido";
+    },
     async guardarCambios() {
       const token = localStorage.getItem("auth_token");
       const payload = { ...this.user, admin: Number(this.user.admin) };
@@ -276,10 +285,9 @@ export default {
   justify-content: center;
   gap: 0.6rem;
   transition: all 0.35s ease;
-  width: auto; 
-  min-width: 180px; 
+  width: auto;
+  min-width: 180px;
 }
-
 
 .edit-btn:hover {
   background: rgba(157, 216, 106, 0.25);
@@ -419,6 +427,12 @@ input:checked + .slider:before {
   color: #ccc;
 }
 
+.tx-cajero {
+  font-size: 0.9rem;
+  color: #9dd86a;
+  font-weight: 600;
+}
+
 .tx-total {
   font-weight: bold;
   font-size: 1.1rem;
@@ -458,4 +472,3 @@ input:checked + .slider:before {
   }
 }
 </style>
-

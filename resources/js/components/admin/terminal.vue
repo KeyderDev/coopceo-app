@@ -252,9 +252,15 @@ export default {
     },
 
     async obtenerProductos() {
-      const res = await axios.get("/api/products");
+      const token = localStorage.getItem("auth_token");
+
+      const res = await axios.get("/api/products", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
       this.productos = res.data;
     },
+
     seleccionarCliente(cliente) {
       this.clienteId = cliente.id;
       this.clienteSeleccionado = cliente;
@@ -419,11 +425,14 @@ export default {
 .order-section {
   flex: 1;
   min-width: 280px;
-  max-height: 80vh; /* 🔹 más flexible para pantallas pequeñas */
+  max-height: 80vh;
+  /* 🔹 más flexible para pantallas pequeñas */
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* 🔹 permite que el contenido interno tenga scroll */
-  overscroll-behavior: contain; /* 🔹 evita el rebote en móviles */
+  overflow-y: auto;
+  /* 🔹 permite que el contenido interno tenga scroll */
+  overscroll-behavior: contain;
+  /* 🔹 evita el rebote en móviles */
 }
 
 
@@ -545,18 +554,39 @@ export default {
   cursor: pointer;
   transition: 0.2s;
 }
+
 .producto-boton:hover {
   filter: brightness(1.2);
 }
 
 /* --- Colores por categoría --- */
-.boton-bebida { background-color: #3a63e8; }
-.boton-agua { background-color: #0ea5e9; }
-.boton-refrigerio { background-color: #1e90ff; }
-.boton-dulce { background-color: #f59e0b; }
-.boton-comida { background-color: #ef4444; }
-.boton-otros { background-color: #4b5563; }
-.boton-chocolates { background-color: #7b4c2b; }
+.boton-bebida {
+  background-color: #3a63e8;
+}
+
+.boton-agua {
+  background-color: #0ea5e9;
+}
+
+.boton-refrigerio {
+  background-color: #1e90ff;
+}
+
+.boton-dulce {
+  background-color: #f59e0b;
+}
+
+.boton-comida {
+  background-color: #ef4444;
+}
+
+.boton-otros {
+  background-color: #4b5563;
+}
+
+.boton-chocolates {
+  background-color: #7b4c2b;
+}
 
 /* --- Botones adicionales --- */
 .boton-extra {
@@ -568,6 +598,7 @@ export default {
   padding: 0.8rem;
   transition: 0.25s;
 }
+
 .boton-extra:hover {
   filter: brightness(1.2);
 }
@@ -579,6 +610,7 @@ export default {
   font-weight: bold;
   flex-wrap: wrap;
 }
+
 .totales span {
   color: #10b981;
 }
@@ -589,7 +621,7 @@ export default {
   overflow-y: auto;
   margin-bottom: 0.5rem;
   min-height: 100px;
-  max-height: 30vh; 
+  max-height: 30vh;
   padding-right: 6px;
   scroll-behavior: smooth;
 }
@@ -598,6 +630,7 @@ export default {
 .order-items-container::-webkit-scrollbar {
   width: 6px;
 }
+
 .order-items-container::-webkit-scrollbar-thumb {
   background-color: #2c3340;
   border-radius: 3px;
@@ -632,6 +665,7 @@ export default {
   gap: 0.5rem;
   flex-wrap: wrap;
 }
+
 .cantidad-subtotal input {
   width: 70px;
   padding: 0.2rem;
@@ -648,9 +682,11 @@ export default {
   gap: 0.5rem;
   flex-wrap: wrap;
 }
+
 .payment-section label {
   color: #aeb9d1;
 }
+
 .payment-section select {
   background: #1a1f2b;
   color: #f5f7fa;
@@ -666,6 +702,7 @@ export default {
   gap: 0.5rem;
   margin-top: 0.5rem;
 }
+
 .cash-buttons button,
 .manual-btn,
 .exacto-btn {
@@ -678,6 +715,7 @@ export default {
   transition: 0.25s;
   padding: 0.8rem;
 }
+
 .cash-buttons button:hover {
   background-color: #475569;
 }
@@ -696,6 +734,7 @@ export default {
   flex-direction: column;
   gap: 0.3rem;
 }
+
 .cash-input input {
   background: #1a1f2b;
   color: #f5f7fa;
@@ -713,7 +752,7 @@ export default {
   margin-top: 0.8rem;
 }
 
-.order-footer > button {
+.order-footer>button {
   width: 100%;
   padding: 1rem;
   font-size: 1rem;
@@ -726,11 +765,13 @@ export default {
   transition: 0.25s;
   letter-spacing: 0.5px;
 }
-.order-footer > button:hover {
+
+.order-footer>button:hover {
   filter: brightness(1.2);
   box-shadow: 0 0 12px rgba(58, 99, 232, 0.4);
 }
-.order-footer > button:disabled {
+
+.order-footer>button:disabled {
   background-color: #374151;
   color: #9ca3af;
   cursor: not-allowed;
@@ -742,6 +783,7 @@ export default {
   gap: 0.5rem;
   margin-top: 0.5rem;
 }
+
 .athmovil-btn {
   background-color: #000;
   border-radius: 8px;
@@ -751,6 +793,7 @@ export default {
   padding: 0.2rem;
   cursor: pointer;
 }
+
 .more-options-btn {
   background-color: #033963;
   color: #fff;
@@ -760,6 +803,7 @@ export default {
   padding: 0.6rem 1rem;
   cursor: pointer;
 }
+
 .more-options-btn:hover {
   background-color: #022f4a;
 }
@@ -777,6 +821,7 @@ export default {
   justify-content: center;
   z-index: 1000;
 }
+
 .modal {
   background-color: #1a1f2b;
   color: #f5f7fa;
@@ -788,12 +833,14 @@ export default {
   flex-direction: column;
   gap: 0.5rem;
 }
+
 .error-modal {
   background-color: #2b1a1a;
   border: 2px solid #ef4444;
   color: #fca5a5;
   text-align: center;
 }
+
 .error-modal button {
   background-color: #ef4444;
   color: white;
@@ -803,6 +850,7 @@ export default {
   cursor: pointer;
   margin-top: 0.5rem;
 }
+
 .modal input {
   padding: 0.5rem;
   border-radius: 6px;
@@ -810,11 +858,13 @@ export default {
   background: #1e2430;
   color: #f5f7fa;
 }
+
 .modal-buttons {
   display: flex;
   justify-content: space-between;
   gap: 0.5rem;
 }
+
 .modal-buttons button {
   flex: 1;
   padding: 0.5rem;
@@ -823,10 +873,12 @@ export default {
   font-weight: bold;
   cursor: pointer;
 }
+
 .modal-buttons button:first-child {
   background-color: #10b981;
   color: #fff;
 }
+
 .modal-buttons button:last-child {
   background-color: #ef4444;
   color: #fff;
@@ -846,6 +898,7 @@ export default {
   z-index: 3000;
   cursor: pointer;
 }
+
 .ath-image {
   max-width: 90%;
   max-height: 90%;
@@ -854,15 +907,24 @@ export default {
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
   animation: zoomIn 0.4s ease-out;
 }
+
 @keyframes zoomIn {
-  from { transform: scale(0.7); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* --- Scroll personalizado --- */
 .products-section::-webkit-scrollbar {
   width: 6px;
 }
+
 .products-section::-webkit-scrollbar-thumb {
   background-color: #2c3340;
   border-radius: 3px;
@@ -870,6 +932,7 @@ export default {
 
 /* --- Responsive --- */
 @media (max-width: 768px) {
+
   /* 🔹 Contenedor principal: ocupa todo el ancho */
   .pos-container {
     padding: 0.5rem;
@@ -877,9 +940,11 @@ export default {
     max-width: 100%;
     margin: 0;
   }
+
   .order-items-container {
     max-height: 320px;
   }
+
   /* 🔹 Sección principal: sin centrado, más fluida */
   .main-section {
     flex-direction: column;
@@ -911,13 +976,17 @@ export default {
     padding: 0.9rem 1rem;
     width: 100%;
   }
+
   .order-section {
-    max-height: 90vh; /* 🔹 aprovecha casi toda la pantalla */
+    max-height: 90vh;
+    /* 🔹 aprovecha casi toda la pantalla */
   }
 
   .order-items-container {
-    max-height: 60vh; /* 🔹 más alto para ver más productos en teléfonos */
+    max-height: 60vh;
+    /* 🔹 más alto para ver más productos en teléfonos */
   }
+
   /* 🔹 Botones de efectivo y totales mejor distribuidos */
   .cash-buttons button {
     flex: 1 1 48%;
@@ -932,7 +1001,7 @@ export default {
   }
 
   /* 🔹 Botón principal de Terminar Orden más grande */
-  .order-footer > button {
+  .order-footer>button {
     width: 100%;
     padding: 1.2rem;
     font-size: 1.1rem;
@@ -958,8 +1027,4 @@ export default {
     padding: 1rem;
   }
 }
-
 </style>
-
-
-

@@ -14,6 +14,12 @@
             </router-link>
           </li>
           <li>
+            <router-link to="menu">
+              <i class="fa-solid fa-utensils"></i>
+              <span>Menu</span>
+            </router-link>
+          </li>
+          <li>
             <router-link to="transactions">
               <i class="fa-solid fa-scroll"></i>
               <span>Mis Transacciones</span>
@@ -273,6 +279,7 @@ export default {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

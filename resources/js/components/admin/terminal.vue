@@ -73,7 +73,6 @@
               <input type="number" min="0" step="0.01" v-model.number="cashRecibido" placeholder="Ej. 37.50" />
             </div>
 
-            <!-- 🔘 OTROS BOTONES -->
             <div class="cash-buttons2">
               <button class="athmovil-btn" @click="mostrarATH">
                 <img :src="athLogo" alt="ATH" class="icon" width="90" height="90" />
@@ -89,7 +88,6 @@
           </div>
         </div>
 
-        <!-- 🛒 PRODUCTOS -->
         <div class="products-section">
           <h3>Productos</h3>
 
@@ -201,13 +199,20 @@ export default {
     },
     clientesFiltrados() {
       if (!this.busquedaCliente) return this.clientes;
-      const search = this.busquedaCliente.toLowerCase();
+
+      const search = this.normalizarTexto(this.busquedaCliente);
+
       return this.clientes.filter((c) => {
-        const nombre = `${c.nombre || c.name} ${c.apellido || c.lastname}`.toLowerCase();
-        return nombre.includes(search) || (c.numero_socio && c.numero_socio.toString().includes(search));
+        const nombre = `${c.nombre || c.name} ${c.apellido || c.lastname}`;
+        const nombreNormalizado = this.normalizarTexto(nombre);
+        const socio = c.numero_socio ? c.numero_socio.toString() : "";
+
+        return (
+          nombreNormalizado.includes(search) ||
+          socio.includes(search)
+        );
       });
     },
-
     productosPorCategoria() {
       const grupos = {};
       const ordenados = [...this.productos].sort((a, b) =>
@@ -239,6 +244,13 @@ export default {
     async loadCurrentUser(token) {
       const res = await axios.get("/api/user", { headers: { Authorization: `Bearer ${token}` } });
       this.user = res.data;
+    },
+    normalizarTexto(texto) {
+      return texto
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
     },
     volverProductos() { this.mostrarOpciones = false; },
     toggleMasOpciones() { this.mostrarOpciones = !this.mostrarOpciones; },
@@ -354,7 +366,6 @@ export default {
   color: #f5f7fa;
 }
 
-/* --- Loader --- */
 .loader-overlay {
   position: fixed;
   top: 0;
@@ -404,7 +415,6 @@ export default {
   font-weight: bold;
 }
 
-/* --- Layout principal --- */
 .main-section {
   display: flex;
   gap: 1rem;
@@ -412,7 +422,6 @@ export default {
   flex-wrap: wrap;
 }
 
-/* --- Secciones principales --- */
 .order-section,
 .products-section {
   background-color: #1a1f2b;
@@ -426,15 +435,9 @@ export default {
   flex: 1;
   min-width: 280px;
   max-height: 80vh;
-  /* 🔹 más flexible para pantallas pequeñas */
-  display: flex;
-  flex-direction: column;
   overflow-y: auto;
-  /* 🔹 permite que el contenido interno tenga scroll */
   overscroll-behavior: contain;
-  /* 🔹 evita el rebote en móviles */
 }
-
 
 .products-section {
   flex: 2;
@@ -443,7 +446,6 @@ export default {
   overflow-y: auto;
 }
 
-/* --- Títulos de secciones --- */
 .order-section h3,
 .products-section h3 {
   font-size: 1.3rem;
@@ -453,7 +455,6 @@ export default {
   padding-bottom: 0.3rem;
 }
 
-/* --- Cliente --- */
 .client-section {
   display: flex;
   flex-direction: column;
@@ -493,7 +494,6 @@ export default {
   background-color: #293142;
 }
 
-/* --- Inputs generales (búsquedas) --- */
 .search-bar {
   background: #1a1f2b;
   color: #f5f7fa;
@@ -515,7 +515,6 @@ export default {
   margin-bottom: 1.2rem;
 }
 
-/* --- Productos --- */
 .categoria-bloque {
   background: #1e2430;
   border-radius: 10px;
@@ -543,7 +542,6 @@ export default {
   gap: 0.5rem;
 }
 
-/* --- Botones de productos --- */
 .producto-boton {
   background-color: #3a63e8;
   color: #fff;
@@ -559,7 +557,6 @@ export default {
   filter: brightness(1.2);
 }
 
-/* --- Colores por categoría --- */
 .boton-bebida {
   background-color: #3a63e8;
 }
@@ -588,7 +585,6 @@ export default {
   background-color: #7b4c2b;
 }
 
-/* --- Botones adicionales --- */
 .boton-extra {
   background-color: #10b981;
   color: #fff;
@@ -603,7 +599,6 @@ export default {
   filter: brightness(1.2);
 }
 
-/* --- Totales --- */
 .totales {
   display: flex;
   justify-content: space-between;
@@ -615,7 +610,6 @@ export default {
   color: #10b981;
 }
 
-/* --- Orden --- */
 .order-items-container {
   flex: 1;
   overflow-y: auto;
@@ -626,7 +620,6 @@ export default {
   scroll-behavior: smooth;
 }
 
-/* Scrollbar oscuro y fino */
 .order-items-container::-webkit-scrollbar {
   width: 6px;
 }
@@ -635,7 +628,6 @@ export default {
   background-color: #2c3340;
   border-radius: 3px;
 }
-
 
 .order-item {
   display: flex;
@@ -658,7 +650,6 @@ export default {
   cursor: pointer;
 }
 
-/* --- Cantidad/Subtotal --- */
 .cantidad-subtotal {
   display: flex;
   align-items: center;
@@ -675,7 +666,6 @@ export default {
   border-radius: 6px;
 }
 
-/* --- Métodos de pago --- */
 .payment-section {
   display: flex;
   align-items: center;
@@ -695,7 +685,6 @@ export default {
   padding: 0.4rem 0.6rem;
 }
 
-/* --- Botones efectivo --- */
 .cash-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -716,18 +705,12 @@ export default {
   padding: 0.8rem;
 }
 
-.cash-buttons button:hover {
-  background-color: #475569;
-}
-
-/* --- Cash info --- */
 .cash-info {
   margin-top: 0.5rem;
   font-weight: bold;
   color: #10b981;
 }
 
-/* --- Cash input manual --- */
 .cash-input {
   margin-top: 0.5rem;
   display: flex;
@@ -744,7 +727,6 @@ export default {
   width: 100%;
 }
 
-/* --- Footer Orden --- */
 .order-footer {
   display: flex;
   flex-direction: column;
@@ -766,18 +748,6 @@ export default {
   letter-spacing: 0.5px;
 }
 
-.order-footer>button:hover {
-  filter: brightness(1.2);
-  box-shadow: 0 0 12px rgba(58, 99, 232, 0.4);
-}
-
-.order-footer>button:disabled {
-  background-color: #374151;
-  color: #9ca3af;
-  cursor: not-allowed;
-}
-
-/* --- ATH y opciones extra --- */
 .cash-buttons2 {
   display: flex;
   gap: 0.5rem;
@@ -808,7 +778,6 @@ export default {
   background-color: #022f4a;
 }
 
-/* --- Modales --- */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -865,15 +834,6 @@ export default {
   gap: 0.5rem;
 }
 
-.modal-buttons button {
-  flex: 1;
-  padding: 0.5rem;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
 .modal-buttons button:first-child {
   background-color: #10b981;
   color: #fff;
@@ -884,7 +844,6 @@ export default {
   color: #fff;
 }
 
-/* --- ATH Overlay --- */
 .ath-overlay {
   position: fixed;
   top: 0;
@@ -920,20 +879,8 @@ export default {
   }
 }
 
-/* --- Scroll personalizado --- */
-.products-section::-webkit-scrollbar {
-  width: 6px;
-}
-
-.products-section::-webkit-scrollbar-thumb {
-  background-color: #2c3340;
-  border-radius: 3px;
-}
-
-/* --- Responsive --- */
 @media (max-width: 768px) {
 
-  /* 🔹 Contenedor principal: ocupa todo el ancho */
   .pos-container {
     padding: 0.5rem;
     width: 100vw;
@@ -941,11 +888,25 @@ export default {
     margin: 0;
   }
 
+  .order-section,
+  .products-section,
   .order-items-container {
-    max-height: 320px;
+    max-height: unset !important;
+    overflow: visible !important;
+    width: 100% !important;
+    flex-basis: 100% !important;
   }
 
-  /* 🔹 Sección principal: sin centrado, más fluida */
+  .products-section,
+  .order-section {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 12px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
   .main-section {
     flex-direction: column;
     width: 100%;
@@ -953,41 +914,18 @@ export default {
     gap: 0.8rem;
   }
 
-  /* 🔹 Panel de orden y productos ocupa todo el ancho */
-  .order-section,
-  .products-section {
-    width: 100%;
-    min-width: 100%;
-    max-width: 100%;
-    border-radius: 12px;
-    margin: 0 auto;
-    box-sizing: border-box;
-  }
-
-  /* 🔹 Ajuste de los productos: botones más anchos */
   .productos-grid {
     grid-template-columns: repeat(auto-fill, minmax(95%, 1fr));
     gap: 0.7rem;
+    width: 100%;
   }
 
-  /* 🔹 Buscadores más grandes y cómodos */
   .search-bar {
     font-size: 1rem;
     padding: 0.9rem 1rem;
     width: 100%;
   }
 
-  .order-section {
-    max-height: 90vh;
-    /* 🔹 aprovecha casi toda la pantalla */
-  }
-
-  .order-items-container {
-    max-height: 60vh;
-    /* 🔹 más alto para ver más productos en teléfonos */
-  }
-
-  /* 🔹 Botones de efectivo y totales mejor distribuidos */
   .cash-buttons button {
     flex: 1 1 48%;
     font-size: 1rem;
@@ -1000,7 +938,6 @@ export default {
     gap: 0.4rem;
   }
 
-  /* 🔹 Botón principal de Terminar Orden más grande */
   .order-footer>button {
     width: 100%;
     padding: 1.2rem;
@@ -1008,21 +945,11 @@ export default {
     font-weight: 700;
   }
 
-  /* 🔹 Evitar que el contenido quede centrado visualmente */
-  .order-section,
-  .products-section,
-  .client-section {
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  /* 🔹 Lista de clientes más amplia */
   .clientes-list {
     width: 100%;
     left: 0;
   }
 
-  /* 🔹 Ajustes menores visuales */
   .categoria-bloque {
     padding: 1rem;
   }

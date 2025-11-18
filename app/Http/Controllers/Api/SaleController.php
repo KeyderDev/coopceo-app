@@ -78,6 +78,26 @@ class SaleController extends Controller
         }
     }
 
+    public function show($id)
+    {
+        $sale = Sale::with(['cliente', 'cajero', 'products'])->find($id);
+
+        if (!$sale) {
+            return response()->json(['error' => 'Venta no encontrada'], 404);
+        }
+
+        return response()->json([
+            'sale' => $sale,
+            'items' => $sale->products->map(function ($p) {
+                return [
+                    'id' => $p->id,
+                    'nombre' => $p->nombre,
+                    'quantity' => $p->pivot->quantity
+                ];
+            })
+        ]);
+    }
+
     public function myTransactions(Request $request)
     {
         $user = $request->user();

@@ -65,6 +65,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/sales', [SaleController::class, 'index']);
     Route::post('/sales', [SaleController::class, 'store']);
     Route::get('/my-transactions', [SaleController::class, 'myTransactions']);
+    Route::get('/sales/{id}', [SaleController::class, 'show']);
 });
 
 

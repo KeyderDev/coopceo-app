@@ -18,6 +18,8 @@ import ForgotPassword from './components/ForgotPassword.vue'
 import management from './components/admin/management.vue'
 import inventory from './components/admin/inventory.vue'
 import userDetails from './components/admin/userDetails.vue'
+import transactionDetails from './components/admin/transaction-details.vue'
+
 
 const routes = [
   {
@@ -26,6 +28,7 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true },
     children: [
       { path: 'users', component: Users, name: 'users' },
+      { path: 'transaction/:id', component: transactionDetails, name: 'transaction-details' },
       { path: 'logs', component: Logs, name: 'logs' },
       { path: 'terminal', component: terminal, name: 'terminal' },
       { path: 'cuadre', component: cuadre, name: 'reconciliation' },

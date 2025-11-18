@@ -39,7 +39,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="sale in sales" :key="sale.id">
+          <tr v-for="sale in sales" :key="sale.id" class="clickable-row"
+            @click="$router.push(`/transaction/${sale.id}`)">
             <td data-label="ID">{{ sale.id }}</td>
             <td data-label="Cliente">{{ sale.cliente?.username || sale.cliente?.nombre || 'Sin nombre' }}</td>
             <td data-label="Cajero">{{ sale.cajero?.username || sale.cajero?.nombre || 'Sistema' }}</td>
@@ -299,13 +300,16 @@ tbody tr:hover {
   height: 10px;
   width: 10px;
 }
+
 .table-wrapper::-webkit-scrollbar-thumb {
   background-color: rgba(157, 216, 106, 0.3);
   border-radius: 10px;
 }
+
 .table-wrapper::-webkit-scrollbar-thumb:hover {
   background-color: rgba(157, 216, 106, 0.6);
 }
+
 .table-wrapper::-webkit-scrollbar-track {
   background-color: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
@@ -359,4 +363,3 @@ tbody tr:hover {
   }
 }
 </style>
-

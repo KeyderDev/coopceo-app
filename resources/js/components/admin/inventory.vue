@@ -15,12 +15,7 @@
 
             <div class="form-group">
               <label>Precio:</label>
-              <input
-                type="number"
-                step="0.01"
-                v-model.number="nuevoProducto.precio"
-                required
-              />
+              <input type="number" step="0.01" v-model.number="nuevoProducto.precio" required />
             </div>
 
             <div class="form-group">
@@ -61,19 +56,10 @@
               <td>{{ producto.categoria }}</td>
               <td>${{ Number(producto.precio || 0).toFixed(2) }}</td>
               <td>
-                <input
-                  type="number"
-                  v-model.number="producto.stock"
-                  min="0"
-                  class="stock-input"
-                />
+                <input type="number" v-model.number="producto.stock" min="0" class="stock-input" />
               </td>
               <td class="actions">
-                <button
-                  class="btn-primary"
-                  @click="actualizarStock(producto)"
-                  :disabled="producto.loading"
-                >
+                <button class="btn-primary" @click="actualizarStock(producto)" :disabled="producto.loading">
                   {{ producto.loading ? "Guardando..." : "Actualizar" }}
                 </button>
                 <button class="btn-danger" @click="eliminarProducto(producto.id)">
@@ -91,18 +77,9 @@
             <p><strong>Categoría:</strong> {{ producto.categoria }}</p>
             <p><strong>Precio:</strong> ${{ Number(producto.precio || 0).toFixed(2) }}</p>
             <p><strong>Stock:</strong></p>
-            <input
-              type="number"
-              v-model.number="producto.stock"
-              min="0"
-              class="stock-input"
-            />
+            <input type="number" v-model.number="producto.stock" min="0" class="stock-input" />
             <div class="card-actions">
-              <button
-                class="btn-primary"
-                @click="actualizarStock(producto)"
-                :disabled="producto.loading"
-              >
+              <button class="btn-primary" @click="actualizarStock(producto)" :disabled="producto.loading">
                 {{ producto.loading ? "Guardando..." : "Actualizar" }}
               </button>
               <button class="btn-danger" @click="eliminarProducto(producto.id)">
@@ -130,13 +107,11 @@
             <span>{{ producto.nombre }}</span>
             <span>{{ producto.stock }}</span>
             <input type="number" v-model.number="producto.contado" placeholder="Contado" min="0" />
-            <span
-              :class="{
-                match: producto.contado === producto.stock,
-                mismatch:
-                  producto.contado !== producto.stock && producto.contado != null,
-              }"
-            >
+            <span :class="{
+              match: producto.contado === producto.stock,
+              mismatch:
+                producto.contado !== producto.stock && producto.contado != null,
+            }">
               {{ producto.contado != null ? producto.contado - producto.stock : "-" }}
             </span>
           </div>
@@ -230,8 +205,26 @@ export default {
     },
 
     async guardarCuadre() {
-      console.log("Cuadre realizado:", this.productos);
-      alert("Cuadre de inventario guardado correctamente ✅");
+      const token = localStorage.getItem("auth_token");
+
+      const cuadrePayload = this.productos.map((p) => ({
+        id: p.id,
+        stock: p.stock,
+        contado: p.contado ?? null,
+      }));
+
+      try {
+        await axios.post(
+          `${import.meta.env.VITE_APP_URL}/api/products/cuadre`,
+          { cuadre: cuadrePayload },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        alert("Cuadre de inventario guardado correctamente ✅");
+      } catch (error) {
+        console.error("Error al guardar el cuadre:", error);
+        alert("Hubo un error guardando el cuadre ❌");
+      }
     },
   },
 };
@@ -580,6 +573,7 @@ input:focus {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

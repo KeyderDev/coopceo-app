@@ -32,10 +32,12 @@
             <div v-else>
               <div class="order-item" v-for="(item, index) in orden" :key="item.id">
                 <span>{{ item.nombre }}</span>
+
                 <div class="cantidad-subtotal">
                   <input type="number" min="1" v-model.number="item.cantidad" />
                   <span>Subtotal: ${{ (item.cantidad * item.precio).toFixed(2) }}</span>
                 </div>
+
                 <button @click="intentarEliminarProducto(index)">Eliminar</button>
               </div>
             </div>
@@ -92,20 +94,62 @@
           <h3>Productos</h3>
 
           <input type="text" v-model="busqueda" placeholder="Buscar producto..." class="search-bar"
-            v-if="!mostrarOpciones" />
+            v-if="!mostrarOpciones && !mostrarCuadre" />
 
           <div v-if="mostrarOpciones" class="productos-botones">
             <button class="boton-extra" @click="volverMenu">Menu Principal</button>
-            <button style="background-color: #3A63E8;" class="boton-extra">Pago Mixto</button>
+            <button class="boton-extra" style="background-color: #3A63E8;">Pago Mixto</button>
             <button class="boton-extra">Codigo Promocional</button>
+
+            <button class="boton-extra" @click="abrirVoid">Transacción Void</button>
+
             <button class="boton-extra" style="background-color: goldenrod;">Refund</button>
-            <router-link to="/cuadre" custom v-slot="{ navigate }">
-              <button class="boton-extra" @click="navigate">Cuadre</button>
-            </router-link>
+
+            <button class="boton-extra" @click="pedirSuperAdminCuadre">Cuadre</button>
+
+
             <button class="boton-extra">ATH Movil Summary</button>
           </div>
 
-          <div v-else>
+          <div v-if="mostrarCuadre" class="cash-reconciliation">
+
+            <h3>Cash Reconciliation</h3>
+
+            <div class="field">
+              <label>Petty:</label>
+              <input type="number" v-model.number="petty" />
+            </div>
+
+            <h4>Billetes</h4>
+            <div class="field" v-for="bill in bills" :key="bill.value">
+              <label>{{ bill.label }}:</label>
+              <input type="number" v-model.number="bill.quantity" min="0" @focus="clearZero($event, bill)" />
+            </div>
+
+            <h4>Monedas</h4>
+            <div class="field" v-for="coin in coins" :key="coin.value">
+              <label>{{ coin.label }}:</label>
+              <input type="number" v-model.number="coin.quantity" min="0" @focus="clearZero($event, coin)" />
+            </div>
+
+            <h4>Rolled Currency</h4>
+            <div class="field" v-for="roll in rolledCurrency" :key="roll.key">
+              <label>{{ roll.label }}:</label>
+              <input type="number" v-model.number="roll.quantity" min="0" @focus="clearZero($event, roll)" />
+            </div>
+
+            <div class="totals">
+              <p>Total ventas efectivo: <span>{{ totalSalesCash.toFixed(2) }}</span></p>
+              <p>Total contado: <span>{{ totalCounted.toFixed(2) }}</span></p>
+              <p>Diferencia: <span :class="{ negative: difference < 0 }">{{ difference.toFixed(2) }}</span></p>
+            </div>
+
+            <button class="boton-extra" @click="saveReconciliation">Guardar cuadre</button>
+            <button class="boton-extra" style="background-color:#ef4444" @click="cerrarCuadre">Cancelar</button>
+
+          </div>
+
+          <div v-if="!mostrarOpciones && !mostrarCuadre">
             <div v-if="productos.length === 0">Cargando productos...</div>
             <div v-else>
               <div v-if="Object.keys(productosPorCategoria).length === 0">No se encontraron productos</div>
@@ -113,11 +157,14 @@
               <div v-for="(listaProductos, categoria) in productosPorCategoria" :key="categoria"
                 class="categoria-bloque">
                 <h4 class="categoria-titulo">{{ categoria }}</h4>
+
                 <div class="productos-grid">
                   <button v-for="producto in listaProductos" :key="producto.id" class="producto-boton"
-                    :class="obtenerClaseCategoria(producto)" @click="agregarProducto(producto)">
+                    :class="[obtenerClaseCategoria(producto), { 'sin-stock': producto.stock === 0 }]"
+                    :disabled="producto.stock === 0" @click="agregarProducto(producto)">
                     {{ producto.nombre }}
                   </button>
+
                 </div>
               </div>
             </div>
@@ -133,13 +180,26 @@
         </div>
       </div>
 
-      <div v-if="mostrarModal" class="modal-overlay">
+      <superadmin :visible="showSuperAdmin" title="Ingrese código SuperAdmin" @confirm="onSuperAdminConfirm"
+        @cancel="onSuperAdminCancel" />
+
+
+      <div v-if="mostrarVoidForm" class="modal-overlay">
         <div class="modal">
-          <h3>Ingrese código superadmin para void</h3>
-          <input type="password" v-model="codigoSuperAdmin" placeholder="Código..." />
+          <h3>Crear Transacción sin fondo</h3>
+
+          <label>Monto total:</label>
+          <input type="number" min="0" step="0.01" v-model.number="tnfMonto" />
+
+          <label>Método de pago:</label>
+          <select v-model="tnfMetodo">
+            <option value="efectivo">Efectivo</option>
+            <option value="athmovil">ATH Móvil</option>
+          </select>
+
           <div class="modal-buttons">
-            <button @click="confirmarVoid">Confirmar</button>
-            <button @click="cancelarVoid">Cancelar</button>
+            <button class="btn-confirm btn-sm" @click="guardarTNF">Crear</button>
+            <button class="btn-cancel btn-sm" @click="cancelarTNF">Cancelar</button>
           </div>
         </div>
       </div>
@@ -151,16 +211,46 @@
   </div>
 </template>
 
+
 <script>
 import axios from "axios";
+import superadmin from "../global/superadmin.vue";
 export default {
+  components: { superadmin },
+
   data() {
     return {
+      petty: 50,
+      bills: [
+        { label: '$20', value: 20, quantity: 0 },
+        { label: '$10', value: 10, quantity: 0 },
+        { label: '$5', value: 5, quantity: 0 },
+        { label: '$1', value: 1, quantity: 0 },
+      ],
+      coins: [
+        { label: '$0.10', value: 0.10, quantity: 0 },
+        { label: '$0.05', value: 0.05, quantity: 0 },
+        { label: '$0.01', value: 0.01, quantity: 0 },
+        { label: '$0.25', value: 0.25, quantity: 0 },
+      ],
+      rolledCurrency: [
+        { label: 'Rollos de $10', value: 10.00, coinValue: 0.25, coinsPerRoll: 40, quantity: 0, key: 'roll_10' },
+        { label: 'Rollos de $5', value: 5.00, coinValue: 0.10, coinsPerRoll: 50, quantity: 0, key: 'roll_5' },
+        { label: 'Rollos de $2', value: 2.00, coinValue: 0.05, coinsPerRoll: 40, quantity: 0, key: 'roll_2' },
+        { label: 'Rollos de $0.50', value: 0.50, coinValue: 0.01, coinsPerRoll: 50, quantity: 0, key: 'roll_0_50' },
+      ],
+      totalSalesCash: 0,
+
+      mostrarVoidModal: false,
+      mostrarVoidForm: false,
+      tnfMonto: 0,
+      tnfMetodo: "efectivo",
       mostrarImagenATH: false,
       isLoading: true,
       clientes: [],
       productos: [],
       clienteId: null,
+      mostrarCuadre: false,
       orden: [],
       metodoPago: "efectivo",
       loading: false,
@@ -168,11 +258,14 @@ export default {
       busqueda: "",
       mostrarManual: false,
       mostrarModal: false,
+      mostrarCuadre: false,
       mostrarErrorModal: false,
       productoAEliminar: null,
       codigoSuperAdmin: "",
       busquedaCliente: "",
       mostrarClientes: false,
+      accionPendiente: null,
+      showSuperAdmin: false,
       clienteSeleccionado: null,
       user: {},
       athLogo: "/images/athpng.png",
@@ -188,6 +281,38 @@ export default {
     },
   },
   computed: {
+    totalBills() {
+      return this.bills.reduce((sum, b) => sum + ((b.quantity || 0) * b.value), 0);
+    },
+
+    rolledCoinsAddition() {
+      const additions = {};
+      this.rolledCurrency.forEach(roll => {
+        const qty = parseInt(roll.quantity || 0, 10);
+        if (!qty) return;
+        const extraCoins = qty * roll.coinsPerRoll;
+        additions[roll.coinValue] = (additions[roll.coinValue] || 0) + extraCoins;
+      });
+      return additions;
+    },
+
+    totalCoins() {
+      return this.coins.reduce((sum, c) => {
+        const manualQty = parseInt(c.quantity || 0, 10);
+        const extraCoins = this.rolledCoinsAddition[c.value] || 0;
+        return sum + ((manualQty + extraCoins) * c.value);
+      }, 0);
+    },
+
+    totalCounted() {
+      return parseFloat((this.totalBills + this.totalCoins).toFixed(2));
+    },
+
+    difference() {
+      const expectedCash = parseFloat((this.petty || 0) + (this.totalSalesCash || 0));
+      return parseFloat((this.totalCounted - expectedCash).toFixed(2));
+    },
+
     subtotal() {
       return this.orden.reduce((acc, item) => acc + Number(item.precio) * item.cantidad, 0);
     },
@@ -245,6 +370,165 @@ export default {
       const res = await axios.get("/api/user", { headers: { Authorization: `Bearer ${token}` } });
       this.user = res.data;
     },
+    abrirCuadre() {
+      this.mostrarCuadre = true;
+      this.mostrarOpciones = false;
+      this.cargarVentasEfectivoHoy();
+
+    },
+    cerrarCuadre() {
+      this.mostrarCuadre = false;
+    },
+    pedirSuperAdminCuadre() {
+      this.accionPendiente = "cuadre";
+      this.showSuperAdmin = true;
+    },
+    clearZero(event, item) {
+      if (item.quantity === 0) {
+        item.quantity = null;
+        event.target.value = '';
+      }
+    },
+    async cargarVentasEfectivoHoy() {
+      const today = new Date();
+      const offset = today.getTimezoneOffset();
+      today.setMinutes(today.getMinutes() - offset);
+
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+
+      const localDate = `${year}-${month}-${day}`;
+
+      try {
+        const token = localStorage.getItem("auth_token");
+        const response = await axios.get(`/api/sales-reconcilliation?date=${localDate}&payment=efectivo`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        this.totalSalesCash = parseFloat(response.data.total_cash);
+      } catch (error) {
+        console.error("Error al obtener total de ventas en efectivo:", error);
+        this.totalSalesCash = 0;
+      }
+    },
+    async saveReconciliation() {
+      const rolledAdd = this.rolledCoinsAddition;
+
+      const payload = {
+        petty: this.petty,
+        bill_20: this.bills[0].quantity,
+        bill_10: this.bills[1].quantity,
+        bill_5: this.bills[2].quantity,
+        bill_1: this.bills[3].quantity,
+        coin_10: (this.coins.find(c => c.value === 0.10).quantity || 0) + (rolledAdd[0.10] || 0),
+        coin_5: (this.coins.find(c => c.value === 0.05).quantity || 0) + (rolledAdd[0.05] || 0),
+        coin_1: (this.coins.find(c => c.value === 0.01).quantity || 0) + (rolledAdd[0.01] || 0),
+        coin_25: (this.coins.find(c => c.value === 0.25).quantity || 0) + (rolledAdd[0.25] || 0),
+        roll_10: this.rolledCurrency.find(r => r.key === 'roll_10').quantity,
+        roll_5: this.rolledCurrency.find(r => r.key === 'roll_5').quantity,
+        roll_2: this.rolledCurrency.find(r => r.key === 'roll_2').quantity,
+        roll_0_50: this.rolledCurrency.find(r => r.key === 'roll_0_50').quantity,
+        total_counted: this.totalCounted,
+        total_sales_cash: this.totalSalesCash,
+        difference: this.difference,
+      };
+
+      try {
+        const token = localStorage.getItem("auth_token");
+
+        await axios.post('/api/cash-reconciliations', payload, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        alert("Cuadre guardado correctamente!");
+        this.cerrarCuadre();
+      } catch (error) {
+        console.error("Error al guardar cuadre:", error);
+        alert("Hubo un error guardando el cuadre.");
+      }
+    },
+    confirmarVoid() {
+      if (this.codigoSuperAdmin === import.meta.env.VITE_SUPERADMIN_PASSWORD) {
+
+        this.mostrarModal = false;
+
+        if (this.accionSuperadmin === "void") {
+          this.codigoSuperAdmin = "";
+          this.accionSuperadmin = null;
+
+          this.voidMonto = 0;
+          this.voidMetodo = "efectivo";
+          this.mostrarVoidForm = true;
+          return;
+        }
+
+        if (this.accionSuperadmin === "eliminar") {
+          this.eliminarProducto(this.productoAEliminar);
+          this.productoAEliminar = null;
+          this.codigoSuperAdmin = "";
+          this.accionSuperadmin = null;
+          return;
+        }
+
+      } else {
+        alert("Código incorrecto");
+      }
+    },
+
+
+    abrirVoid() {
+      this.accionPendiente = "void";
+      this.showSuperAdmin = true;
+    },
+
+    async guardarTNF() {
+      const monto = parseFloat(this.tnfMonto);
+
+      if (isNaN(monto) || monto <= 0) {
+        alert("Debe ingresar un monto válido");
+        return;
+      }
+
+      this.loading = true;
+
+      const payload = {
+        cliente_id: null,
+        cajero_id: this.user.id,
+        total: monto,
+        metodo_pago: this.tnfMetodo,
+        productos: null,
+      };
+
+      try {
+        const token = localStorage.getItem("auth_token");
+        await axios.post("/api/sales", payload, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        alert("Transacción void creada correctamente");
+
+        this.mostrarVoidForm = false;
+        this.tnfMonto = "";
+        this.tnfMetodo = "efectivo";
+
+      } catch (e) {
+        console.error("422 ERROR:", e.response?.data);
+        alert("Error al crear transacción void");
+      } finally {
+        this.loading = false;
+      }
+    },
+
+
+    cancelarVoid() {
+      this.mostrarModal = false;
+      this.mostrarVoidForm = false;
+      this.codigoSuperAdmin = "";
+      this.productoAEliminar = null;
+      this.accionSuperadmin = null;
+      this.tnfMonto = 0;
+    },
+
     normalizarTexto(texto) {
       return texto
         .normalize("NFD")
@@ -252,7 +536,11 @@ export default {
         .toLowerCase()
         .trim();
     },
-    volverProductos() { this.mostrarOpciones = false; },
+    volverProductos() {
+      this.mostrarOpciones = false;
+      this.mostrarCuadre = false;
+      this.mostrarVoidForm = false;
+    },
     toggleMasOpciones() { this.mostrarOpciones = !this.mostrarOpciones; },
     mostrarATH() { this.mostrarImagenATH = true; },
     cerrarATH() { this.mostrarImagenATH = false; },
@@ -296,18 +584,45 @@ export default {
     },
     intentarEliminarProducto(index) {
       if (this.metodoPago === "efectivo" && this.cashRecibido > 0) {
+
         this.productoAEliminar = index;
+        this.accionPendiente = "eliminar";
         this.mostrarModal = true;
-      } else this.eliminarProducto(index);
+        this.showSuperAdmin = true;
+
+      } else {
+        this.eliminarProducto(index);
+      }
+    },
+    onSuperAdminConfirm(code) {
+      if (code !== import.meta.env.VITE_SUPERADMIN_PASSWORD) {
+        alert("Código incorrecto");
+        return;
+      }
+
+      if (this.accionPendiente === "void") {
+        this.mostrarVoidForm = true;
+      }
+
+      if (this.accionPendiente === "eliminar") {
+        this.eliminarProducto(this.productoAEliminar);
+      }
+
+      if (this.accionPendiente === "cuadre") {
+        this.mostrarCuadre = true;
+        this.mostrarOpciones = false;
+        this.cargarVentasEfectivoHoy();
+      }
+
+      this.showSuperAdmin = false;
+      this.accionPendiente = null;
+    },
+
+    onSuperAdminCancel() {
+      this.showSuperAdmin = false;
+      this.accionPendiente = null;
     },
     eliminarProducto(index) { this.orden.splice(index, 1); },
-    confirmarVoid() {
-      if (this.codigoSuperAdmin === "0000superadmin") {
-        this.eliminarProducto(this.productoAEliminar);
-        this.mostrarModal = false;
-        this.codigoSuperAdmin = "";
-      } else alert("Código incorrecto");
-    },
     cancelarVoid() { this.mostrarModal = false; this.codigoSuperAdmin = ""; },
     seleccionarCash(monto) { this.cashRecibido += monto; },
     seleccionarExacto() { this.cashRecibido = this.total; },
@@ -381,6 +696,25 @@ export default {
   color: #fff;
 }
 
+.producto-boton.sin-stock {
+  background-color: #2b2b2b !important;
+  color: #777 !important;
+  cursor: not-allowed !important;
+  filter: none !important;
+  border: 1px solid #444 !important;
+}
+
+.producto-boton.sin-stock:hover {
+  filter: none !important;
+}
+
+@media (max-width: 768px) {
+  .numpad-btn {
+    font-size: 2rem;
+    padding: 1.2rem 0;
+  }
+}
+
 .loader {
   display: flex;
   gap: 0.5rem;
@@ -438,6 +772,33 @@ export default {
   overflow-y: auto;
   overscroll-behavior: contain;
 }
+
+.btn-sm {
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  flex: 1;
+}
+
+
+.btn-action {
+  background-color: #3A63E8;
+  color: #ffffff;
+  padding: 0.8rem 1.2rem;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.btn-action:hover {
+  background-color: #4c74ff;
+}
+
 
 .products-section {
   flex: 2;
@@ -856,6 +1217,140 @@ export default {
   justify-content: center;
   z-index: 3000;
   cursor: pointer;
+}
+
+.cash-reconciliation {
+  background-color: #1a1f2b;
+  border-radius: 12px;
+  padding: 1rem 1.3rem;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+  color: #f5f7fa;
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 78vh;
+  overflow-y: auto;
+}
+
+.cash-reconciliation h3 {
+  font-size: 1.35rem;
+  margin-bottom: 1.2rem;
+  color: #3a63e8;
+  border-bottom: 1px solid #2c3340;
+  padding-bottom: 0.4rem;
+}
+
+.cash-reconciliation h4 {
+  margin-top: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: #8fa3c8;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #2c3340;
+  padding-bottom: 3px;
+}
+
+.cash-reconciliation .field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.55rem 0;
+}
+
+.cash-reconciliation .field label {
+  font-size: 1rem;
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.cash-reconciliation .field input {
+  width: 110px;
+  background: #0e1117;
+  border: 1px solid #2c3340;
+  color: #f5f7fa;
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  font-size: 1rem;
+  text-align: right;
+  transition: 0.2s;
+}
+
+.cash-reconciliation .field input:focus {
+  border-color: #3a63e8;
+  box-shadow: 0 0 8px rgba(58, 99, 232, 0.4);
+  outline: none;
+}
+
+.cash-reconciliation .totals {
+  margin-top: 1.6rem;
+  padding: 0.9rem 1rem;
+  background-color: #1e2430;
+  border: 1px solid #2c3340;
+  border-radius: 10px;
+}
+
+.cash-reconciliation .totals p {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  margin: 0.55rem 0;
+  font-weight: 600;
+}
+
+.cash-reconciliation .totals span {
+  color: #10b981;
+}
+
+.cash-reconciliation .totals .negative {
+  color: #ef4444;
+}
+
+/* Botones */
+.cash-reconciliation button {
+  width: 100%;
+  padding: 0.9rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.7rem;
+  transition: 0.25s ease;
+  border: none;
+}
+
+.cash-reconciliation .boton-extra {
+  background-color: #10b981;
+  color: #fff;
+}
+
+.cash-reconciliation .boton-extra:hover {
+  filter: brightness(1.15);
+}
+
+.cash-reconciliation .cancel-btn {
+  background-color: #ef4444 !important;
+  color: white;
+}
+
+.cash-reconciliation::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cash-reconciliation::-webkit-scrollbar-thumb {
+  background: #2c3340;
+  border-radius: 6px;
+}
+
+.cash-reconciliation::-webkit-scrollbar-thumb:hover {
+  background: #3a414f;
+}
+
+@media (max-width: 768px) {
+  .cash-reconciliation {
+    max-height: unset;
+  }
+
+  .cash-reconciliation .field input {
+    width: 90px;
+  }
 }
 
 .ath-image {

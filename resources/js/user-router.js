@@ -5,6 +5,7 @@ import Register from './components/Register.vue'
 import transactions from './components/user/transactions.vue'
 import ForgotPassword from './components/ForgotPassword.vue'
 import Menu from './components/user/menu.vue'
+import Settings from './components/user/settings.vue'
 
 
 
@@ -15,7 +16,8 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       { path: 'transactions', component: transactions, name: 'transactions' }, 
-      { path: 'menu', component: Menu, name: 'menu' }
+      { path: 'menu', component: Menu, name: 'menu' },
+      { path: 'settings', component: Settings, name: 'settings' }
     ]
   },
   { path: '/login', component: Login, name: 'login' },

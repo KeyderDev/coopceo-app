@@ -1,6 +1,5 @@
 <template>
     <div id="app">
-        <!-- 🔝 Topbar -->
         <header class="topbar">
             <div class="topbar-left">
                 <h2><i class="fa-solid fa-user-shield"></i>JuCoop Back Office</h2>
@@ -12,6 +11,9 @@
                 <button @click="logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
             </div>
         </header>
+        <div class="marquee">
+            <span>🎄 ¡Felices fiestas les desea la Coopceo! 🎁</span>
+        </div>
 
         <main class="main-content">
             <div v-if="$route.path === '/' || $route.path === '/admin-panel'" class="menu-grid">
@@ -51,7 +53,6 @@
             </div>
         </main>
 
-        <!-- 🧾 Footer -->
         <footer class="footer">
             <div class="footer-left">
                 <i class="fas fa-calendar-day"></i>
@@ -154,6 +155,33 @@ export default {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+.marquee {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    background: black;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 0;
+    backdrop-filter: blur(6px);
+}
+
+.marquee span {
+    display: inline-block;
+    padding-left: 100%;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #9dd86a;
+    animation: marqueeMove 12s linear infinite;
+}
+
+@keyframes marqueeMove {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
 .topbar {

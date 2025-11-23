@@ -35,7 +35,6 @@
       </nav>
     </aside>
 
-    <!-- 🧩 Contenido principal -->
     <div class="main-content">
       <header class="topbar">
         <div class="topbar-left">
@@ -45,10 +44,11 @@
           <button @click="logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
         </div>
       </header>
-
+        <div class="marquee">
+            <span>🎄 ¡Felices fiestas les desea la Coopceo! 🎁</span>
+        </div>
       <div class="portal">
         <router-view v-slot="{ Component }">
-          <!-- Si NO hay componente cargado -->
           <div class="user-card" v-if="!Component && user">
             <div class="avatar">
               <i class="fa-solid fa-user-circle"></i>
@@ -60,7 +60,6 @@
             </div>
           </div>
 
-          <!-- Si hay componente -->
           <component :is="Component" v-else />
         </router-view>
       </div>
@@ -113,7 +112,6 @@ export default {
 </script>
 
 <style scoped>
-/* 🌌 Fondo principal */
 .portal-container {
   display: flex;
   height: 100vh;
@@ -121,8 +119,33 @@ export default {
   color: #fff;
   font-family: "Inter", sans-serif;
 }
+.marquee {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    background: black;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 0;
+    backdrop-filter: blur(6px);
+}
 
-/* 🧭 Sidebar */
+.marquee span {
+    display: inline-block;
+    padding-left: 100%;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #9dd86a;
+    animation: marqueeMove 12s linear infinite;
+}
+
+@keyframes marqueeMove {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
 .sidebar {
   width: 250px;
   background: rgba(25, 27, 31, 0.75);
@@ -179,20 +202,17 @@ export default {
   font-weight: 600;
 }
 
-/* 🧭 Íconos */
 .sidebar i {
   width: 20px;
   text-align: center;
 }
 
-/* 📊 Contenido principal */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-/* 🔝 Barra superior */
 .topbar {
   height: 65px;
   background: rgba(157, 216, 106, 0.1);
@@ -227,7 +247,6 @@ export default {
   transform: translateY(-2px);
 }
 
-/* 🧩 Portal */
 .portal {
   flex: 1;
   padding: 2rem;
@@ -237,7 +256,6 @@ export default {
   overflow-y: auto;
 }
 
-/* 💳 Tarjeta de usuario */
 .user-card {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -273,7 +291,6 @@ export default {
   color: #9dd86a;
 }
 
-/* ✨ Animación */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -286,7 +303,6 @@ export default {
   }
 }
 
-/* 📱 Responsive */
 @media (max-width: 768px) {
   .portal-container {
     flex-direction: column;

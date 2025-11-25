@@ -1,6 +1,7 @@
 <!-- resources/views/portal.blade.php -->
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,7 +12,8 @@
 
   <style>
     /* 🌌 Fondo */
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       height: 100%;
@@ -148,14 +150,55 @@
       line-height: 1.6;
     }
 
+    #turnstile-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 10, 10, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .turnstile-box {
+      background: #1e1e1e;
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      color: #fff;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .turnstile-box h2 {
+      margin-bottom: 10px;
+      color: #9dd86a;
+    }
+
+    .turnstile-box p {
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+
     .news-section ul li:last-child {
       border-bottom: none;
     }
 
     /* 🌀 Animaciones */
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* 📱 Responsive */
@@ -188,15 +231,38 @@
     }
 
     @media (max-width: 480px) {
-      .title { font-size: 1.8rem; }
-      .subtitle { font-size: 0.9rem; }
-      .btn { font-size: 0.9rem; padding: 0.8rem; }
-      .logo-img { width: 110px; }
+      .title {
+        font-size: 1.8rem;
+      }
+
+      .subtitle {
+        font-size: 0.9rem;
+      }
+
+      .btn {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+      }
+
+      .logo-img {
+        width: 110px;
+      }
     }
   </style>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 
 <body>
+  <div id="turnstile-overlay">
+    <div class="turnstile-box">
+      <h2>Verificación de seguridad</h2>
+      <p>Por favor, confirma que no eres un robot.</p>
+
+      <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITE_KEY') }}" data-callback="onTurnstileSuccess"></div>
+    </div>
+  </div>
+  </div>
+
   <div class="page">
     <div class="portal-section">
       <img src="{{ asset('images/coopceofixed.png') }}" alt="COOPCEO Logo" class="logo-img" />
@@ -217,5 +283,13 @@
       </ul>
     </div>
   </div>
+
+  <script>
+    function onTurnstileSuccess(token) {
+      document.getElementById('turnstile-overlay').style.display = 'none';
+    }
+  </script>
+
 </body>
+
 </html>

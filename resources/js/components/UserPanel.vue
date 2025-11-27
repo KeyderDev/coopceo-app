@@ -114,38 +114,41 @@ export default {
 <style scoped>
 .portal-container {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;        
+  height: auto;
   background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
   color: #fff;
   font-family: "Inter", sans-serif;
 }
+
 .marquee {
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    background: black;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0.5rem 0;
-    backdrop-filter: blur(6px);
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  background: black;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 0;
+  backdrop-filter: blur(6px);
 }
 
 .marquee span {
-    display: inline-block;
-    padding-left: 100%;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #9dd86a;
-    animation: marqueeMove 12s linear infinite;
+  display: inline-block;
+  padding-left: 100%;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #9dd86a;
+  animation: marqueeMove 12s linear infinite;
 }
 
 @keyframes marqueeMove {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
+
 .sidebar {
   width: 250px;
   background: rgba(25, 27, 31, 0.75);
@@ -156,6 +159,7 @@ export default {
   padding: 1.5rem 1rem;
   box-shadow: 4px 0 10px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .logo {
@@ -188,6 +192,7 @@ export default {
   text-decoration: none;
   font-weight: 500;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .sidebar nav ul li a:hover {
@@ -211,6 +216,7 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;             
 }
 
 .topbar {
@@ -223,6 +229,7 @@ export default {
   padding: 0 2rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
 }
 
 .topbar h2 {
@@ -254,6 +261,8 @@ export default {
   background: rgba(20, 22, 25, 0.65);
   backdrop-filter: blur(8px);
   overflow-y: auto;
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 .user-card {
@@ -306,19 +315,36 @@ export default {
 @media (max-width: 768px) {
   .portal-container {
     flex-direction: column;
+    height: auto;
   }
 
   .sidebar {
     width: 100%;
     flex-direction: row;
     overflow-x: auto;
+    overflow-y: hidden;
     justify-content: space-between;
-    padding: 1rem;
+    padding: 0.8rem 1rem;
+    gap: 1rem;
+  }
+
+  .logo {
+    margin-bottom: 0;
+    font-size: 1.1rem;
   }
 
   .sidebar nav ul {
     display: flex;
-    gap: 1rem;
+    gap: 0.6rem;
+  }
+
+  .sidebar nav ul li {
+    margin-bottom: 0;
+  }
+
+  .sidebar nav ul li a {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
   }
 
   .topbar {
@@ -326,11 +352,16 @@ export default {
     height: auto;
     gap: 0.5rem;
     text-align: center;
-    padding: 1rem;
+    padding: 0.8rem 1rem;
+  }
+
+  .marquee {
+    font-size: 0.9rem;
   }
 
   .portal {
     padding: 1.2rem;
+    overflow-y: visible;    
   }
 
   .user-card {
@@ -339,3 +370,4 @@ export default {
   }
 }
 </style>
+

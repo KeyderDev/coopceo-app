@@ -100,15 +100,12 @@
             <button class="boton-extra" @click="volverMenu">Menu Principal</button>
             <button class="boton-extra" style="background-color: #3A63E8;">Pago Mixto</button>
             <button class="boton-extra">Codigo Promocional</button>
-
             <button class="boton-extra" @click="abrirVoid">Transacción Void</button>
-
             <button class="boton-extra" style="background-color: goldenrod;">Refund</button>
-
             <button class="boton-extra" @click="pedirSuperAdminCuadre">Cuadre</button>
-
-
             <button class="boton-extra">ATH Movil Summary</button>
+            <button class="boton-extra">Gavetas</button>
+
           </div>
 
           <div v-if="mostrarCuadre" class="cash-reconciliation">

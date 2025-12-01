@@ -93,8 +93,13 @@
         <div class="products-section">
           <h3>Productos</h3>
 
-          <input type="text" v-model="busqueda" placeholder="Buscar producto..." class="search-bar"
-            v-if="!mostrarOpciones && !mostrarCuadre" />
+          <div class="categorias-container" v-if="!mostrarOpciones && !mostrarCuadre">
+            <button v-for="cat in categorias" :key="cat" class="categoria-btn"
+              :class="{ activa: categoriaSeleccionada === cat }" @click="categoriaSeleccionada = cat">
+              {{ cat }}
+            </button>
+          </div>
+
 
           <div v-if="mostrarOpciones" class="productos-botones">
             <button class="boton-extra" @click="volverMenu">Menu Principal</button>
@@ -104,7 +109,7 @@
             <button class="boton-extra" style="background-color: goldenrod;">Refund</button>
             <button class="boton-extra" @click="pedirSuperAdminCuadre">Cuadre</button>
             <button class="boton-extra">ATH Movil Summary</button>
-            <button class="boton-extra">Gavetas</button>
+            <button class="boton-extra" @click="abrirGavetas">Gavetas</button>
 
           </div>
 
@@ -151,19 +156,18 @@
             <div v-else>
               <div v-if="Object.keys(productosPorCategoria).length === 0">No se encontraron productos</div>
 
-              <div v-for="(listaProductos, categoria) in productosPorCategoria" :key="categoria"
-                class="categoria-bloque">
-                <h4 class="categoria-titulo">{{ categoria }}</h4>
+              <div class="categoria-bloque">
+                <h4 class="categoria-titulo">{{ categoriaSeleccionada }}</h4>
 
                 <div class="productos-grid">
-                  <button v-for="producto in listaProductos" :key="producto.id" class="producto-boton"
+                  <button v-for="producto in productosFiltrados" :key="producto.id" class="producto-boton"
                     :class="[obtenerClaseCategoria(producto), { 'sin-stock': producto.stock === 0 }]"
                     :disabled="producto.stock === 0" @click="agregarProducto(producto)">
                     {{ producto.nombre }}
                   </button>
-
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -180,6 +184,33 @@
       <superadmin :visible="showSuperAdmin" title="Ingrese código SuperAdmin" @confirm="onSuperAdminConfirm"
         @cancel="onSuperAdminCancel" />
 
+      <div v-if="mostrarGavetas" class="modal-overlay">
+        <div class="modal" style="width: 350px;">
+          <h3>Asignar Gaveta</h3>
+
+          <label>Gaveta:</label>
+          <select v-model="gavetaSeleccionada">
+            <option v-for="g in gavetas" :value="g.id">
+              {{ g.name }} - {{ g.assigned_user_id ? "Ocupada" : "Libre" }}
+            </option>
+          </select>
+
+          <label>Usuario:</label>
+          <select v-model="usuarioAsignar">
+            <option v-for="u in clientes" :value="u.id">
+              {{ u.nombre || u.name }} {{ u.apellido || u.lastname }}
+            </option>
+          </select>
+
+          <label>Petty:</label>
+          <input type="number" v-model.number="pettyAsignado" />
+
+          <div class="modal-buttons">
+            <button class="btn-confirm" @click="asignarGaveta">Asignar</button>
+            <button class="btn-cancel" @click="mostrarGavetas = false">Cerrar</button>
+          </div>
+        </div>
+      </div>
 
       <div v-if="mostrarVoidForm" class="modal-overlay">
         <div class="modal">
@@ -247,12 +278,13 @@ export default {
       clientes: [],
       productos: [],
       clienteId: null,
-      mostrarCuadre: false,
       orden: [],
       metodoPago: "efectivo",
       loading: false,
       cashRecibido: 0,
       busqueda: "",
+      drawer: null,
+      categoriaSeleccionada: "Todas",
       mostrarManual: false,
       mostrarModal: false,
       mostrarCuadre: false,
@@ -262,6 +294,11 @@ export default {
       busquedaCliente: "",
       mostrarClientes: false,
       accionPendiente: null,
+      gavetas: [],
+      mostrarGavetas: false,
+      usuarioAsignar: null,
+      gavetaSeleccionada: null,
+      pettyAsignado: 0,
       showSuperAdmin: false,
       clienteSeleccionado: null,
       user: {},
@@ -280,6 +317,17 @@ export default {
   computed: {
     totalBills() {
       return this.bills.reduce((sum, b) => sum + ((b.quantity || 0) * b.value), 0);
+    },
+    productosFiltrados() {
+      if (this.categoriaSeleccionada === "Todas") return this.productos;
+
+      return this.productos.filter(
+        (p) => (p.categoria || "Sin categoría") === this.categoriaSeleccionada
+      );
+    },
+    categorias() {
+      const cats = new Set(this.productos.map(p => p.categoria || "Sin categoría"));
+      return ["Todas", ...cats];
     },
 
     rolledCoinsAddition() {
@@ -355,6 +403,7 @@ export default {
       const token = localStorage.getItem("auth_token");
       await this.loadCurrentUser(token);
       await this.obtenerClientes();
+      await this.verificarAccesoGaveta();
       await this.obtenerProductos();
     } finally {
       const elapsed = Date.now() - start;
@@ -366,6 +415,78 @@ export default {
     async loadCurrentUser(token) {
       const res = await axios.get("/api/user", { headers: { Authorization: `Bearer ${token}` } });
       this.user = res.data;
+    },
+    async verificarAccesoGaveta() {
+  const token = localStorage.getItem("auth_token");
+
+  const res = await axios.get("/api/my-drawer", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  const drawer = res.data;
+
+  // 🔥 SI NO HAY GAVETA ASIGNADA
+  if (!drawer) {
+    this.drawer = null;
+    this.productos = [];
+    this.orden = [];
+    this.mostrarOpciones = false;
+    alert("No tienes una gaveta asignada. Contacta a un administrador.");
+    return;
+  }
+
+  // 🔥 SI LA GAVETA ES DE OTRO USUARIO
+  if (drawer.assigned_user_id !== this.user.id) {
+    this.drawer = null;
+    this.productos = [];
+    this.orden = [];
+    this.mostrarOpciones = false;
+    alert("Esta gaveta pertenece a otro cajero. No puedes usar el POS.");
+    return;
+  }
+
+  this.drawer = drawer;
+},
+
+
+    async asignarGaveta() {
+      if (!this.gavetaSeleccionada || !this.usuarioAsignar) {
+        alert("Debes seleccionar gaveta y usuario");
+        return;
+      }
+
+      const token = localStorage.getItem("auth_token");
+
+      await axios.post("/api/drawers/assign", {
+        drawer_id: this.gavetaSeleccionada,
+        user_id: this.usuarioAsignar,
+        petty: this.pettyAsignado
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert("Gaveta asignada correctamente");
+      this.mostrarGavetas = false;
+
+      this.verificarAccesoGaveta();
+    },
+    async cargarGavetas() {
+      const token = localStorage.getItem("auth_token");
+      const res = await axios.get("/api/drawers", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      this.gavetas = res.data;
+
+      const users = await axios.get("/api/users", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      this.clientes = users.data;
+    },
+    abrirGavetas() {
+      this.accionPendiente = "gavetas";
+      this.showSuperAdmin = true;
     },
     abrirCuadre() {
       this.mostrarCuadre = true;
@@ -566,10 +687,19 @@ export default {
     },
     ocultarListaClientes() { setTimeout(() => (this.mostrarClientes = false), 200); },
     agregarProducto(producto) {
+      if (!this.drawer) {
+        alert("No puedes agregar productos sin tener una gaveta asignada.");
+        return;
+      }
+
       const index = this.orden.findIndex((p) => p.id === producto.id);
-      if (index !== -1) this.orden[index].cantidad += 1;
-      else this.orden.push({ ...producto, cantidad: 1 });
+      if (index !== -1) {
+        this.orden[index].cantidad += 1;
+      } else {
+        this.orden.push({ ...producto, cantidad: 1 });
+      }
     },
+
     obtenerClaseCategoria(producto) {
       const cat = producto.categoria?.toLowerCase() || "";
       if (cat.includes("bebidas")) return producto.nombre.toLowerCase().includes("agua") ? "boton-agua" : "boton-bebida";
@@ -599,6 +729,10 @@ export default {
 
       if (this.accionPendiente === "void") {
         this.mostrarVoidForm = true;
+      }
+      if (this.accionPendiente === "gavetas") {
+        this.cargarGavetas();
+        this.mostrarGavetas = true;
       }
 
       if (this.accionPendiente === "eliminar") {
@@ -1043,6 +1177,35 @@ export default {
   padding: 0.4rem 0.6rem;
 }
 
+.categorias-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.categoria-btn {
+  background: #1e2430;
+  color: #cbd5e1;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid #2c3340;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.25s;
+}
+
+.categoria-btn:hover {
+  background: #2c3340;
+}
+
+.categoria-btn.activa {
+  background: #3a63e8;
+  color: #fff;
+  border-color: #3a63e8;
+}
+
+
 .cash-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -1134,6 +1297,56 @@ export default {
 
 .more-options-btn:hover {
   background-color: #022f4a;
+}
+
+/* === SELECTS DEL MODAL DE GAVETAS === */
+.modal select {
+  width: 100%;
+  padding: 0.55rem 0.8rem;
+  background-color: #1e2430;
+  color: #f5f7fa;
+  border: 1px solid #2c3340;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+  font-size: 0.95rem;
+  appearance: none;
+}
+
+.modal select:focus {
+  outline: none;
+  border-color: #3a63e8;
+  box-shadow: 0 0 8px rgba(58, 99, 232, 0.4);
+}
+.modal-buttons .btn-confirm {
+  background-color: #10b981;
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.25s ease;
+}
+
+.modal-buttons .btn-confirm:hover {
+  background-color: #0da46f;
+}
+
+.modal-buttons .btn-cancel {
+  background-color: #ef4444;
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.25s ease;
+}
+
+.modal-buttons .btn-cancel:hover {
+  background-color: #d83838;
 }
 
 .modal-overlay {

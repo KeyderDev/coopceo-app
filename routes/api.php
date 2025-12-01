@@ -18,7 +18,7 @@ use App\Http\Controllers\MonthlyReportController;
 use App\Http\Controllers\ProductCuadreController;
 use App\Http\Controllers\CalendarNoteController;
 use App\Http\Controllers\ScheduleController;
-
+use App\Http\Controllers\DrawerController;
 
 // ==========================
 // 🔹 RUTAS DE AUTENTICACIÓN
@@ -55,6 +55,17 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/products/{product}', [ProductController::class, 'updateStock']);
     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
     Route::post('/products/cuadre', [ProductCuadreController::class, 'store']);
+});
+
+// ==========================
+// 🔹 DRAWERS
+// ==========================
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/drawers', [DrawerController::class, 'index']);
+    Route::post('/drawers/assign', [DrawerController::class, 'assign']);
+    Route::get('/my-drawer', [DrawerController::class, 'myDrawer']);
+    Route::post('/drawers/unassign', [DrawerController::class, 'unassign']);
 });
 
 

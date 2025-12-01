@@ -1,294 +1,655 @@
-<!-- resources/views/portal.blade.php -->
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portal COOPCEO</title>
-  <meta name="description" content="Portal oficial de COOPCEO — Accede a tu cuenta de socio o al panel administrativo.">
-  <meta property="og:image" content="{{ asset('images/coopceofixed.png') }}">
-  <link rel="icon" type="image/png" href="/images/coopceofixed.png" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JuCoop | Transformando el Comercio Escolar</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* 🌌 Fondo */
-    html,
-    body {
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
       height: 100%;
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    }
+
+    body {
       overflow-x: hidden;
-    }
-
-    .page {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: stretch;
-      width: 100%;
-      max-width: 1100px;
-      min-height: 80vh;
-      margin: 2rem;
-      border-radius: 20px;
-      background: rgba(25, 27, 31, 0.85);
-      backdrop-filter: blur(14px);
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.45);
-      overflow: hidden;
-      animation: fadeIn 0.8s ease-in-out;
-    }
-
-    /* 🌿 Panel izquierdo */
-    .portal-section {
-      flex: 1;
-      padding: 3rem 2rem;
+      font-family: 'Inter', sans-serif;
+      background: #ffffff;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+    }
+/* ===== TRUST SECTION ===== */
+
+.trust-section {
+  padding: 60px 5%;
+  background: #ffffff;
+  text-align: center;
+}
+
+.trust-section h2 {
+  font-size: 36px;
+  color: #0f2027;
+}
+
+.trust-subtitle {
+  margin-top: 8px;
+  color: #555;
+  font-size: 17px;
+}
+
+.trust-logos {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+.school-card {
+  background: #f0f4f1;
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 16px;
+  color: #033961;
+  font-weight: 600;
+  border: 1px solid #dfe6df;
+}
+
+@media(max-width: 992px) {
+  .trust-logos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media(max-width: 768px) {
+  .trust-logos {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== STATS SECTION ===== */
+
+.stats-section {
+  margin-top: 0;
+  padding: 60px 5%;
+  background: #0f2027;
+  color: white;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  text-align: center;
+}
+
+.stat-card h3 {
+  font-size: 44px;
+  color: #97d569;
+}
+
+.stat-card p {
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+/* ===== WHY CHOOSE US ===== */
+
+.why-section {
+  padding: 60px 5%;
+  text-align: center;
+}
+
+.why-section h2 {
+  font-size: 38px;
+  color: #0f2027;
+}
+
+.why-grid {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.why-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+}
+
+.why-card h4 {
+  font-size: 20px;
+  color: #033961;
+}
+
+.why-card p {
+  margin-top: 8px;
+  color: #555;
+}
+
+@media(max-width: 992px) {
+  .why-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media(max-width: 768px) {
+  .why-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== CTA FINAL ===== */
+
+.cta-section {
+  margin-top: 60px;
+  padding: 70px 5%;
+  background: #033961;
+  color: white;
+  text-align: center;
+  border-radius: 0;
+}
+
+.cta-section h2 {
+  font-size: 38px;
+}
+
+.cta-section p {
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+.cta-btn {
+  display: inline-block;
+  margin-top: 25px;
+  background: #97d569;
+  padding: 14px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #033961;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.cta-btn:hover {
+  background: #89c157;
+}
+
+    /* ===== NAVBAR ===== */
+
+    .navbar {
+      width: 100%;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      border-right: 1px solid rgba(255, 255, 255, 0.1);
-      text-align: center;
+      background: #0f2027;
+      color: white;
+      position: relative;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .logo-img {
-      width: 130px;
-      height: auto;
-      margin-bottom: 1.5rem;
-      filter: drop-shadow(0 0 10px rgba(157, 216, 106, 0.4));
+      height: 32px;
     }
 
-    .title {
-      font-size: 2.2rem;
+    .nav-title {
+      font-size: 20px;
       font-weight: 700;
-      color: #9dd86a;
-      margin-bottom: 0.4rem;
     }
 
-    .subtitle {
-      font-size: 1rem;
-      color: #ccc;
-      margin-bottom: 2rem;
-    }
-
-    .buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      width: 100%;
-      max-width: 280px;
-    }
-
-    .btn {
-      padding: 0.9rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 10px;
-      text-decoration: none;
-      text-align: center;
+    /* BURGER MENU */
+    .burger {
+      display: none;
+      background: none;
       border: none;
+      font-size: 28px;
+      color: white;
       cursor: pointer;
-      transition: all 0.3s ease;
     }
 
-    .btn-account {
-      background: linear-gradient(135deg, #9dd86a, #7ab55c);
-      color: #fff;
-      box-shadow: 0 6px 16px rgba(157, 216, 106, 0.4);
-    }
-
-    .btn-account:hover {
-      background: linear-gradient(135deg, #b9f089, #91d46d);
-      transform: translateY(-2px);
-    }
-
-    .btn-admin {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #9dd86a;
-    }
-
-    .btn-admin:hover {
-      background: rgba(157, 216, 106, 0.15);
-      color: #b9f089;
-      transform: translateY(-2px);
-    }
-
-    /* 📰 Panel derecho */
-    .news-section {
-      flex: 1;
-      padding: 3rem;
+    /* MENU DESKTOP */
+    .nav-menu {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-    }
-
-    .news-section h2 {
-      font-size: 1.6rem;
-      color: #9dd86a;
-      margin-bottom: 1.2rem;
-      text-align: left;
-    }
-
-    .news-section ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .news-section ul li {
-      padding: 0.8rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      font-size: 1rem;
-      color: #eaeaea;
-      line-height: 1.6;
-    }
-
-    #turnstile-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(10, 10, 10, 0.9);
-      display: flex;
-      justify-content: center;
+      gap: 22px;
       align-items: center;
-      z-index: 9999;
     }
 
-    .turnstile-box {
-      background: #1e1e1e;
-      padding: 2rem;
-      border-radius: 15px;
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-      color: #fff;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    .nav-menu a {
+      color: #dfe6e9;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
     }
 
-    .turnstile-box h2 {
-      margin-bottom: 10px;
-      color: #9dd86a;
+    .nav-menu a:hover {
+      color: #97d569;
     }
 
-    .turnstile-box p {
-      margin-bottom: 20px;
-      color: #ccc;
+    /* LOGIN BUTTON */
+    .login-container {
+      position: relative;
     }
 
-    .news-section ul li:last-child {
-      border-bottom: none;
+    .login-button {
+      background: #97d569;
+      color: #0f2027;
+      border: none;
+      padding: 9px 15px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
     }
 
-    /* 🌀 Animaciones */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
+    .login-button:hover {
+      background: #8ac05d;
+    }
+
+    .login-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 40px;
+      background: white;
+      width: 170px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 20;
+    }
+
+    .login-dropdown a {
+      display: block;
+      padding: 12px 16px;
+      color: #0f2027;
+      text-decoration: none;
+      font-size: 15px;
+    }
+
+    .login-dropdown a:hover {
+      background: #eef3ee;
+      color: #97d569;
+    }
+
+    .login-container.show .login-dropdown {
+      display: block;
+    }
+
+    /* ===== MOBILE MENU ===== */
+
+    .desktop-login {
+      display: block;
+    }
+    .mobile-login {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+
+      .burger {
+        display: block;
       }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* 📱 Responsive */
-    @media (max-width: 900px) {
-      .page {
+      .nav-menu {
+        display: none;
         flex-direction: column;
-        align-items: center;
-        height: auto;
-        margin: 1rem;
+        align-items: flex-start;
+        width: 100%;
+        background: #0f2027;
+        padding: 18px;
+        gap: 16px;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        animation: fadeDown 0.25s ease-out;
       }
 
-      .portal-section {
-        border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 2rem 1.5rem;
+      .nav-menu.show {
+        display: flex;
       }
 
-      .news-section {
-        padding: 2rem 1.5rem;
-        text-align: center;
+      @keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
       }
 
-      .news-section h2 {
-        text-align: center;
+      .desktop-login {
+        display: none;
       }
 
-      .news-section ul li {
-        font-size: 0.95rem;
+      .mobile-login {
+        display: block;
+        width: 100%;
       }
     }
 
-    @media (max-width: 480px) {
-      .title {
-        font-size: 1.8rem;
+    /* ===== HERO ===== */
+
+    .hero {
+      display: flex;
+      padding: 55px 5%;
+      justify-content: space-between;
+      align-items: center;
+      background: #f5f7fa;
+      gap: 40px;
+    }
+
+    .hero-text {
+      max-width: 500px;
+    }
+
+    .hero-text h1 {
+      font-size: 46px;
+      line-height: 1.2;
+      color: #0f2027;
+    }
+
+    .hero-text span {
+      color: #97d569;
+    }
+
+    .hero-text p {
+      font-size: 18px;
+      color: #555;
+      margin-top: 15px;
+    }
+
+    .hero-img img {
+      width: 100%;
+      max-width: 380px;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 45px 20px;
       }
 
-      .subtitle {
-        font-size: 0.9rem;
+      .hero-text h1 {
+        font-size: 32px;
       }
 
-      .btn {
-        font-size: 0.9rem;
-        padding: 0.8rem;
+      .hero-img img {
+        max-width: 240px;
       }
+    }
 
-      .logo-img {
-        width: 110px;
+    /* ===== OFFER SECTION ===== */
+
+    .offer-section {
+      padding: 70px 5%;
+      text-align: center;
+    }
+
+    .offer-section h2 {
+      font-size: 40px;
+      color: #0f2027;
+    }
+
+    .offer-grid {
+      margin-top: 50px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 35px;
+    }
+
+    @media (max-width: 992px) {
+      .offer-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
+    }
+
+    @media (max-width: 768px) {
+      .offer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .offer-card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+    }
+
+    .offer-card h3 {
+      color: #033961;
+      font-size: 22px;
+    }
+
+    .offer-card p {
+      margin-top: 8px;
+      color: #555;
+    }
+
+    /* FOOTER */
+    footer {
+      margin-top: auto;
+      background: #0f2027;
+      color: white;
+      padding: 30px;
+      text-align: center;
+      width: 100%;
     }
   </style>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 
 <body>
-  <div id="turnstile-overlay">
-    <div class="turnstile-box">
-      <h2>Verificación de seguridad</h2>
-      <p>Por favor, confirma que no eres un robot.</p>
 
-      <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITE_KEY') }}" data-callback="onTurnstileSuccess"></div>
+  <!-- ===== HEADER ===== -->
+  <header class="navbar">
+    <div class="nav-left">
+      <img src="/images/coopceopng.png" alt="JuCoop" class="logo-img">
+      <span class="nav-title">JuCoop</span>
     </div>
-  </div>
-  </div>
 
-  <div class="page">
-    <div class="portal-section">
-      <img src="{{ asset('images/coopceofixed.png') }}" alt="COOPCEO Logo" class="logo-img" />
-      <h1 class="title">Portal COOPCEO</h1>
-      <p class="subtitle">Bienvenido al sistema de gestión de COOPCEO</p>
+    <button class="burger" id="burgerBtn">☰</button>
 
-      <div class="buttons">
-        <a href="{{ url('/user-panel') }}" class="btn btn-account">Manejar mi cuenta - Socio</a>
-        <a href="{{ url('/admin-panel') }}" class="btn btn-admin">Administración</a>
+    <nav class="nav-menu" id="mobileMenu">
+      <a href="#">Inicio</a>
+      <a href="#">Servicios</a>
+      <a href="#">Back Office</a>
+      <a href="#">POS</a>
+
+      <div class="login-container mobile-login">
+        <button class="login-button">Iniciar Sesión ▾</button>
+        <div class="login-dropdown">
+          <a href="{{ url('/user-panel') }}">Como Socio</a>
+          <a href="{{ url('/admin-panel') }}">Como Administrador</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="login-container desktop-login">
+      <button class="login-button">Iniciar Sesión ▾</button>
+      <div class="login-dropdown">
+        <a href="{{ url('/user-panel') }}">Como Socio</a>
+        <a href="{{ url('/admin-panel') }}">Como Administrador</a>
       </div>
     </div>
+  </header>
 
-    <div class="news-section">
-      <h2>📰 Novedades</h2>
-      <ul>
-        <li>📢 ¡Vuelven los mantecados a la venta en la cooperativa!</li>
-        <li>💡 Consulta tus dividendos actualizados en el portal de socios.</li>
-      </ul>
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Transformando<br><span>el Comercio Escolar</span></h1>
+      <p>En JuCoop ayudamos a cooperativas escolares a modernizar sus operaciones diarias.</p>
     </div>
+
+    <div class="hero-img">
+      <img src="/images/coopwoman.jpg">
+    </div>
+  </section>
+
+  <!-- ===== OFFER SECTION ===== -->
+  <section class="offer-section">
+    <h2>Lo que ofrecemos</h2>
+
+    <div class="offer-grid">
+      <div class="offer-card">
+        <h3>POS Escolar Moderno</h3>
+        <p>Sistema de caja registradora intuitivo y veloz.</p>
+      </div>
+
+      <div class="offer-card">
+        <h3>Back Office Avanzado</h3>
+        <p>Control de inventario, ventas, usuarios y reportes PDF.</p>
+      </div>
+
+      <div class="offer-card">
+        <h3>Portal para Socios</h3>
+        <p>Accede a balances, historial y datos personales.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TRUST SECTION (ESCUELAS) ===== -->
+<section class="trust-section">
+  <h2>Escuelas que confían en nosotros</h2>
+  <p class="trust-subtitle">JuCoop ya impulsa cooperativas escolares alrededor de Puerto Rico.</p>
+
+  <div class="trust-logos">
+    <div class="school-card">✨ Escuela Superior Vocacional Tomas C. Ongay</div>
+  </div>
+</section>
+
+<!-- ===== STATS SECTION ===== -->
+<section class="stats-section">
+  <div class="stat-card">
+    <h3 class="counter" data-target="150">0</h3>
+    <p>Estudiantes impactados</p>
   </div>
 
-  <script>
-    function onTurnstileSuccess(token) {
-      document.getElementById('turnstile-overlay').style.display = 'none';
+  <div class="stat-card">
+    <h3 class="counter" data-target="700">0</h3>
+    <p>Transacciones procesadas</p>
+  </div>
+
+  <div class="stat-card">
+    <h3 class="counter" data-target="95">0%</h3>
+    <p>Satisfacción de uso</p>
+  </div>
+</section>
+
+
+<!-- ===== WHY CHOOSE US ===== -->
+<section class="why-section">
+  <h2>¿Por qué elegir JuCoop?</h2>
+
+  <div class="why-grid">
+    <div class="why-card">
+      <h4>✔ 100% para escuelas</h4>
+      <p>JuCoop está diseñado exclusivamente para cooperativas escolares, con herramientas prácticas y simples.</p>
+    </div>
+
+    <div class="why-card">
+      <h4>✔ Moderno y rápido</h4>
+      <p>Interfaz elegante, fácil de usar, perfecta para estudiantes y administradores.</p>
+    </div>
+
+    <div class="why-card">
+      <h4>✔ Reportes automáticos</h4>
+      <p>Genera PDFs profesionales de ventas, inventario, ganancias y más.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA FINAL ===== -->
+<section class="cta-section">
+  <h2>Moderniza tu cooperativa con JuCoop</h2>
+  <p>Únete a las escuelas que ya transformaron su sistema de ventas.</p>
+  <a href="#" class="cta-btn">Solicitar información</a>
+</section>
+
+
+  <footer>
+    © {{ date('Y') }} JuCoop — Todos los derechos reservados.
+  </footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ===== MENU ===== */
+  const burger = document.getElementById("burgerBtn");
+  const mobileMenu = document.getElementById("mobileMenu");
+
+  burger.addEventListener("click", () => {
+    mobileMenu.classList.toggle("show");
+  });
+
+  /* ===== LOGIN DROPDOWN ===== */
+  const loginButtons = document.querySelectorAll(".login-button");
+
+  loginButtons.forEach(button => {
+    button.addEventListener("click", function (e) {
+      e.stopPropagation();
+      this.parentElement.classList.toggle("show");
+    });
+  });
+
+  document.addEventListener("click", () => {
+    document.querySelectorAll(".login-container").forEach(c => c.classList.remove("show"));
+  });
+
+
+  /* ===== COUNTER ANIMATION ===== */
+  const counters = document.querySelectorAll(".counter");
+  let started = false;
+
+  const startCounting = () => {
+    if (started) return;
+    started = true;
+
+    counters.forEach(counter => {
+      const updateCount = () => {
+        const target = +counter.getAttribute("data-target");
+        const current = +counter.innerText.replace(/[^\d]/g, "");
+        const increment = target / 80;
+
+        if (current < target) {
+          counter.innerText = Math.ceil(current + increment).toLocaleString();
+          setTimeout(updateCount, 20);
+        } else {
+          counter.innerText = target.toLocaleString();
+        }
+      };
+
+      updateCount();
+    });
+  };
+
+  // Activar al llegar a la sección
+  const statsSection = document.querySelector(".stats-section");
+
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      startCounting();
     }
-  </script>
+  }, { threshold: 0.4 });
+
+  if (statsSection) observer.observe(statsSection);
+
+});
+</script>
+
 
 </body>
 

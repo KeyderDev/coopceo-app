@@ -281,7 +281,7 @@ export default {
 
 .child-component {
     width: 100%;
-    background: rgba(25, 27, 31, 0.85);
+    background-color: #192329;
     border-radius: 20px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
     padding: 2rem;

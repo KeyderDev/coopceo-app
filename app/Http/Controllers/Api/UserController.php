@@ -44,6 +44,7 @@ class UserController extends Controller
                 'telefono' => 'nullable|string|max:255',
                 'email' => 'nullable|email|max:255',
                 'admin' => 'nullable|boolean',
+                'numero_socio' => 'nullable|numeric|unique:users,numero_socio,' . $id,
             ]);
 
             $user->update($validated);

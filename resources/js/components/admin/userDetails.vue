@@ -10,6 +10,10 @@
     <div v-if="user" class="user-card">
       <div class="user-info">
         <div class="info-field">
+          <span class="label">Número de socio:</span>
+          <span>{{ user.numero_socio }}</span>
+        </div>
+        <div class="info-field">
           <span class="label">Nombre:</span>
           <span>{{ user.nombre }} {{ user.apellido }}</span>
         </div>
@@ -43,11 +47,14 @@
       <transition name="fade">
         <div v-if="editMode" class="edit-section">
           <h3><i class="fa-solid fa-pen"></i> Editar información</h3>
+
           <div class="form-grid">
+            <input v-model="user.numero_socio" placeholder="Número de socio" />
             <input v-model="user.nombre" placeholder="Nombre" />
             <input v-model="user.apellido" placeholder="Apellido" />
             <input v-model="user.telefono" placeholder="Teléfono" />
             <input v-model="user.email" placeholder="Email" />
+
             <div class="admin-toggle">
               <label>Administrador:</label>
               <label class="switch">
@@ -56,6 +63,7 @@
               </label>
             </div>
           </div>
+
           <button @click="guardarCambios" class="save-btn">
             <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
           </button>
@@ -85,6 +93,7 @@
 </template>
 
 <script>
+/** @type {import('vue').ComponentOptions} */
 import axios from "axios";
 export default {
   data() {
@@ -92,51 +101,42 @@ export default {
       user: null,
       transactions: [],
       usersMap: {},
-      editMode: false,
+      editMode: false
     };
   },
   computed: {
     filteredTransactions() {
       if (!this.user) return [];
       return this.transactions
-        .filter(
-          (tx) =>
-            tx.user_id === this.user.id || tx.cliente_id === this.user.id
-        )
+        .filter(tx => tx.user_id === this.user.id || tx.cliente_id === this.user.id)
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
         .slice(0, 10);
-    },
+    }
   },
   async created() {
     const id = this.$route.params.id;
     const token = localStorage.getItem("auth_token");
 
-    try {
-      const [userRes, salesRes, usersRes] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_APP_URL}/api/users/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get(`${import.meta.env.VITE_APP_URL}/api/sales`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get(`${import.meta.env.VITE_APP_URL}/api/users`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      ]);
+    const [userRes, salesRes, usersRes] = await Promise.all([
+      axios.get(`${import.meta.env.VITE_APP_URL}/api/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }),
+      axios.get(`${import.meta.env.VITE_APP_URL}/api/sales`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }),
+      axios.get(`${import.meta.env.VITE_APP_URL}/api/users`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+    ]);
 
-      this.user = userRes.data;
-      this.transactions = salesRes.data;
-      this.usersMap = Object.fromEntries(
-        usersRes.data.map((u) => [u.id, u])
-      );
-    } catch (err) {
-      console.error("Error al obtener datos:", err);
-    }
+    this.user = userRes.data;
+    this.transactions = salesRes.data;
+    this.usersMap = Object.fromEntries(usersRes.data.map(u => [u.id, u]));
   },
   methods: {
     getCajeroNombre(id) {
       const u = this.usersMap[id];
-      return u ? `${u.nombre}` : "Desconocido";
+      return u ? u.nombre : "Desconocido";
     },
     async guardarCambios() {
       const token = localStorage.getItem("auth_token");
@@ -155,13 +155,13 @@ export default {
         month: "short",
         year: "numeric",
         hour: "2-digit",
-        minute: "2-digit",
+        minute: "2-digit"
       });
     },
     formatMethod(method) {
       return method === "athmovil" ? "ATH Móvil" : "Efectivo";
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -280,12 +280,11 @@ export default {
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  transition: all 0.35s ease;
-  width: auto;
+  transition: 0.35s;
   min-width: 180px;
 }
 
@@ -312,7 +311,7 @@ export default {
   font-size: 1rem;
   letter-spacing: 0.3px;
   cursor: pointer;
-  transition: all 0.35s ease;
+  transition: 0.35s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -347,7 +346,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 0.8rem;
   color: #9dd86a;
   font-weight: 600;
 }
@@ -460,10 +458,6 @@ input:checked + .slider:before {
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-  }
-
-  .edit-btn {
-    width: auto;
   }
 
   .user-card,

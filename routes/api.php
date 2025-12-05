@@ -19,6 +19,7 @@ use App\Http\Controllers\ProductCuadreController;
 use App\Http\Controllers\CalendarNoteController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\DrawerController;
+use App\Http\Controllers\DatabaseController;
 
 // ==========================
 // 🔹 RUTAS DE AUTENTICACIÓN
@@ -34,7 +35,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-
+Route::get('/database/info', [DatabaseController::class, 'info']);
+Route::get('/database/backup', [DatabaseController::class, 'backup']);
 // ==========================
 // 🔹 RUTAS DE USUARIOS
 // ==========================

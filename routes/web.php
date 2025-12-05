@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('portal'); // Página inicial con botones
 });
+Route::get('/pos', function () {
+    return view('pos');
+});
 
 // SPA Admin
 Route::get('/admin-panel/{any?}', function () {

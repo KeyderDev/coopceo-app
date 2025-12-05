@@ -17,6 +17,10 @@
         <i class="fa-solid fa-clock"></i>
         <p>Schedules</p>
       </router-link>
+      <router-link to="/database" class="menu-item">
+        <i class="fa-solid fa-database"></i>
+        <p>Database</p>
+      </router-link>
     </div>
 
   </div>
@@ -38,7 +42,7 @@ export default {
 .menu-wrapper {
   min-height: 100vh;
   width: 100%;
-  background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
+  background-color: #192329;
   display: flex;
   justify-content: center;
   align-items: center;

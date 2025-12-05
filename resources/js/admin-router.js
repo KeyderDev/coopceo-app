@@ -19,6 +19,7 @@ import management from './components/admin/management.vue'
 import inventory from './components/admin/inventory.vue'
 import userDetails from './components/admin/userDetails.vue'
 import transactionDetails from './components/admin/transaction-details.vue'
+import database from './components/admin/database.vue'
 
 
 const routes = [
@@ -42,7 +43,8 @@ const routes = [
       { path: 'registro-compras', component: registroCompras, name: 'registro-compras' },
       { path: 'documentos', component: documentos, name: 'documentos' },
       { path: 'management', component: management, name: 'management' },
-      { path: 'inventory', component: inventory, name: 'inventory' }
+      { path: 'inventory', component: inventory, name: 'inventory' },
+      { path: 'database', component: database, name: 'database' },
     ]
   },
   { path: '/login', component: Login, name: 'login' },

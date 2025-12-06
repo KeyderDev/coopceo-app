@@ -44,7 +44,7 @@
             </tr>
             <tr>
               <td>Total Ventas ATH Móvil</td>
-              <td>${{ formatCurrency(totalAth) }}</td>
+              <td>${{ formatCurrency(totalAth) }} (Aprox.)</td>
             </tr>
             <tr>
               <td>Total Ventas Efectivo</td>

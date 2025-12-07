@@ -1,4 +1,6 @@
+import axios from "axios"
 import { createRouter, createWebHistory } from 'vue-router'
+
 import UserPanel from './components/UserPanel.vue'
 import Login from './components/Login.vue'
 import Register from './components/Register.vue'
@@ -7,15 +9,26 @@ import ForgotPassword from './components/ForgotPassword.vue'
 import Menu from './components/user/menu.vue'
 import Settings from './components/user/settings.vue'
 
+const token = localStorage.getItem("auth_token")
+const coop = localStorage.getItem("coop_codigo")
 
+if (token) {
+  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+}
+
+if (coop) {
+  axios.defaults.headers.common["X-Coop-Code"] = coop
+}
+
+// --------------------------
 
 const routes = [
   {
-    path: '/', 
+    path: '/',
     component: UserPanel,
     meta: { requiresAuth: true },
     children: [
-      { path: 'transactions', component: transactions, name: 'transactions' }, 
+      { path: 'transactions', component: transactions, name: 'transactions' },
       { path: 'menu', component: Menu, name: 'menu' },
       { path: 'settings', component: Settings, name: 'settings' }
     ]
@@ -25,9 +38,8 @@ const routes = [
   { path: '/forgot-password', component: ForgotPassword, name: 'forgot-password' }
 ]
 
-
 const router = createRouter({
-  history: createWebHistory('/user-panel'), 
+  history: createWebHistory('/user-panel'),
   routes,
 })
 
@@ -44,5 +56,3 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
-
-

@@ -1,141 +1,69 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// === Controladores ===
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\ProductController;
-use App\Http\Controllers\Api\SaleController;
-use App\Http\Controllers\Api\RegistroCompraController;
-use App\Http\Controllers\Api\CashReconciliationController;
-use App\Http\Controllers\Api\CustomEmailController;
-use App\Http\Controllers\Api\PasswordController;
-use App\Http\Controllers\Misc\LogController;
-use App\Http\Controllers\GananciasController;
-use App\Http\Controllers\MonthlyReportController;
-use App\Http\Controllers\ProductCuadreController;
-use App\Http\Controllers\CalendarNoteController;
-use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\DrawerController;
-use App\Http\Controllers\DatabaseController;
+Route::group([], function () {
 
-// ==========================
-// 🔹 RUTAS DE AUTENTICACIÓN
-// ==========================
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/password/otp', [PasswordController::class, 'sendOtp']);
-Route::post('/password/verify-otp', [PasswordController::class, 'verifyOtp']);
-Route::post('/password/reset', [PasswordController::class, 'resetPassword']);
+    Route::post('/register', [\App\Http\Controllers\Auth\AuthController::class, 'register']);
+    Route::post('/login', [\App\Http\Controllers\Auth\AuthController::class, 'login']);
 
-Route::middleware('auth:api')->group(function () {
-    Route::get('/user', [UserController::class, 'me']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/password/otp', [\App\Http\Controllers\Api\PasswordController::class, 'sendOtp']);
+    Route::post('/password/verify-otp', [\App\Http\Controllers\Api\PasswordController::class, 'verifyOtp']);
+    Route::post('/password/reset', [\App\Http\Controllers\Api\PasswordController::class, 'resetPassword']);
+    // Route::middleware(['tenant', 'apitoken'])->group(function () {
+
+    Route::middleware(['apitoken'])->group(function () {
+
+        Route::get('/database/info', [\App\Http\Controllers\DatabaseController::class, 'info']);
+        Route::get('/database/backup', [\App\Http\Controllers\DatabaseController::class, 'backup']);
+
+        Route::get('/user', [\App\Http\Controllers\Api\UserController::class, 'me']);
+        Route::post('/logout', [\App\Http\Controllers\Auth\AuthController::class, 'logout']);
+
+        Route::get('/users', [\App\Http\Controllers\Api\UserController::class, 'index']);
+        Route::get('/users/{id}', [\App\Http\Controllers\Api\UserController::class, 'show']);
+        Route::put('/users/{id}', [\App\Http\Controllers\Api\UserController::class, 'update']);
+        Route::delete('/users/{id}', [\App\Http\Controllers\Api\UserController::class, 'destroy']);
+
+        Route::get('/products', [\App\Http\Controllers\Api\ProductController::class, 'index']);
+        Route::post('/products', [\App\Http\Controllers\Api\ProductController::class, 'store']);
+        Route::put('/products/{product}', [\App\Http\Controllers\Api\ProductController::class, 'updateStock']);
+        Route::delete('/products/{id}', [\App\Http\Controllers\Api\ProductController::class, 'destroy']);
+        Route::post('/products/cuadre', [\App\Http\Controllers\ProductCuadreController::class, 'store']);
+
+        Route::get('/drawers', [\App\Http\Controllers\DrawerController::class, 'index']);
+        Route::post('/drawers/assign', [\App\Http\Controllers\DrawerController::class, 'assign']);
+        Route::get('/my-drawer', [\App\Http\Controllers\DrawerController::class, 'myDrawer']);
+        Route::post('/drawers/unassign', [\App\Http\Controllers\DrawerController::class, 'unassign']);
+
+        Route::get('/sales', [\App\Http\Controllers\Api\SaleController::class, 'index']);
+        Route::post('/sales', [\App\Http\Controllers\Api\SaleController::class, 'store']);
+        Route::get('/my-transactions', [\App\Http\Controllers\Api\SaleController::class, 'myTransactions']);
+        Route::get('/sales/{id}', [\App\Http\Controllers\Api\SaleController::class, 'show']);
+
+        Route::get('/compras', [\App\Http\Controllers\Api\RegistroCompraController::class, 'index']);
+        Route::post('/compras', [\App\Http\Controllers\Api\RegistroCompraController::class, 'store']);
+        Route::get('/compras/{id}', [\App\Http\Controllers\Api\RegistroCompraController::class, 'show']);
+        Route::put('/compras/{id}', [\App\Http\Controllers\Api\RegistroCompraController::class, 'update']);
+        Route::delete('/compras/{id}', [\App\Http\Controllers\Api\RegistroCompraController::class, 'destroy']);
+
+        Route::get('/cash-reconciliations', [\App\Http\Controllers\Api\CashReconciliationController::class, 'index']);
+        Route::post('/cash-reconciliations', [\App\Http\Controllers\Api\CashReconciliationController::class, 'store']);
+
+        Route::get('/calendar/users', [\App\Http\Controllers\ScheduleController::class, 'users']);
+        Route::post('/schedules', [\App\Http\Controllers\ScheduleController::class, 'store']);
+        Route::post('/schedules/send-email', [\App\Http\Controllers\ScheduleController::class, 'sendEmail']);
+
+        Route::get('/calendar-notes', [\App\Http\Controllers\CalendarNoteController::class, 'index']);
+        Route::post('/calendar-notes', [\App\Http\Controllers\CalendarNoteController::class, 'store']);
+        Route::delete('/calendar-notes/{date}', [\App\Http\Controllers\CalendarNoteController::class, 'destroy']);
+
+        Route::get('/ganancias', [\App\Http\Controllers\GananciasController::class, 'index']);
+
+        Route::get('/sales/resumen-mensual/{mes}', [\App\Http\Controllers\MonthlyReportController::class, 'resumenMensual']);
+
+        Route::get('/sales-reconcilliation', [\App\Http\Controllers\Api\CashReconciliationController::class, 'totalSales']);
+
+        Route::get('/logs', [\App\Http\Controllers\Misc\LogController::class, 'index']);
+    });
 });
-
-Route::get('/database/info', [DatabaseController::class, 'info']);
-Route::get('/database/backup', [DatabaseController::class, 'backup']);
-// ==========================
-// 🔹 RUTAS DE USUARIOS
-// ==========================
-Route::middleware('auth:api')->group(function () {
-    Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/{id}', [UserController::class, 'show']);
-    Route::put('/users/{id}', [UserController::class, 'update']);
-    Route::delete('/users/{id}', [UserController::class, 'destroy']);
-});
-
-
-// ==========================
-// 🔹 PRODUCTOS
-// ==========================
-Route::middleware('auth:api')->group(function () {
-    Route::get('/products', [ProductController::class, 'index']);
-    Route::post('/products', [ProductController::class, 'store']);
-    Route::put('/products/{product}', [ProductController::class, 'updateStock']);
-    Route::delete('/products/{id}', [ProductController::class, 'destroy']);
-    Route::post('/products/cuadre', [ProductCuadreController::class, 'store']);
-});
-
-// ==========================
-// 🔹 DRAWERS
-// ==========================
-
-Route::middleware('auth:api')->group(function () {
-    Route::get('/drawers', [DrawerController::class, 'index']);
-    Route::post('/drawers/assign', [DrawerController::class, 'assign']);
-    Route::get('/my-drawer', [DrawerController::class, 'myDrawer']);
-    Route::post('/drawers/unassign', [DrawerController::class, 'unassign']);
-});
-
-
-// ==========================
-// 🔹 VENTAS
-// ==========================
-Route::middleware('auth:api')->group(function () {
-    Route::get('/sales', [SaleController::class, 'index']);
-    Route::post('/sales', [SaleController::class, 'store']);
-    Route::get('/my-transactions', [SaleController::class, 'myTransactions']);
-    Route::get('/sales/{id}', [SaleController::class, 'show']);
-});
-
-
-// ==========================
-// 🔹 COMPRAS (RegistroCompra)
-// ==========================
-Route::middleware('auth:api')->group(function () {
-    Route::get('/compras', [RegistroCompraController::class, 'index']);
-    Route::post('/compras', [RegistroCompraController::class, 'store']);
-    Route::get('/compras/{id}', [RegistroCompraController::class, 'show']);
-    Route::put('/compras/{id}', [RegistroCompraController::class, 'update']);
-    Route::delete('/compras/{id}', [RegistroCompraController::class, 'destroy']);
-});
-
-
-// ==========================
-// 🔹 RECONCILIACIONES DE CAJA
-// ==========================
-Route::get('/sales-reconcilliation', [CashReconciliationController::class, 'totalSales']);
-Route::post('/cash-reconciliations', [CashReconciliationController::class, 'store']);
-Route::middleware('auth:api')->get('/cash-reconciliations', [CashReconciliationController::class, 'index']);
-
-
-// ==========================
-// 🔹 REPORTES Y GANANCIAS
-// ==========================
-Route::middleware('auth:api')->get('/ganancias', [GananciasController::class, 'index']);
-Route::get('/sales/resumen-mensual/{mes}', [MonthlyReportController::class, 'resumenMensual']);
-
-
-// ==========================
-// 🔹 CALENDARIO / HORARIOS
-// ==========================
-Route::get('/users', [ScheduleController::class, 'users']);
-Route::post('/schedules', [ScheduleController::class, 'store']);
-Route::post('/schedules/send-email', [ScheduleController::class, 'sendEmail']);
-
-Route::middleware('auth:api')->group(function () {
-    Route::get('/calendar-notes', [CalendarNoteController::class, 'index']);
-    Route::post('/calendar-notes', [CalendarNoteController::class, 'store']);
-    Route::delete('/calendar-notes/{date}', [CalendarNoteController::class, 'destroy']);
-});
-
-
-// ==========================
-// 🔹 CORREOS PERSONALIZADOS
-// ==========================
-Route::middleware('auth:api')->post('/send-email', [CustomEmailController::class, 'sendCustomEmail']);
-
-
-// ==========================
-// 🔹 LOGS
-// ==========================
-Route::middleware('auth:api')->get('/logs', [LogController::class, 'index']);
-
-
-// ==========================
-// 🔹 UTILIDADES
-// ==========================
-Route::get('/ping', fn() => response()->json(['pong' => true]));

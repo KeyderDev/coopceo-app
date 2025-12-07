@@ -32,31 +32,43 @@ class DrawerController extends Controller
 
 public function myDrawer(Request $request)
 {
-    $drawer = Drawer::where('assigned_user_id', $request->user()->id)
+    $token = $request->bearerToken();
+    $user = \App\Models\User::where('api_token', $token)->first();
+
+    if (!$user) {
+        return response()->json(['message' => 'No autenticado'], 401);
+    }
+
+    $drawer = Drawer::where('assigned_user_id', $user->id)
         ->where('is_open', true)
         ->first();
-
-    if (!$drawer) {
-        return response()->json(null, 200); // <-- CLAVE
-    }
 
     return response()->json($drawer);
 }
 
-    public function unassign(Request $request)
-    {
-        $drawer = Drawer::where('assigned_user_id', $request->user()->id)
-            ->where('is_open', true)
-            ->first();
 
-        if (!$drawer) {
-            return response()->json(['message' => 'No tiene gaveta abierta'], 404);
-        }
+public function unassign(Request $request)
+{
+    $token = $request->bearerToken();
+    $user = \App\Models\User::where('api_token', $token)->first();
 
-        $drawer->is_open = false;
-        $drawer->assigned_user_id = null;
-        $drawer->save();
-
-        return response()->json(['message' => 'Gaveta cerrada']);
+    if (!$user) {
+        return response()->json(['message' => 'No autenticado'], 401);
     }
+
+    $drawer = Drawer::where('assigned_user_id', $user->id)
+        ->where('is_open', true)
+        ->first();
+
+    if (!$drawer) {
+        return response()->json(['message' => 'No tiene gaveta abierta'], 404);
+    }
+
+    $drawer->is_open = false;
+    $drawer->assigned_user_id = null;
+    $drawer->save();
+
+    return response()->json(['message' => 'Gaveta cerrada']);
+}
+
 }

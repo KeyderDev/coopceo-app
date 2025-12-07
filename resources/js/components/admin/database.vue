@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import axios from "axios"
 import SuperadminModal from "../global/superadmin.vue"
 
 export default {
@@ -87,12 +88,13 @@ export default {
 
   async created() {
     try {
-      const res = await fetch("/api/database/info", {
+      const res = await axios.get("/api/database/info", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth_token")}`
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          "X-Coop-Code": localStorage.getItem("coop_code")
         }
       })
-      this.info = await res.json()
+      this.info = res.data
     } catch (e) {}
     this.loading = false
   },
@@ -105,23 +107,26 @@ export default {
     async confirmBackup() {
       this.showSuperadmin = false
       try {
-        const response = await fetch("/api/database/backup", {
-          method: "GET",
+        const response = await axios.get("/api/database/backup", {
+          responseType: "blob",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth_token")}`
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+            "X-Coop-Code": localStorage.getItem("coop_code")
           }
         })
-        const blob = await response.blob()
-        const url = window.URL.createObjectURL(blob)
+
+        const url = window.URL.createObjectURL(new Blob([response.data]))
         const a = document.createElement("a")
         a.href = url
         a.download = "database_backup.sql"
         a.click()
+        window.URL.revokeObjectURL(url)
       } catch (e) {}
     }
   }
 }
 </script>
+
 
 <style scoped>
 .db-wrapper {

@@ -100,11 +100,23 @@ class SaleController extends Controller
 
     public function myTransactions(Request $request)
     {
-        $user = $request->user();
+        $user = auth()->user();
+
+        \Log::info("MYTRANSACTIONS AUTH", [
+            'user_id' => optional($user)->id,
+            'tenant_db' => config('database.connections.tenant.database'),
+            'header_coop' => $request->header('X-Coop-Code')
+        ]);
+
+        if (!$user) {
+            return response()->json(['message' => 'No autenticado'], 401);
+        }
 
         return Sale::with(['cajero', 'products'])
             ->where('cliente_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
     }
+
+
 }

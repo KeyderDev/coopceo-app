@@ -13,7 +13,24 @@ class UserController extends Controller
 {
     public function me(Request $request)
     {
-        $user = Auth::user();
+        \Log::info('UserController me() DB', [
+            'db' => config('database.connections.tenant.database'),
+            'user' => config('database.connections.tenant.username'),
+        ]);
+
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['message' => 'Token faltante'], 401);
+        }
+
+        $user = User::on('tenant')
+            ->where('api_token', $token)
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'No autenticado'], 401);
+        }
 
         return response()->json([
             'id' => $user->id,
@@ -29,14 +46,14 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::all();
+        $users = User::on('tenant')->get();
         return response()->json($users);
     }
 
     public function update(Request $request, $id)
     {
         try {
-            $user = User::findOrFail($id);
+            $user = User::on('tenant')->findOrFail($id);
 
             $validated = $request->validate([
                 'nombre' => 'nullable|string|max:255',
@@ -67,7 +84,7 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::find($id);
+            $user = User::on('tenant')->find($id);
 
             if (!$user) {
                 return response()->json(['error' => 'Usuario no encontrado'], 404);
@@ -84,33 +101,49 @@ class UserController extends Controller
     public function destroy(Request $request, $id)
     {
         $token = $request->bearerToken();
-        $authUser = User::where('api_token', $token)->first();
 
-        if (!$authUser) {
+        $tenantUserAuth = User::on('tenant')->where('api_token', $token)->first();
+
+        if (!$tenantUserAuth) {
             return response()->json(['message' => 'No autorizado'], 401);
         }
 
-        $user = User::find($id);
+        $mainDB = DB::connection('mysql_main');
+        $tenantDB = DB::connection('tenant');
 
-        if (!$user) {
+        $tenantUser = User::on('tenant')->find($id);
+
+        if (!$tenantUser) {
             return response()->json(['message' => 'Usuario no encontrado'], 404);
         }
 
+        $globalUser = $mainDB->table('usuarios_global')->where('email', $tenantUser->email)->first();
+
+        if (!$globalUser) {
+            return response()->json(['message' => 'Usuario no existe en jucoop_main'], 404);
+        }
+
         DB::beginTransaction();
+        $tenantDB->beginTransaction();
 
         try {
-            $user->sales()->delete();
-            $user->delete();
+            if (method_exists($tenantUser, 'sales')) {
+                $tenantUser->sales()->delete();
+            }
+
+            $tenantUser->delete();
+
+            $mainDB->table('usuarios_global')->where('email', $tenantUser->email)->delete();
 
             DB::commit();
+            $tenantDB->commit();
 
             return response()->json(['message' => 'Usuario eliminado correctamente']);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'message' => 'Error al eliminar el usuario',
-                'error' => $e->getMessage()
-            ], 500);
+            $tenantDB->rollBack();
+            return response()->json(['message' => 'Error al eliminar el usuario']);
         }
     }
+
 }

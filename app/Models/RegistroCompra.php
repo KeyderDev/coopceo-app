@@ -9,6 +9,8 @@ class RegistroCompra extends Model
 {
     use HasFactory;
 
+    protected $connection = 'tenant';
+
     protected $table = 'registro_compras';
 
     protected $fillable = [

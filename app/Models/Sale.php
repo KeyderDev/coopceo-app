@@ -6,13 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sale extends Model
 {
+    protected $connection = 'tenant';
+
     protected $fillable = ['cliente_id', 'cajero_id', 'total', 'metodo_pago'];
 
     public function products()
     {
         return $this->belongsToMany(Product::class, 'sale_product')
-                    ->withPivot('quantity')
-                    ->withTimestamps();
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 
     public function cliente()

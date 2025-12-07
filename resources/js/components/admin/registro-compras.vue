@@ -49,7 +49,6 @@
           <p v-if="mensaje" class="mensaje" :class="{ error: mensaje.includes('❌') }">{{ mensaje }}</p>
         </form>
 
-        <!-- TABLA DE COMPRAS -->
         <div class="tabla-compras" v-if="compras.length">
           <h3>🧾 Compras registradas</h3>
           <div class="tabla-wrapper">
@@ -79,7 +78,6 @@
         <p v-else class="sin-registros">No hay compras registradas aún.</p>
       </div>
 
-      <!-- PANEL DERECHO -->
       <div class="visual-panel">
         <div class="preview-card">
           <h4>Vista previa</h4>
@@ -97,6 +95,7 @@
 <script setup>
 import { reactive, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 
 const isLoading = ref(false);
 const mensaje = ref("");
@@ -120,14 +119,10 @@ const volverMenu = () => router.push("/");
 
 async function cargarCompras() {
   try {
-    const token = localStorage.getItem("auth_token");
-    const response = await fetch(`${import.meta.env.VITE_APP_URL}/api/compras`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok) throw new Error("Error al obtener compras");
-    compras.value = await response.json();
+    const response = await axios.get("/api/compras");
+    compras.value = response.data;
   } catch (error) {
-    console.error(error);
+    console.error("Error al obtener compras:", error);
   }
 }
 
@@ -141,20 +136,10 @@ async function guardarCompra() {
   mensaje.value = "";
 
   try {
-    const token = localStorage.getItem("auth_token");
-    const response = await fetch(`${import.meta.env.VITE_APP_URL}/api/compras`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(form),
-    });
-
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Error al guardar");
+    const response = await axios.post("/api/compras", { ...form });
 
     mensaje.value = "✅ Compra registrada correctamente.";
+
     form.descripcion = "";
     form.proveedor = "";
     form.metodo_pago = "";
@@ -163,13 +148,14 @@ async function guardarCompra() {
 
     await cargarCompras();
   } catch (error) {
-    console.error(error);
-    mensaje.value = "❌ " + error.message;
+    console.error("Error al guardar compra:", error);
+    mensaje.value = "❌ " + (error.response?.data?.message || "Error al guardar");
   } finally {
     isLoading.value = false;
   }
 }
 </script>
+
 
 <style scoped>
 /* 🌌 Fondo general */

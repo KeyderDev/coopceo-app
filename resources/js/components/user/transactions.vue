@@ -48,9 +48,16 @@ export default {
   async created() {
     try {
       const token = localStorage.getItem("auth_token");
+      console.log("TOKEN:", token);
+console.log("COOP:", localStorage.getItem("coop_codigo"));
+
       const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/my-transactions`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-Coop-Code": localStorage.getItem("coop_codigo")
+        },
       });
+
       this.transactions = res.data;
     } catch (err) {
       console.error("Error cargando transacciones:", err);

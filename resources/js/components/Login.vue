@@ -10,25 +10,12 @@
       <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
           <label for="email">Correo Electrónico</label>
-          <input
-            id="email"
-            v-model="email"
-            type="text"
-            placeholder="ejemplo@correo.com"
-            autocomplete="off"
-            required
-          />
+          <input id="email" v-model="email" type="text" placeholder="ejemplo@correo.com" autocomplete="off" required />
         </div>
 
         <div class="form-group">
           <label for="password">Contraseña</label>
-          <input
-            id="password"
-            v-model="password"
-            type="password"
-            placeholder="Tu contraseña"
-            required
-          />
+          <input id="password" v-model="password" type="password" placeholder="Tu contraseña" required />
         </div>
 
         <button type="submit" class="login-button" :disabled="loading">
@@ -73,12 +60,22 @@ export default {
 
         const token = response.data.access_token;
         const user = response.data.user;
+        const coop = response.data.coop_codigo;
+        const isAdmin = Number(response.data.admin ?? user.admin ?? 0);
 
         localStorage.setItem("auth_token", token);
         localStorage.setItem("user", JSON.stringify(user));
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        localStorage.setItem("coop_codigo", coop);
+        localStorage.setItem("is_admin", isAdmin);
 
-        this.$router.push("/");
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        axios.defaults.headers.common["X-Coop-Code"] = coop;
+
+        if (isAdmin === 1) {
+          this.$router.push("/");
+        } else {
+          this.$router.push('/')
+        }
       } catch (err) {
         if (err.response) {
           this.error = err.response.data.message || "Credenciales inválidas.";
@@ -96,7 +93,6 @@ export default {
 </script>
 
 <style scoped>
-/* 🎨 Fondo general */
 .login-page {
   height: 100vh;
   display: flex;
@@ -107,7 +103,6 @@ export default {
   padding: 1rem;
 }
 
-/* 🪪 Tarjeta principal */
 .login-card {
   background: rgba(25, 27, 31, 0.95);
   padding: 2.5rem 2rem;
@@ -119,7 +114,6 @@ export default {
   animation: fadeIn 0.6s ease-in-out;
 }
 
-/* ✨ Logo animado */
 .logo-container {
   margin-bottom: 1rem;
 }
@@ -133,7 +127,6 @@ export default {
   animation: pulse 2s infinite ease-in-out;
 }
 
-/* 🖋️ Título */
 .login-title {
   color: #ffffff;
   font-size: 2rem;
@@ -147,7 +140,6 @@ export default {
   margin-bottom: 2rem;
 }
 
-/* 📋 Formulario */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -183,7 +175,6 @@ input:focus {
   outline: none;
 }
 
-/* 🔘 Botón */
 .login-button {
   background: linear-gradient(135deg, #9dd86a, #7ab55c);
   color: #fff;
@@ -206,7 +197,6 @@ input:focus {
   cursor: not-allowed;
 }
 
-/* ⏳ Spinner */
 .spinner {
   border: 3px solid #2c2f36;
   border-top: 3px solid #9dd86a;
@@ -218,14 +208,12 @@ input:focus {
   vertical-align: middle;
 }
 
-/* ⚠️ Error */
 .error-message {
   color: #ff6666;
   font-size: 0.9rem;
   margin-top: 1rem;
 }
 
-/* 🔗 Links */
 .footer-links {
   margin-top: 1.5rem;
   display: flex;
@@ -244,12 +232,12 @@ input:focus {
   color: #b9f089;
 }
 
-/* 🌀 Animaciones */
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -257,10 +245,13 @@ input:focus {
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.1);
     opacity: 0.7;
@@ -273,7 +264,6 @@ input:focus {
   }
 }
 
-/* 📱 Responsive */
 @media (max-width: 480px) {
   .login-card {
     padding: 2rem 1.5rem;

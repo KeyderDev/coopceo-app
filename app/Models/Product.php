@@ -9,11 +9,12 @@ class Product extends Model
 {
     use HasFactory;
 
+    protected $connection = 'tenant';
+
     protected $fillable = ['nombre', 'precio', 'categoria', 'stock'];
 
     public function sales()
     {
-        return $this->belongsToMany(Sale::class, 'sale_product')
-                    ->withPivot('quantity', 'price', 'subtotal');
+        return $this->belongsToMany(Sale::class, 'sale_product')->withPivot('quantity', 'price', 'subtotal');
     }
 }

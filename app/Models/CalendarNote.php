@@ -9,13 +9,14 @@ class CalendarNote extends Model
 {
     use HasFactory;
 
+    protected $connection = 'tenant';
+
     protected $fillable = [
         'user_id',
         'date',
         'note',
     ];
 
-    // Relación con el usuario
     public function user()
     {
         return $this->belongsTo(User::class);

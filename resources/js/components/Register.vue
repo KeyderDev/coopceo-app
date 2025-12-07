@@ -9,6 +9,7 @@
       <p class="subtitle">Crea tu cuenta para comenzar</p>
 
       <form @submit.prevent="handleRegister" class="register-form">
+
         <div class="form-row">
           <div class="form-group">
             <label for="nombre">Nombre</label>
@@ -39,14 +40,14 @@
 
           <div class="form-group">
             <label for="password_confirmation">Confirmar Contraseña</label>
-            <input
-              id="password_confirmation"
-              v-model="password_confirmation"
-              type="password"
-              placeholder="Repite tu contraseña"
-              required
-            />
+            <input id="password_confirmation" v-model="password_confirmation" type="password"
+              placeholder="Repite tu contraseña" required />
           </div>
+        </div>
+
+        <div class="form-group">
+          <label for="codigo_coop">Código de Cooperativa</label>
+          <input id="codigo_coop" v-model="codigo_coop" type="text" placeholder="Ej: COO1" required />
         </div>
 
         <button type="submit" class="register-button" :disabled="loading">
@@ -65,6 +66,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from "axios";
 
@@ -75,6 +77,7 @@ export default {
       nombre: "",
       apellido: "",
       telefono: "",
+      codigo_coop: "",
       email: "",
       password: "",
       password_confirmation: "",
@@ -95,6 +98,7 @@ export default {
           email: this.email,
           password: this.password,
           password_confirmation: this.password_confirmation,
+          coop_codigo: this.codigo_coop
         });
 
         const token = response.data.access_token;
@@ -282,6 +286,7 @@ input:focus {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -289,10 +294,13 @@ input:focus {
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.1);
     opacity: 0.7;

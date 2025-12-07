@@ -9,6 +9,8 @@ class CashReconciliation extends Model
 {
     use HasFactory;
 
+    protected $connection = 'tenant';
+
     protected $fillable = [
         'petty',
         'bill_20',

@@ -1,24 +1,18 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\Controller;
 use App\Models\RegistroCompra;
 use Illuminate\Http\Request;
 
 class RegistroCompraController extends Controller
 {
-    /**
-     * Mostrar todas las compras
-     */
     public function index()
     {
-        $compras = RegistroCompra::orderBy('fecha_compra', 'desc')->get();
-        return response()->json($compras);
+        return RegistroCompra::orderBy('fecha_compra', 'desc')->get();
     }
 
-    /**
-     * Guardar una nueva compra
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -37,9 +31,6 @@ class RegistroCompraController extends Controller
         ], 201);
     }
 
-    /**
-     * Mostrar una compra específica
-     */
     public function show($id)
     {
         $compra = RegistroCompra::find($id);
@@ -51,9 +42,6 @@ class RegistroCompraController extends Controller
         return response()->json($compra);
     }
 
-    /**
-     * Actualizar una compra
-     */
     public function update(Request $request, $id)
     {
         $compra = RegistroCompra::find($id);
@@ -78,9 +66,6 @@ class RegistroCompraController extends Controller
         ]);
     }
 
-    /**
-     * Eliminar una compra
-     */
     public function destroy($id)
     {
         $compra = RegistroCompra::find($id);

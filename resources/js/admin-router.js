@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import axios from "axios"
 import AdminPanel from './components/AdminPanel.vue'
 import Login from './components/Login.vue'
 import Register from './components/Register.vue'
@@ -21,6 +22,18 @@ import userDetails from './components/admin/userDetails.vue'
 import transactionDetails from './components/admin/transaction-details.vue'
 import database from './components/admin/database.vue'
 
+const token = localStorage.getItem("auth_token")
+const coop = localStorage.getItem("coop_codigo")
+
+if (token) {
+  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+}
+
+if (coop) {
+  axios.defaults.headers.common["X-Coop-Code"] = coop
+}
+
+// --------------------------
 
 const routes = [
   {
@@ -70,10 +83,8 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.meta.requiresAdmin && token) {
     try {
-      const res = await fetch(`${import.meta.env.VITE_APP_URL}/api/user`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const user = await res.json()
+      const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/user`)
+      const user = res.data
 
       if (!user.admin) {
         return next('/')
@@ -86,6 +97,7 @@ router.beforeEach(async (to, from, next) => {
       return next({ name: 'login' })
     }
   }
+
   next()
 })
 

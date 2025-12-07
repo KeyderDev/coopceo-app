@@ -40,8 +40,7 @@
 
           <div class="form-group">
             <label for="password_confirmation">Confirmar Contraseña</label>
-            <input id="password_confirmation" v-model="password_confirmation" type="password"
-              placeholder="Repite tu contraseña" required />
+            <input id="password_confirmation" v-model="password_confirmation" type="password" placeholder="Repite tu contraseña" required />
           </div>
         </div>
 

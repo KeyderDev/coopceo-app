@@ -11,38 +11,56 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    public function me(Request $request)
-    {
-        \Log::info('UserController me() DB', [
-            'db' => config('database.connections.tenant.database'),
-            'user' => config('database.connections.tenant.username'),
-        ]);
+public function me(Request $request)
+{
+    \Log::info('UserController me() DB', [
+        'db' => config('database.connections.tenant.database'),
+        'user' => config('database.connections.tenant.username'),
+    ]);
 
-        $token = $request->bearerToken();
+    $token = $request->bearerToken();
 
-        if (!$token) {
-            return response()->json(['message' => 'Token faltante'], 401);
-        }
-
-        $user = User::on('tenant')
-            ->where('api_token', $token)
-            ->first();
-
-        if (!$user) {
-            return response()->json(['message' => 'No autenticado'], 401);
-        }
-
-        return response()->json([
-            'id' => $user->id,
-            'nombre' => $user->nombre,
-            'apellido' => $user->apellido,
-            'numero_socio' => $user->numero_socio,
-            'admin' => $user->admin,
-            'dividendos' => $user->dividendos ?? 0,
-            'email' => $user->email,
-            'posicion' => $user->posicion,
-        ]);
+    if (!$token) {
+        return response()->json(['message' => 'Token faltante'], 401);
     }
+
+    $user = User::on('tenant')
+        ->where('api_token', $token)
+        ->first();
+
+    if (!$user) {
+        return response()->json(['message' => 'No autenticado'], 401);
+    }
+
+    $global = \DB::connection('mysql_main')
+        ->table('usuarios_global')
+        ->where('email', $user->email)
+        ->first();
+
+    $coopCode = $global->coop_codigo ?? null;
+
+    $coop = null;
+    if ($coopCode) {
+        $coop = \DB::connection('mysql_main')
+            ->table('cooperativas')
+            ->where('codigo', $coopCode)
+            ->first();
+    }
+
+    return response()->json([
+        'id' => $user->id,
+        'nombre' => $user->nombre,
+        'apellido' => $user->apellido,
+        'numero_socio' => $user->numero_socio,
+        'admin' => $user->admin,
+        'dividendos' => $user->dividendos ?? 0,
+        'email' => $user->email,
+        'posicion' => $user->posicion,
+        'coop_codigo' => $coopCode,
+        'coop_nombre' => $coop->nombre ?? null
+    ]);
+}
+
 
     public function index()
     {

@@ -58,17 +58,16 @@
                 <i class="fas fa-calendar-day"></i>
                 <span>{{ currentDate }}</span>
             </div>
-
             <div class="footer-center">
-                <i class="fas fa-clock"></i>
-                <span>{{ currentTime }}</span>
+                <i class="fa-solid fa-building-columns"></i>
+                <span>{{ user.coop_codigo }} – {{ user.coop_nombre }}</span>
             </div>
-
             <div class="footer-right">
                 <i class="fas fa-dollar-sign"></i>
                 <span>Total ventas hoy: ${{ formatCurrency(totalSalesToday) }}</span>
             </div>
         </footer>
+
     </div>
 </template>
 
@@ -99,7 +98,10 @@ export default {
         async loadUser(token) {
             try {
                 const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/user`, {
-                    headers: { Authorization: `Bearer ${token}` },
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "X-Coop-Code": localStorage.getItem("coop_codigo")
+                    }
                 });
                 this.user = res.data;
             } catch {
@@ -156,6 +158,7 @@ export default {
     display: flex;
     flex-direction: column;
 }
+
 .marquee {
     width: 100%;
     overflow: hidden;
@@ -179,6 +182,7 @@ export default {
     0% {
         transform: translateX(0);
     }
+
     100% {
         transform: translateX(-100%);
     }

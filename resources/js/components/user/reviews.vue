@@ -1,6 +1,6 @@
 <template>
   <div class="reviews-wrapper">
-    <h2 class="title">Reseñas de la Cooperativa</h2>
+    <h2 class="title">Reseñas</h2>
 
     <div class="review-list">
       <div class="review" v-for="r in reviews" :key="r.id">

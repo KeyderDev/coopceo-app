@@ -28,7 +28,7 @@
                 </router-link>
 
                 <router-link to="/users" class="menu-item">
-                    <i class="fa-solid fa-user"></i>
+                    <i class="fa-solid fa-users"></i>
                     <p>Users</p>
                 </router-link>
 
@@ -45,6 +45,10 @@
                 <router-link to="/documentos" class="menu-item">
                     <i class="fas fa-file-alt"></i>
                     <p>Reports</p>
+                </router-link>
+                <router-link to="/users" class="menu-item">
+                    <i class="fa-solid fa-user"></i>
+                    <p>My Account</p>
                 </router-link>
             </div>
 

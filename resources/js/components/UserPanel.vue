@@ -14,15 +14,21 @@
             </router-link>
           </li>
           <li>
+            <router-link to="transactions">
+              <i class="fa-solid fa-scroll"></i>
+              <span>Mis Transacciones</span>
+            </router-link>
+          </li>
+          <li>
             <router-link to="menu">
               <i class="fa-solid fa-utensils"></i>
               <span>Menu</span>
             </router-link>
           </li>
           <li>
-            <router-link to="transactions">
-              <i class="fa-solid fa-scroll"></i>
-              <span>Mis Transacciones</span>
+            <router-link to="reviews">
+              <i class="fa-solid fa-comment"></i>
+                <span>Reseñas</span>
             </router-link>
           </li>
           <li>
@@ -44,9 +50,9 @@
           <button @click="logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
         </div>
       </header>
-        <div class="marquee">
-            <span>🎄 ¡Felices fiestas les desea la Coopceo! 🎁</span>
-        </div>
+      <div class="marquee">
+        <span>🎄 ¡Felices fiestas les desea la Coopceo! 🎁</span>
+      </div>
       <div class="portal">
         <router-view v-slot="{ Component }">
           <div class="user-card" v-if="!Component && user">
@@ -114,7 +120,7 @@ export default {
 <style scoped>
 .portal-container {
   display: flex;
-  min-height: 100vh;        
+  min-height: 100vh;
   height: auto;
   background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
   color: #fff;
@@ -144,6 +150,7 @@ export default {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-100%);
   }
@@ -216,7 +223,7 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;             
+  min-height: 0;
 }
 
 .topbar {
@@ -361,7 +368,7 @@ export default {
 
   .portal {
     padding: 1.2rem;
-    overflow-y: visible;    
+    overflow-y: visible;
   }
 
   .user-card {
@@ -370,4 +377,3 @@ export default {
   }
 }
 </style>
-

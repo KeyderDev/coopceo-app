@@ -14,6 +14,9 @@ Route::group([], function () {
 
     Route::middleware(['apitoken'])->group(function () {
 
+        Route::get('/reviews', [\App\Http\Controllers\Api\ReviewController::class, 'index']);
+        Route::post('/reviews', [\App\Http\Controllers\Api\ReviewController::class, 'store']);
+
         Route::get('/database/info', [\App\Http\Controllers\DatabaseController::class, 'info']);
         Route::get('/database/backup', [\App\Http\Controllers\DatabaseController::class, 'backup']);
 

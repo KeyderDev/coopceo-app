@@ -35,4 +35,9 @@ class TenantManager
     {
         return $this->coop;
     }
+
+        public function useTenant(string $codigo)
+    {
+        return $this->setFromCoopCode($codigo);
+    }
 }

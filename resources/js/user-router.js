@@ -8,7 +8,7 @@ import transactions from './components/user/transactions.vue'
 import ForgotPassword from './components/ForgotPassword.vue'
 import Menu from './components/user/menu.vue'
 import Settings from './components/user/settings.vue'
-
+import reviews from './components/user/reviews.vue'
 const token = localStorage.getItem("auth_token")
 const coop = localStorage.getItem("coop_codigo")
 
@@ -30,7 +30,8 @@ const routes = [
     children: [
       { path: 'transactions', component: transactions, name: 'transactions' },
       { path: 'menu', component: Menu, name: 'menu' },
-      { path: 'settings', component: Settings, name: 'settings' }
+      { path: 'settings', component: Settings, name: 'settings' },
+      { path: 'reviews', component: reviews, name: 'reviews' },
     ]
   },
   { path: '/login', component: Login, name: 'login' },

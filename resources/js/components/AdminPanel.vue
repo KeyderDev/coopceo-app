@@ -46,7 +46,7 @@
                     <i class="fas fa-file-alt"></i>
                     <p>Reports</p>
                 </router-link>
-                <router-link to="/users" class="menu-item">
+                <router-link to="/my-account" class="menu-item">
                     <i class="fa-solid fa-user"></i>
                     <p>My Account</p>
                 </router-link>

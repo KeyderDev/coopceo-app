@@ -13,6 +13,8 @@ Route::group([], function () {
     // Route::middleware(['tenant', 'apitoken'])->group(function () {
 
     Route::middleware(['apitoken'])->group(function () {
+        Route::post('/user/profile-picture', [\App\Http\Controllers\Api\UserController::class, 'updateProfilePicture']);
+
 
         Route::get('/reviews', [\App\Http\Controllers\Api\ReviewController::class, 'index']);
         Route::post('/reviews', [\App\Http\Controllers\Api\ReviewController::class, 'store']);

@@ -11,55 +11,57 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-public function me(Request $request)
-{
-    \Log::info('UserController me() DB', [
-        'db' => config('database.connections.tenant.database'),
-        'user' => config('database.connections.tenant.username'),
-    ]);
+    public function me(Request $request)
+    {
+        \Log::info('UserController me() DB', [
+            'db' => config('database.connections.tenant.database'),
+            'user' => config('database.connections.tenant.username'),
+        ]);
 
-    $token = $request->bearerToken();
+        $token = $request->bearerToken();
 
-    if (!$token) {
-        return response()->json(['message' => 'Token faltante'], 401);
-    }
+        if (!$token) {
+            return response()->json(['message' => 'Token faltante'], 401);
+        }
 
-    $user = User::on('tenant')
-        ->where('api_token', $token)
-        ->first();
-
-    if (!$user) {
-        return response()->json(['message' => 'No autenticado'], 401);
-    }
-
-    $global = \DB::connection('mysql_main')
-        ->table('usuarios_global')
-        ->where('email', $user->email)
-        ->first();
-
-    $coopCode = $global->coop_codigo ?? null;
-
-    $coop = null;
-    if ($coopCode) {
-        $coop = \DB::connection('mysql_main')
-            ->table('cooperativas')
-            ->where('codigo', $coopCode)
+        $user = User::on('tenant')
+            ->where('api_token', $token)
             ->first();
-    }
 
-    return response()->json([
-        'id' => $user->id,
-        'nombre' => $user->nombre,
-        'apellido' => $user->apellido,
-        'numero_socio' => $user->numero_socio,
-        'admin' => $user->admin,
-        'dividendos' => $user->dividendos ?? 0,
-        'email' => $user->email,
-        'posicion' => $user->posicion,
-        'coop_codigo' => $coopCode,
-        'coop_nombre' => $coop->nombre ?? null
-    ]);
-}
+        if (!$user) {
+            return response()->json(['message' => 'No autenticado'], 401);
+        }
+
+        $global = \DB::connection('mysql_main')
+            ->table('usuarios_global')
+            ->where('email', $user->email)
+            ->first();
+
+        $coopCode = $global->coop_codigo ?? null;
+
+        $coop = null;
+        if ($coopCode) {
+            $coop = \DB::connection('mysql_main')
+                ->table('cooperativas')
+                ->where('codigo', $coopCode)
+                ->first();
+        }
+
+        return response()->json([
+            'id' => $user->id,
+            'nombre' => $user->nombre,
+            'apellido' => $user->apellido,
+            'numero_socio' => $user->numero_socio,
+            'admin' => $user->admin,
+            'dividendos' => $user->dividendos ?? 0,
+            'email' => $user->email,
+            'posicion' => $user->posicion,
+            'coop_codigo' => $coopCode,
+            'coop_nombre' => $coop->nombre ?? null,
+            'profile_picture' => $user->profile_picture
+
+        ]);
+    }
 
 
     public function index()
@@ -67,6 +69,78 @@ public function me(Request $request)
         $users = User::on('tenant')->get();
         return response()->json($users);
     }
+
+public function updateProfilePicture(Request $request)
+{
+    \Log::info("📸 INICIO updateProfilePicture()", [
+        'token' => $request->bearerToken(),
+        'has_file' => $request->hasFile('profile_picture'),
+        'file_info' => $request->file('profile_picture') ? [
+            'name' => $request->file('profile_picture')->getClientOriginalName(),
+            'size' => $request->file('profile_picture')->getSize(),
+            'mime' => $request->file('profile_picture')->getMimeType()
+        ] : 'NO FILE',
+        'headers' => $request->headers->all(),
+    ]);
+
+    try {
+        $user = auth()->user();
+
+        \Log::info("📌 Usuario autenticado", [
+            'user_id' => $user?->id,
+            'email' => $user?->email,
+            'tenant_db' => config('database.connections.tenant.database'),
+        ]);
+
+        if (!$user) {
+            \Log::error("❌ NO AUTENTICADO en updateProfilePicture()");
+            return response()->json(['message' => 'No autenticado'], 401);
+        }
+
+        // Antes de validar
+        \Log::info("🔍 Validando archivo...");
+
+        $request->validate([
+    'profile_picture' => 'required|image|max:15360'
+        ]);
+
+        \Log::info("✔ Archivo validado correctamente");
+
+        if ($request->hasFile('profile_picture')) {
+            \Log::info("📤 Guardando archivo en storage...");
+
+            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+
+            \Log::info("📁 Archivo guardado", [
+                'path' => $path
+            ]);
+
+            $user->profile_picture = $path;
+            $user->save();
+
+            \Log::info("✔ Usuario actualizado con nueva foto", [
+                'user_id' => $user->id
+            ]);
+
+            return response()->json([
+                'profile_picture' => $user->profile_picture
+            ], 200);
+        } else {
+            \Log::warning("⚠ request->hasFile devolvió FALSE desde móvil");
+        }
+
+        return response()->json(['message' => 'No se recibió archivo'], 400);
+
+    } catch (\Exception $e) {
+        \Log::error("🔥 ERROR en updateProfilePicture()", [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json(['message' => 'Error subiendo foto'], 500);
+    }
+}
+
 
     public function update(Request $request, $id)
     {

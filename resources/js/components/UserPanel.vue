@@ -28,14 +28,14 @@
           <li>
             <router-link to="reviews">
               <i class="fa-solid fa-comment"></i>
-                <span>Reseñas</span>
+              <span>Reseñas</span>
             </router-link>
           </li>
           <li>
-            <a href="#">
+            <router-link to="settings">
               <i class="fa-solid fa-gear"></i>
               <span>Configuración</span>
-            </a>
+            </router-link>
           </li>
         </ul>
       </nav>
@@ -57,8 +57,14 @@
         <router-view v-slot="{ Component }">
           <div class="user-card" v-if="!Component && user">
             <div class="avatar">
-              <i class="fa-solid fa-user-circle"></i>
+              <img v-if="user?.profile_picture" :src="imageUrl(user.profile_picture)" alt="" class="avatar-img" />
+
+              <div v-else class="avatar-placeholder">
+                {{ user?.nombre?.charAt(0) }}
+              </div>
             </div>
+
+
             <div class="info">
               <h3>#{{ user.numero_socio }} - {{ user.nombre }} {{ user.apellido }}</h3>
               <p>Balance acumulado</p>
@@ -81,6 +87,7 @@ export default {
   data() {
     return { user: null };
   },
+
   async created() {
     const token = localStorage.getItem("auth_token");
     if (!token) {
@@ -93,12 +100,14 @@ export default {
         headers: { Authorization: `Bearer ${token}` },
       });
       this.user = response.data;
+      console.log('USUARIO CARGADO:', this.user);
     } catch (error) {
       console.error("Error al cargar usuario:", error);
       localStorage.removeItem("auth_token");
       window.location.href = "/user-panel/login";
     }
   },
+
   methods: {
     async logout() {
       const token = localStorage.getItem("auth_token");
@@ -113,9 +122,14 @@ export default {
         window.location.href = "/user-panel/login";
       }
     },
-  },
+
+    imageUrl(path) {
+      return `${import.meta.env.VITE_APP_URL}/storage/${path}`;
+    }
+  }
 };
 </script>
+
 
 <style scoped>
 .portal-container {
@@ -289,6 +303,35 @@ export default {
   font-size: 3rem;
   color: #9dd86a;
 }
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  font-size: 3rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #9dd86a;
+}
+
 
 .user-card .info h3 {
   font-size: 1.25rem;

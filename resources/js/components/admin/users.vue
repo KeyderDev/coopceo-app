@@ -4,12 +4,7 @@
     <div class="search-section">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="Buscar usuario..."
-          class="search-input"
-        />
+        <input type="text" v-model="searchQuery" placeholder="Buscar usuario..." class="search-input" />
       </div>
 
       <div class="filter-section">
@@ -34,17 +29,24 @@
     <div class="users-list">
       <div v-for="user in filteredUsers" :key="user.id" class="user-card">
         <div class="user-main">
+          <div class="user-avatar">
+            <img v-if="user.profile_picture" :src="imageUrl(user.profile_picture)" />
+            <span v-else>{{ user.nombre.charAt(0) }}</span>
+          </div>
+
           <div class="user-info">
             <h3>{{ user.nombre }} {{ user.apellido }}</h3>
             <p><strong>Número socio:</strong> {{ user.numero_socio }}</p>
             <p><strong>Teléfono:</strong> {{ user.telefono || '—' }}</p>
             <p><strong>Email:</strong> {{ user.email }}</p>
           </div>
+
           <div class="user-balance">
             <span>Balance</span>
             <p class="amount">${{ user.dividendos ?? 0 }}</p>
           </div>
         </div>
+
 
         <div class="user-actions">
           <button class="manage-btn" @click="goToUser(user.id)">
@@ -120,7 +122,9 @@ export default {
     goToUser(userId) {
       this.$router.push(`/users/${userId}`);
     },
-
+    imageUrl(path) {
+      return `/storage/${path}`
+    },
     async deleteUser(userId) {
       if (!confirm("¿Seguro que deseas eliminar este usuario?")) return;
       const token = localStorage.getItem("auth_token");
@@ -185,6 +189,29 @@ export default {
   margin-top: 1rem;
   gap: 0.7rem;
 }
+
+.user-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #9dd86a;
+  flex-shrink: 0;
+  margin-right: 1rem;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 
 .manage-btn {
   background: rgba(157, 216, 106, 0.15);
@@ -429,4 +456,3 @@ export default {
   }
 }
 </style>
-

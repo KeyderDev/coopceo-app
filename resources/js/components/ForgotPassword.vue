@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "axios"
 
 export default {
   name: "ForgotPassword",
@@ -65,46 +65,51 @@ export default {
       step: 1,
       loading: false,
       error: null,
-      success: null,
-    };
+      success: null
+    }
   },
   methods: {
     async handleForgotPassword() {
-      this.error = null;
-      this.success = null;
-      this.loading = true;
+      this.error = null
+      this.success = null
+      this.loading = true
 
       try {
         if (this.step === 1) {
-          await axios.post(`${import.meta.env.VITE_APP_URL}/api/password/otp`, { email: this.email });
-          this.success = "OTP enviado a tu correo.";
-          this.step = 2;
+          await axios.post(`${import.meta.env.VITE_APP_URL}/api/password/otp`, {
+            email: this.email
+          })
+          this.success = "OTP enviado a tu correo."
+          this.step = 2
         } else if (this.step === 2) {
           await axios.post(`${import.meta.env.VITE_APP_URL}/api/password/verify-otp`, {
             email: this.email,
-            otp: this.otp,
-          });
-          this.success = "OTP verificado, ingresa tu nueva contraseña.";
-          this.step = 3;
+            otp: this.otp
+          })
+          this.success = "OTP verificado, ingresa tu nueva contraseña."
+          this.step = 3
         } else if (this.step === 3) {
           await axios.post(`${import.meta.env.VITE_APP_URL}/api/password/reset`, {
             email: this.email,
             otp: this.otp,
-            password: this.newPassword,
-          });
-          this.success = "¡Contraseña cambiada exitosamente!";
-          this.step = 1;
-          this.email = this.otp = this.newPassword = "";
+            password: this.newPassword
+          })
+          this.success = "¡Contraseña cambiada exitosamente!"
+          this.step = 1
+          this.email = ""
+          this.otp = ""
+          this.newPassword = ""
         }
       } catch (err) {
-        this.error = err.response?.data?.message || "Ocurrió un error inesperado.";
+        this.error = err.response?.data?.message || "Ocurrió un error inesperado."
       } finally {
-        this.loading = false;
+        this.loading = false
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
+
 
 <style scoped>
 /* 🌌 Fondo */
